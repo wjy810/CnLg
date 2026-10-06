@@ -21,6 +21,9 @@ const FORCE = 1 << 7; // 恢复时必须重新运行（暂停时执行过清理�
 
 const MAX_ITERATIONS = 100;
 
+/** 所有者按创建顺序编号：同一轮里先运行先创建的 effect（外层先于内层） */
+let nextOwnerId = 0;
+
 /** @type {Computed | Effect | null} 正在收集依赖的节点 */
 let evalContext = null;
 /** @type {Owner | null} 新建 effect / 作用域的归属 */
@@ -33,6 +36,15 @@ let globalVersion = 0;
 function report(error) {
   if (typeof globalThis.reportError === 'function') globalThis.reportError(error);
   else console.error(error);
+}
+
+/** 运行清理函数：出错时报告，不打断其余的清理 */
+function cleanupSafely(fn) {
+  try {
+    untrack(fn);
+  } catch (error) {
+    report(error);
+  }
 }
 
 // ───────────────────────── signal ─────────────────────────
@@ -228,6 +240,7 @@ export class Computed extends Signal {
 class Owner {
   /** @param {Owner | null} [owner] 不传则归属当前所有者，传 null 表示独立的根 */
   constructor(owner) {
+    this._id = nextOwnerId++;
     this._flags = 0;
     /** @type {Set<Owner> | null} */
     this._children = null;
@@ -321,14 +334,14 @@ export class Scope extends Owner {
 
   /** 注册释放时执行的函数 */
   onDispose(fn) {
-    if (this._flags & DISPOSED) fn();
+    if (this._flags & DISPOSED) cleanupSafely(fn);
     else (this._cleanups ??= []).push(fn);
   }
 
   _onDispose() {
     const cleanups = this._cleanups;
     this._cleanups = null;
-    if (cleanups) for (const fn of cleanups.reverse()) untrack(fn);
+    if (cleanups) for (const fn of cleanups.reverse()) cleanupSafely(fn);
   }
 }
 
@@ -377,7 +390,15 @@ class Effect extends Owner {
     batchDepth++;
     try {
       const result = this._fn();
-      if (typeof result === 'function') this._cleanup = result;
+      if (typeof result === 'function') {
+        if (this._flags & (PAUSED | DISPOSED)) {
+          // 运行途中被暂停或释放：这次的副作用不能留着
+          cleanupSafely(result);
+          if (!(this._flags & DISPOSED)) this._flags |= FORCE;
+        } else {
+          this._cleanup = result;
+        }
+      }
     } finally {
       evalContext = prevContext;
       currentOwner = prevOwner;
@@ -391,7 +412,7 @@ class Effect extends Owner {
   _teardown() {
     const cleanup = this._cleanup;
     this._cleanup = null;
-    if (cleanup) untrack(cleanup);
+    if (cleanup) cleanupSafely(cleanup);
     this._disposeChildren();
   }
 
@@ -400,7 +421,7 @@ class Effect extends Owner {
     if (this._cleanup) {
       const cleanup = this._cleanup;
       this._cleanup = null;
-      untrack(cleanup);
+      cleanupSafely(cleanup);
       this._flags |= FORCE;
     }
   }
@@ -420,7 +441,7 @@ class Effect extends Owner {
     this._sources.clear();
     const cleanup = this._cleanup;
     this._cleanup = null;
-    if (cleanup) untrack(cleanup);
+    if (cleanup) cleanupSafely(cleanup);
   }
 }
 
@@ -462,12 +483,18 @@ function endBatch() {
   try {
     while (queue.length) {
       if (++iterations > MAX_ITERATIONS) {
-        for (const effect of queue) effect._flags &= ~NOTIFIED;
+        const dropped = queue;
         queue = [];
+        for (const effect of dropped) {
+          effect._flags &= ~NOTIFIED;
+          // 让中间的 computed 也清掉“已标记”，否则它们以后不会再向下通知
+          for (const source of effect._sources.keys()) source._refresh();
+        }
         throw new Error(`[Vunio] effect 互相触发超过 ${MAX_ITERATIONS} 轮，可能存在循环依赖`);
       }
       const effects = queue;
       queue = [];
+      if (effects.length > 1) effects.sort((a, b) => a._id - b._id);
       for (const effect of effects) {
         effect._flags &= ~NOTIFIED;
         if (effect._flags & (PAUSED | DISPOSED)) continue;

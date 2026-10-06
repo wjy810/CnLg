@@ -444,6 +444,11 @@ function stringifyAttribute(name, value) {
 
 const marker = () => document.createComment('');
 
+function report(error) {
+  if (typeof globalThis.reportError === 'function') globalThis.reportError(error);
+  else console.error(error);
+}
+
 /**
  * 删除 start 与 end 之间的节点（不含两端）。
  * 不用 Range：Range 在被回收前一直是“活的”，每次 DOM 修改浏览器都要更新它们，大量删除时会变成 O(n²)。
@@ -511,6 +516,29 @@ const KEYED = 6;
 const UNSET = Symbol('unset');
 
 /** 一段动态内容，用一对注释节点圈定范围 */
+/**
+ * 渲染 repeat 的一行。模板函数在这一行自己的作用域里运行（其中创建的 effect 归这一行所有），
+ * 每次重新渲染换一个新的作用域。模板出错时报告错误并保留这一行原来的内容，其余行照常协调。
+ */
+function renderRow(directive, row) {
+  const scope = createScope(row.scope);
+  let rendered;
+  try {
+    rendered = scope.run(() => untrack(() => directive.template(row.item, row.index)));
+  } catch (error) {
+    scope.dispose();
+    report(error);
+    return;
+  }
+  row.renderScope?.dispose();
+  row.renderScope = scope;
+  try {
+    row.part.setValue(rendered);
+  } catch (error) {
+    report(error);
+  }
+}
+
 class ChildPart {
   /**
    * @param {Comment} start
@@ -547,7 +575,13 @@ class ChildPart {
     if (isReactive(value)) {
       this.binding = createEffect(() => {
         const resolved = readDeep(value);
-        untrack(() => this.commit(resolved));
+        // 函数返回 repeat(list, …) 时，列表本身也要跟踪，否则列表变化不会更新
+        if (resolved instanceof RepeatDirective) {
+          const items = readDeep(resolved.items);
+          untrack(() => this.commitRepeat(resolved, items));
+        } else {
+          untrack(() => this.commit(resolved));
+        }
       }, this.scope);
     } else if (value instanceof RepeatDirective && isReactive(value.items)) {
       this.binding = createEffect(() => {
@@ -607,11 +641,18 @@ class ChildPart {
     }
     this.clear();
     const scope = createScope(this.scope);
-    const instance = scope.run(() => {
-      const created = new TemplateInstance(template, this.context, scope);
-      created.update(result.values);
-      return created;
-    });
+    let instance;
+    try {
+      instance = scope.run(() => {
+        const created = new TemplateInstance(template, this.context, scope);
+        created.update(result.values);
+        return created;
+      });
+    } catch (error) {
+      // 创建失败：释放已经建立的绑定，不留下没人管的 effect
+      scope.dispose();
+      throw error;
+    }
     this.end.before(instance.fragment);
     this.kind = INSTANCE;
     this.content = instance;
@@ -705,17 +746,15 @@ class ChildPart {
         const end = marker();
         anchor.before(start, end);
         const scope = createScope(this.contentScope);
-        row = { key: keys[i], item, index: i, scope, part: new ChildPart(start, end, this.context, scope) };
+        row = { key: keys[i], item, index: i, scope, renderScope: null, part: new ChildPart(start, end, this.context, scope) };
         rows.set(keys[i], row);
-        const rendered = untrack(() => directive.template(item, i));
-        row.part.setValue(rendered);
+        renderRow(directive, row);
       } else {
         if (!stable.has(i)) moveRange(row.part.start, row.part.end, anchor);
         if (row.item !== item || row.index !== i) {
           row.item = item;
           row.index = i;
-          const rendered = untrack(() => directive.template(item, i));
-          row.part.setValue(rendered);
+          renderRow(directive, row);
         }
       }
       order[i] = row;

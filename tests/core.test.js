@@ -379,3 +379,116 @@ test('减少动态效果：animate() 直接跳到结束状态', async (t) => {
   });
   assert.deepEqual(result, { reduced: true, duration: 0 });
 });
+
+test('移出页面时某个清理函数出错：其余资源照常释放，unmounted 照常调用', async (t) => {
+  const { page } = await open(t, { allowErrors: true });
+  const result = await page.evaluate(async () => {
+    const { VunioElement, html, signal } = window.vunio;
+    const g = signal(0);
+    const stats = { clicks: 0, runs: 0, timeouts: 0, unmounted: 0 };
+    class TBadCleanup extends VunioElement {
+      static tag = 't-bad-cleanup';
+      render() {
+        return html`<p>${() => g.value}</p>`;
+      }
+      mounted() {
+        this.effect(() => () => {
+          throw new Error('cleanup');
+        });
+        this.effect(() => (g.value, stats.runs++));
+        this.on(document, 'click', () => stats.clicks++);
+        this.timeout(() => stats.timeouts++, 10);
+        this.onCleanup(() => {
+          throw new Error('onCleanup');
+        });
+      }
+      unmounted() {
+        stats.unmounted++;
+      }
+    }
+    TBadCleanup.define();
+    const el = document.body.appendChild(document.createElement('t-bad-cleanup'));
+    el.remove();
+    const runs = stats.runs;
+    g.value = 1;
+    document.dispatchEvent(new MouseEvent('click'));
+    await new Promise((r) => setTimeout(r, 40));
+    return { ...stats, runs: stats.runs - runs, observers: g._observers?.size ?? 0 };
+  });
+  assert.deepEqual(result, { clicks: 0, runs: 0, timeouts: 0, unmounted: 1, observers: 0 });
+});
+
+test('在 render() / update() 中把自己移出页面：模板绑定暂停，不运行 mounted，不报错', async (t) => {
+  const { page, errors } = await open(t, { allowErrors: true });
+  const result = await page.evaluate(() => {
+    const { VunioElement, html, signal } = window.vunio;
+    const g = signal(0);
+    let mounted = 0;
+    class TLeaveInRender extends VunioElement {
+      static tag = 't-leave-in-render';
+      render() {
+        this.remove();
+        return html`<p>${() => g.value}</p>`;
+      }
+      mounted() {
+        mounted++;
+      }
+    }
+    class TLeaveInUpdate extends VunioElement {
+      static tag = 't-leave-in-update';
+      update() {
+        this.remove();
+      }
+      mounted() {
+        mounted++;
+      }
+    }
+    TLeaveInRender.define();
+    TLeaveInUpdate.define();
+    const a = document.body.appendChild(document.createElement('t-leave-in-render'));
+    document.body.appendChild(document.createElement('t-leave-in-update'));
+    g.value = 42;
+    const detachedText = a.root.textContent;
+    const observers = g._observers?.size ?? 0;
+    const mountedWhileDetached = mounted;
+    document.body.append(a);
+    return { detachedText, observers, mountedWhileDetached, mounted, reconnectedText: a.root.textContent };
+  });
+  assert.deepEqual(result, { detachedText: '0', observers: 0, mountedWhileDetached: 0, mounted: 1, reconnectedText: '42' });
+  assert.deepEqual(errors, []);
+});
+
+test('loop()：在 tick 里暂停再恢复，不会开出第二条帧循环', async (t) => {
+  const { page } = await open(t);
+  const result = await page.evaluate(async () => {
+    const { VunioElement } = window.vunio;
+    let ticks = 0;
+    let handle;
+    class TLoop extends VunioElement {
+      static tag = 't-loop-twice';
+      mounted() {
+        handle = this.loop(() => {
+          ticks++;
+          if (ticks === 1) {
+            handle.pause();
+            handle.resume();
+          }
+        });
+      }
+    }
+    TLoop.define();
+    document.body.appendChild(document.createElement('t-loop-twice'));
+    let frames = 0;
+    await new Promise((resolve) => {
+      const count = () => (++frames === 20 ? resolve() : requestAnimationFrame(count));
+      requestAnimationFrame(count);
+    });
+    const perFrame = ticks / frames;
+    handle.stop();
+    const stoppedAt = ticks;
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    return { perFrame, afterStop: ticks - stoppedAt };
+  });
+  assert.ok(result.perFrame <= 1.1, `每帧 tick 次数 ${result.perFrame}`);
+  assert.equal(result.afterStop, 0);
+});

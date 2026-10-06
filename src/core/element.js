@@ -111,19 +111,27 @@ export class VunioElement extends HTMLElement {
   // ───────────────────────── 生命周期 ─────────────────────────
 
   connectedCallback() {
-    this.#conn = { controller: new AbortController(), cleanups: new Set(), animations: new Set() };
+    const conn = { controller: new AbortController(), cleanups: new Set(), animations: new Set() };
+    this.#conn = conn;
     this.#scope = createScope(null);
 
     if (!this.#rendered) {
+      this.#rendered = true;
       this.#upgradeProps();
       this.#guard('render', () => untrack(() => this.#renderOnce()));
-      this.#rendered = true;
+      // render() 里把自己移出了页面：移出时渲染作用域还不存在，这里补上暂停
+      if (this.#conn !== conn) {
+        if (!this.#conn) this.#renderScope?.pause();
+        return;
+      }
     } else {
       this.#renderScope?.resume();
     }
 
     this.#changed.clear();
     this.#guard('update', () => this.#inScope(() => this.update(new Changes(true, propsOf(this.constructor).defs.keys()))));
+    // update() 里移出（或移出又移入）了页面：后面的阶段属于已经结束的这次连接
+    if (this.#conn !== conn) return;
     this.#guard('mounted', () => this.#inScope(() => this.mounted()));
   }
 
@@ -131,8 +139,9 @@ export class VunioElement extends HTMLElement {
     const conn = this.#conn;
     if (!conn) return;
     this.#conn = null;
-    this.#renderScope?.pause();
-    this.#scope?.dispose();
+    // 每一步单独保护：一步出错不影响其余资源的释放
+    this.#guard('disconnect', () => this.#renderScope?.pause());
+    this.#guard('disconnect', () => this.#scope?.dispose());
     this.#scope = null;
     conn.controller.abort();
     for (const animation of conn.animations) animation.cancel();
@@ -264,11 +273,13 @@ export class VunioElement extends HTMLElement {
     let running = false;
     let stopped = false;
 
+    // id 为 0 表示没有排队中的帧；tick 里 pause() + resume() 时由 resume 排下一帧，这里不再重复排
     const frame = (now) => {
+      id = 0;
       const dt = last ? Math.min(now - last, 64) : 16.7;
       last = now;
       if (tick.call(this, dt, now) === false) return handle.stop();
-      if (running) id = requestAnimationFrame(frame);
+      if (running && !id) id = requestAnimationFrame(frame);
     };
 
     const handle = {
@@ -279,12 +290,13 @@ export class VunioElement extends HTMLElement {
         if (!running) return;
         running = false;
         cancelAnimationFrame(id);
+        id = 0;
       },
       resume() {
         if (running || stopped) return;
         running = true;
         last = 0;
-        id = requestAnimationFrame(frame);
+        if (!id) id = requestAnimationFrame(frame);
       },
       stop() {
         stopped = true;

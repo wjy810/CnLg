@@ -345,3 +345,132 @@ describe('作用域', () => {
     assert.equal(runs, 1);
   });
 });
+
+describe('健壮性（出错、重入、执行顺序）', () => {
+  test('外层 effect 先于它创建的内层 effect 运行：旧的内层在看到新值之前就被释放', (t) => {
+    const errors = captureErrors(t);
+    const user = signal({ name: 'a' });
+    const log = [];
+    effect(() => {
+      const u = user.value;
+      if (u) effect(() => log.push(`${user.value.name}/${u.name}`));
+    });
+    user.value = { name: 'b' };
+    user.value = null;
+    assert.deepEqual(log, ['a/a', 'b/b']);
+    assert.deepEqual(errors, []);
+  });
+
+  test('清理函数出错：报告错误，effect 继续工作，子 effect 照常释放', (t) => {
+    const errors = captureErrors(t);
+    const s = signal(0);
+    const tick = signal(0);
+    const runs = [];
+    const children = [];
+    let fail = true;
+    effect(() => {
+      const v = s.value;
+      runs.push(v);
+      effect(() => children.push(`${v}:${tick.value}`));
+      return () => {
+        if (fail) {
+          fail = false;
+          throw new Error('cleanup');
+        }
+      };
+    });
+    s.value = 1;
+    s.value = 2;
+    tick.value = 1;
+    assert.deepEqual(runs, [0, 1, 2]);
+    assert.deepEqual(children, ['0:0', '1:0', '2:0', '2:1']);
+    assert.equal(errors.length, 1);
+  });
+
+  test('释放 / 暂停时某个清理函数出错，其余的照常释放 / 暂停', (t) => {
+    const errors = captureErrors(t);
+    const s = signal(0);
+    const log = [];
+    const scope = createScope(null);
+    scope.run(() => {
+      effect(() => {
+        s.value;
+        return () => {
+          throw new Error('cleanup');
+        };
+      });
+      effect(() => log.push(s.value));
+    });
+    scope.onDispose(() => log.push('first'));
+    scope.onDispose(() => {
+      throw new Error('onDispose');
+    });
+    scope.pause();
+    s.value = 1;
+    scope.resume();
+    scope.dispose();
+    s.value = 2;
+    assert.deepEqual(log, [0, 1, 'first']);
+    assert.equal(observerCount(s), 0);
+    assert.equal(errors.length, 3);
+  });
+
+  test('effect 互相触发超过上限后，图中其他 effect 不受影响', (t) => {
+    captureErrors(t);
+    const n = signal(0);
+    const s = signal(0);
+    const on = signal(false);
+    const c = computed(() => s.value);
+    const seen = [];
+    effect(() => seen.push(c.value));
+    const stop = effect(() => {
+      const v = n.value;
+      if (on.value) {
+        s.value = v + 1;
+        n.value = v + 1;
+      }
+    });
+    assert.throws(() => (on.value = true), /超过/);
+    stop();
+    s.value = 12345;
+    assert.equal(seen.at(-1), 12345);
+    s.value = 777;
+    assert.equal(seen.at(-1), 777);
+  });
+
+  test('effect 在自己运行时被释放：这次运行返回的清理函数立即执行', () => {
+    const s = signal(0);
+    const scope = createScope(null);
+    let cleaned = 0;
+    scope.run(() =>
+      effect(() => {
+        if (s.value === 1) scope.dispose();
+        return () => cleaned++;
+      }),
+    );
+    s.value = 1;
+    assert.equal(cleaned, 2);
+  });
+
+  test('effect 在自己运行时被暂停：这次的清理函数立即执行，恢复后重新运行', () => {
+    const s = signal(0);
+    const scope = createScope(null);
+    const active = new Set();
+    let paused = false;
+    scope.run(() =>
+      effect(() => {
+        const v = s.value;
+        if (v === 1 && !paused) {
+          paused = true;
+          scope.pause();
+        }
+        active.add(v);
+        return () => active.delete(v);
+      }),
+    );
+    s.value = 1;
+    assert.deepEqual([...active], [], '暂停时不应留下仍在生效的副作用');
+    scope.resume();
+    assert.deepEqual([...active], [1]);
+  });
+});

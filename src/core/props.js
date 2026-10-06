@@ -27,6 +27,10 @@ function normalize(name, input) {
   if (opt.attribute !== false && !rich) {
     attribute = typeof opt.attribute === 'string' ? opt.attribute : toKebab(name);
   }
+  if (type === Boolean && attribute && opt.default === true) {
+    // 布尔 attribute 只看有没有，无法表达“默认为真”：没有这个 attribute 时永远是 false
+    console.warn(`[Vunio] 属性 ${name} 是 Boolean，default: true 不会生效。请改用反义的名字（如 open → closed），默认为 false。`);
+  }
   return Object.freeze({
     name,
     type,

@@ -43,5 +43,12 @@
 - 测试：signals 与主题检查在 Node 中运行，其余在真实浏览器中运行；CI 覆盖 Chromium、Firefox、WebKit。
 - 体积预算：`npm run size`，core 约 10 KB（gzip），超出预算时 CI 失败。
 - 性能基准：`npm run bench`，参照 js-framework-benchmark。
+- 修复（核心审查）：
+  - 同一轮里 effect 按创建顺序运行，外层先于它创建的内层：`when(user, () => html\`${() => user.value.name}\`)` 在 `user` 变为 `null` 时不再报错。
+  - 清理函数出错时只报告错误，effect、作用域和组件的其余资源照常运行 / 释放；effect 在自己运行途中被释放或暂停时，这次的清理函数立即执行。
+  - effect 互相触发超过上限后，图中其他 effect 不再永久失效。
+  - 函数或 `when` 返回的 `repeat(list, …)` 现在跟踪 `list` 的变化；行模板里创建的 effect 归这一行所有；某一行模板出错不再打乱整个列表。
+  - 组件在 `render()` / `update()` 中把自己移出页面时，模板绑定正确暂停，不再调用 `mounted()`；`loop()` 在 tick 里暂停再恢复不再开出第二条帧循环。
+  - Boolean 属性写 `default: true` 时给出警告（布尔 attribute 无法表达“默认为真”）。
 - 修复：删除列表行时不再创建 `Range`。Range 在被回收前一直是“活的”，大量删除时会变成 O(n²)；
   清空 1,000 行从 197ms 降到 5ms，创建 10,000 行从 5.4s 降到 0.6s。

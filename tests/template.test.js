@@ -287,6 +287,104 @@ test('repeat：清空后行内订阅释放，前后兄弟节点不受影响，�
   assert.equal(result.readsAfterClear, 0, '清空后行内的绑定不再响应');
 });
 
+test('repeat：由函数或 when 返回时仍然跟踪列表的变化', async (t) => {
+  const { page } = await open(t);
+  const result = await page.evaluate(() => {
+    const { html, render, signal, repeat, when } = window.vunio;
+    const list = signal(['a', 'b']);
+    const show = signal(true);
+    const row = (i) => html`<li>${i}</li>`;
+    const a = document.createElement('ul');
+    const b = document.createElement('ul');
+    render(html`${() => show.value && repeat(list, (i) => i, row)}`, a);
+    render(html`${when(show, () => repeat(list, (i) => i, row))}`, b);
+    const first = a.querySelector('li');
+    list.value = ['a', 'b', 'c'];
+    const grown = [a.textContent, b.textContent, a.querySelector('li') === first];
+    show.value = false;
+    list.value = ['x'];
+    return { grown, hidden: [a.textContent, b.textContent] };
+  });
+  assert.deepEqual(result.grown, ['abc', 'abc', true], '列表变化时增量更新，已有的行不重建');
+  assert.deepEqual(result.hidden, ['', '']);
+});
+
+test('repeat：某一行的模板出错时报告错误，其余行照常协调', async (t) => {
+  const { page } = await open(t, { allowErrors: true });
+  const result = await page.evaluate(() => {
+    const { html, render, signal, repeat } = window.vunio;
+    const errors = [];
+    const original = window.reportError;
+    window.reportError = (error) => errors.push(error.message);
+    const host = document.createElement('ul');
+    let fail = false;
+    const list = signal(['A', 'B', 'C', 'D']);
+    render(
+      html`${repeat(list, (k) => k, (k) => {
+        if (k === 'B' && fail) {
+          fail = false;
+          throw new Error('坏行');
+        }
+        return html`<li>${k}</li>`;
+      })}`,
+      host,
+    );
+    const text = () => [...host.querySelectorAll('li')].map((li) => li.textContent).join('');
+    fail = true;
+    list.value = ['D', 'C', 'B', 'A'];
+    const reversed = text();
+    list.value = ['A', 'B', 'C', 'D', 'E'];
+    const restored = text();
+    list.value = [];
+    window.reportError = original;
+    return { reversed, restored, errors, leftover: host.childNodes.length };
+  });
+  assert.deepEqual(result.errors, ['坏行']);
+  assert.equal(result.reversed, 'DCBA', 'B 移动后重新渲染时出错：保留原来的内容，顺序仍然正确');
+  assert.equal(result.restored, 'ABCDE');
+});
+
+test('repeat：行模板里创建的 effect 归这一行所有，行还在就继续运行，行删除时释放', async (t) => {
+  const { page } = await open(t);
+  const result = await page.evaluate(() => {
+    const { html, render, signal, repeat, effect } = window.vunio;
+    const host = document.createElement('ul');
+    const a = { id: 'a', n: signal(0) };
+    const b = { id: 'b', n: signal(0) };
+    const list = signal([a]);
+    const seen = [];
+    render(
+      html`${repeat(list, (i) => i.id, (i) => {
+        effect(() => seen.push(`${i.id}${i.n.value}`));
+        return html`<li>${i.id}</li>`;
+      })}`,
+      host,
+    );
+    list.value = [a, b];
+    a.n.value = 1;
+    list.value = [b];
+    a.n.value = 2;
+    b.n.value = 1;
+    return { seen, aObservers: a.n._observers?.size ?? 0 };
+  });
+  // [a, b] → [b]：b 的位置变了，这一行重新渲染（第二个 b0），旧渲染里的 effect 随之释放
+  assert.deepEqual(result.seen, ['a0', 'b0', 'a1', 'b0', 'b1']);
+  assert.equal(result.aObservers, 0);
+});
+
+test('when：切换分支时，旧分支里的绑定不会先看到新值', async (t) => {
+  const { page } = await open(t);
+  const result = await page.evaluate(() => {
+    const { html, render, signal, when } = window.vunio;
+    const host = document.createElement('div');
+    const user = signal({ name: '李白' });
+    render(html`${when(user, () => html`<b>${() => user.value.name}</b>`, () => '未登录')}`, host);
+    user.value = null;
+    return host.textContent;
+  });
+  assert.equal(result, '未登录');
+});
+
 test('when：只在真假变化时切换，旧分支的订阅被释放', async (t) => {
   const { page } = await open(t);
   const result = await page.evaluate(() => {
