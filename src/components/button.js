@@ -1,12 +1,14 @@
 import { VunioElement, html, css, signal, when } from '../core/index.js';
-import { burst } from '../effects/burst.js';
+import { burst, burstLayer, hasBurst } from '../effects/burst.js';
+
+const warned = new Set();
 
 /**
  * <vn-button> 按钮。默认墨色；朱砂色只给一个视图里最重要的操作。
  *
  * @attr {'ink'|'cinnabar'|'moon'|'text'} variant - 墨 · 朱砂 · 月白（描边）· 素（文字），默认 ink
  * @attr {'sm'|'md'|'lg'} size - 尺寸，默认 md
- * @attr {'ink'|'blossom'|'snow'|'wind'|'none'} effect - 点击效果，默认 ink（墨晕）
+ * @attr {string} effect - 点击效果：auto（默认，由主题的 --vn-effect 决定：古风墨晕、赛博故障）、ink、blossom、snow、wind、glitch、spark、none，或 registerBurst 注册的名字
  * @attr {'button'|'submit'|'reset'} type - 在表单中的作用，默认 button
  * @attr {boolean} disabled - 禁用
  * @attr {boolean} loading - 加载中：禁止点击并显示墨圈
@@ -25,7 +27,7 @@ export class VnButton extends VunioElement {
   static props = {
     variant: { type: String, default: 'ink', values: ['ink', 'cinnabar', 'moon', 'text'] },
     size: { type: String, default: 'md', values: ['sm', 'md', 'lg'] },
-    effect: { type: String, default: 'ink', values: ['ink', 'blossom', 'snow', 'wind', 'none'] },
+    effect: { type: String, default: 'auto' },
     type: { type: String, default: 'button', values: ['button', 'submit', 'reset'] },
     disabled: Boolean,
     loading: Boolean,
@@ -219,13 +221,24 @@ export class VnButton extends VunioElement {
     this.#fieldsetDisabled.value = disabled;
   }
 
+  /** 实际使用的点击效果：auto 时由主题决定 */
+  get resolvedEffect() {
+    if (this.effect !== 'auto') return this.effect;
+    return getComputedStyle(this).getPropertyValue('--vn-effect').trim() || 'ink';
+  }
+
   handleClick(event) {
-    const effect = this.effect;
-    if (effect !== 'none') {
+    const effect = this.resolvedEffect;
+    if (effect !== 'none' && !hasBurst(effect)) {
+      if (!warned.has(effect)) {
+        warned.add(effect);
+        console.warn(`[Vunio] <vn-button> 的 effect="${effect}" 没有注册，请先调用 registerBurst()`);
+      }
+    } else if (effect !== 'none') {
       const rect = this.refs.button.getBoundingClientRect();
       // 键盘触发（detail 为 0）时从中心发出
       const fromPointer = event.detail > 0;
-      burst(effect, effect === 'ink' ? this.refs.wash : this.refs.fx, {
+      burst(effect, burstLayer(effect) === 'wash' ? this.refs.wash : this.refs.fx, {
         x: fromPointer ? event.clientX - rect.left : rect.width / 2,
         y: fromPointer ? event.clientY - rect.top : rect.height / 2,
         animate: this.animate.bind(this),

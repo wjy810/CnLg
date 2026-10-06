@@ -13,8 +13,8 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 export const ENTRIES = [
   { name: 'vunio/core（Signals · 模板 · 组件基类）', entry: 'src/core/index.js', budget: 11 },
   { name: 'vunio/router（不含 core）', entry: 'src/router/index.js', own: true, budget: 3 },
-  { name: 'vunio/effects（不含 core）', entry: 'src/effects/index.js', own: true, budget: 3.5 },
-  { name: 'vunio（以上全部）', entry: 'src/index.js', budget: 16 },
+  { name: 'vunio/effects（不含 core）', entry: 'src/effects/index.js', own: true, budget: 4.5 },
+  { name: 'vunio（以上全部）', entry: 'src/index.js', budget: 17.5 },
   { name: 'vunio/components（13 个组件，含 core）', entry: 'src/components/index.js', budget: 27 },
 ];
 

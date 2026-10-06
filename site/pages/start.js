@@ -36,9 +36,14 @@ export default () => html`
     },
   })}
 
-  <h2>主题</h2>
-  <p>在 <code>&lt;html&gt;</code> 上写 <code>data-mode</code>：<code>day</code>（昼）、<code>night</code>（夜）或 <code>auto</code>（跟随系统）。任何元素加上 <code>data-mode</code> 都可以局部换主题。</p>
-  ${code(`<html data-mode="auto">`, 'html')}
+  <h2>主题与昼夜</h2>
+  <p>
+    主题决定整体风格，换一个 CSS 文件即可：<code>themes/guofeng.css</code>（古风）或 <code>themes/cyber.css</code>（赛博）。
+    组件只使用两套主题共同的变量（${link('/design', '主题契约')}），所以不需要改任何代码。右上角可以现场切换。
+  </p>
+  <p>昼夜写在 <code>data-mode</code> 上：<code>day</code>、<code>night</code> 或 <code>auto</code>（跟随系统）。任何元素加上 <code>data-mode</code> 都可以局部切换。</p>
+  ${code(`<link rel="stylesheet" href="/vunio/themes/cyber.css" />
+<html data-mode="auto">`, 'html')}
 
   <h2>写第一个组件</h2>
   <p>一个组件就是一个文件：声明属性、写出结构，会变的地方用 signal 或函数绑定。</p>

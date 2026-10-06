@@ -5,13 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Vunio</title>
     <meta name="description" content="Vunio：一个古风的 Web Components 框架。原生组件、精确更新、纸墨朱印的设计系统与风花雪月的动效。" />
+    <link rel="stylesheet" id="vn-theme" href="../themes/guofeng.css" />
+    <link rel="stylesheet" id="vn-theme-fonts" href="../themes/guofeng-fonts.css" />
+    <!-- 首次渲染前应用保存的主题与昼夜，避免闪烁；?theme=cyber、?mode=night 可以临时指定 -->
     <script>
       try {
-        document.documentElement.dataset.mode = localStorage.getItem('vunio-mode') || 'auto';
+        const query = new URLSearchParams(location.search);
+        const theme = query.get('theme') || localStorage.getItem('vunio-theme');
+        if (/^(guofeng|cyber)$/.test(theme)) {
+          for (const link of document.querySelectorAll('#vn-theme, #vn-theme-fonts')) link.href = link.getAttribute('href').replace('guofeng', theme);
+        }
+        document.documentElement.dataset.mode = query.get('mode') || localStorage.getItem('vunio-mode') || 'auto';
       } catch {}
     </script>
-    <link rel="stylesheet" href="../themes/guofeng.css" />
-    <link rel="stylesheet" href="../themes/guofeng-fonts.css" />
     <style>
       * {
         box-sizing: border-box;

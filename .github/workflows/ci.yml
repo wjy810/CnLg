@@ -35,9 +35,15 @@ jobs:
       fail-fast: false
       matrix:
         browser: [chromium, firefox, webkit]
-    name: test (${{ matrix.browser }})
+        theme: [guofeng]
+        # 换成赛博主题再跑一遍：组件不依赖某一套主题（RFC 0006）
+        include:
+          - browser: chromium
+            theme: cyber
+    name: test (${{ matrix.browser }}, ${{ matrix.theme }})
     env:
       BROWSER: ${{ matrix.browser }}
+      THEME: ${{ matrix.theme }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5

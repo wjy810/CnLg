@@ -1,0 +1,292 @@
+/*
+ * Vunio 赛博主题。霓虹、硬边、故障。深夜的城市，电青与品红的灯管，信号偶尔失真。
+ * 由 scripts/build-theme.js 根据 themes/cyber.tokens.js 生成，请勿手改。
+ *
+ * 用法：
+ *   <link rel="stylesheet" href="themes/cyber.css" />
+ *   <link rel="stylesheet" href="themes/cyber-fonts.css" />   可选：网络字体
+ *   <html data-mode="day">   昼（默认为夜）
+ *   <html data-mode="auto">    跟随系统
+ *   任意元素加 data-mode 可以局部切换昼夜
+ */
+
+:root {
+  /* 原色（组件不要直接使用） */
+  --vn-color-xuwu: #0A0B12; /* 虚无 */
+  --vn-color-moye: #12141F; /* 墨夜 */
+  --vn-color-shenyuan: #1A1D2C; /* 深渊 */
+  --vn-color-gangtie: #2A3048; /* 钢铁 */
+  --vn-color-guangbai: #E6E8F2; /* 光白 */
+  --vn-color-xinghui: #9AA0B8; /* 星灰 */
+  --vn-color-dianqing: #00E5FF; /* 电青 */
+  --vn-color-meihong: #FF2E88; /* 霓虹品红 */
+  --vn-color-fenhong: #FF5CA8; /* 荧粉 */
+  --vn-color-suanhuang: #F5E400; /* 酸黄 */
+  --vn-color-yinglv: #2BFF88; /* 荧绿 */
+  --vn-color-jinghong: #FF4D5E; /* 警红 */
+  --vn-color-tianlan: #4DB8FF; /* 天蓝 */
+  --vn-color-lengbai: #EEF1F7; /* 冷白 */
+  --vn-color-huabai: #FFFFFF; /* 画白 */
+  --vn-color-yinhui: #E2E6F0; /* 银灰 */
+  --vn-color-tanhei: #0B0D17; /* 碳黑 */
+  --vn-color-shenpin: #C00060; /* 深品红 */
+
+  /* 字体 */
+  --vn-font-display: 'Orbitron', 'ZCOOL QingKe HuangYou', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --vn-font-body: 'Chakra Petch', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --vn-font-quote: 'Share Tech Mono', 'Noto Sans SC', ui-monospace, monospace;
+  --vn-font-mono: 'Share Tech Mono', ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+
+  /* 字号 */
+  --vn-font-size-xs: 12px;
+  --vn-font-size-sm: 14px;
+  --vn-font-size-md: 16px;
+  --vn-font-size-lg: 18px;
+  --vn-font-size-xl: 22px;
+  --vn-font-size-2xl: 28px;
+  --vn-font-size-3xl: 36px;
+  --vn-font-size-4xl: 48px;
+  --vn-font-size-5xl: 64px;
+
+  /* 行高 */
+  --vn-leading-tight: 1.3;
+  --vn-leading-normal: 1.75;
+  --vn-leading-loose: 2;
+
+  /* 字距 */
+  --vn-tracking-normal: 0;
+  --vn-tracking-wide: 0.06em;
+  --vn-tracking-wider: 0.14em;
+  --vn-tracking-widest: 0.28em;
+
+  /* 字重 */
+  --vn-weight-regular: 400;
+  --vn-weight-medium: 600;
+  --vn-weight-bold: 700;
+
+  /* 间距 */
+  --vn-space-0: 0;
+  --vn-space-1: 4px;
+  --vn-space-2: 8px;
+  --vn-space-3: 12px;
+  --vn-space-4: 16px;
+  --vn-space-5: 24px;
+  --vn-space-6: 32px;
+  --vn-space-7: 48px;
+  --vn-space-8: 64px;
+  --vn-space-9: 96px;
+
+  /* 圆角 */
+  --vn-radius-none: 0;
+  --vn-radius-sm: 0;
+  --vn-radius-md: 2px;
+  --vn-radius-lg: 4px;
+  --vn-radius-full: 999px;
+
+  /* 线宽 */
+  --vn-border-thin: 1px;
+  --vn-border-thick: 2px;
+
+  /* 缓动 */
+  --vn-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --vn-ease-enter: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --vn-ease-move: cubic-bezier(0.6, 0, 0.2, 1);
+  --vn-ease-spring: cubic-bezier(0.3, 1.6, 0.5, 1);
+
+  /* 时长 */
+  --vn-duration-instant: 60ms;
+  --vn-duration-fast: 120ms;
+  --vn-duration-normal: 220ms;
+  --vn-duration-slow: 420ms;
+  --vn-duration-slower: 640ms;
+
+  /* 层级 */
+  --vn-z-dropdown: 1000;
+  --vn-z-sticky: 1050;
+  --vn-z-overlay: 1100;
+  --vn-z-modal: 1110;
+  --vn-z-toast: 1200;
+
+  /* 行宽 */
+  --vn-measure-narrow: 22em;
+  --vn-measure-normal: 34em;
+  --vn-measure-wide: 48em;
+
+  /* 焦点 */
+  --vn-focus-ring: 2px solid var(--vn-focus);
+  --vn-focus-offset: 3px;
+
+  /* 形状（用作 mask-image） */
+  --vn-mask-stroke: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8' preserveAspectRatio='none'%3E%3Cpath d='M0 2.5H128V5.5H0ZM134 2.5H164V5.5H134ZM170 2.5H184V5.5H170ZM190 2.5H200V5.5H190Z'/%3E%3C/svg%3E");
+  --vn-mask-stamp: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath fill-rule='evenodd' d='M0 0h24v24H0zM0 0h2v2h-2zM10 2h2v2h-2zM12 6h2v2h-2zM2 8h2v2h-2zM20 12h2v2h-2zM0 14h2v2h-2zM6 14h2v2h-2zM12 16h2v2h-2zM16 16h2v2h-2zM18 16h2v2h-2zM16 18h2v2h-2zM20 18h2v2h-2zM4 20h2v2h-2zM0 22h2v2h-2zM10 22h2v2h-2zM12 22h2v2h-2zM22 22h2v2h-2z'/%3E%3C/svg%3E");
+
+  /* 按钮默认的点击效果 */
+  --vn-effect: glitch;
+}
+
+/* 夜（默认） */
+:root,
+[data-mode='night'] {
+  color-scheme: dark;
+  --vn-bg: var(--vn-color-xuwu);
+  --vn-surface: var(--vn-color-moye);
+  --vn-surface-sunken: var(--vn-color-shenyuan);
+  --vn-fg: var(--vn-color-guangbai);
+  --vn-fg-strong: #FFFFFF;
+  --vn-fg-muted: var(--vn-color-xinghui);
+  --vn-fg-subtle: #5F6580;
+  --vn-line: rgba(0, 229, 255, 0.16);
+  --vn-line-strong: #3E7C8C;
+  --vn-primary: var(--vn-color-dianqing);
+  --vn-on-primary: #04060B;
+  --vn-accent: var(--vn-color-meihong);
+  --vn-on-accent: var(--vn-color-xuwu);
+  --vn-accent-fg: var(--vn-color-fenhong);
+  --vn-accent-wash: rgba(255, 46, 136, 0.14);
+  --vn-success: var(--vn-color-yinglv);
+  --vn-warning: var(--vn-color-suanhuang);
+  --vn-danger: var(--vn-color-jinghong);
+  --vn-info: var(--vn-color-tianlan);
+  --vn-focus: var(--vn-color-dianqing);
+  --vn-selection: rgba(0, 229, 255, 0.28);
+  --vn-overlay: rgba(2, 3, 8, 0.72);
+  --vn-frame: var(--vn-color-gangtie);
+  --vn-trim: var(--vn-color-dianqing);
+  --vn-blossom: var(--vn-color-fenhong);
+  --vn-blossom-deep: var(--vn-color-meihong);
+  --vn-snow: #9EF3FF;
+  --vn-wind: #7CFFCB;
+  --vn-moon: #FFD6F0;
+  --vn-night-sky: #05060A;
+  --vn-shadow-1: 0 0 0 1px rgba(0, 229, 255, 0.18);
+  --vn-shadow-2: 0 0 0 1px rgba(0, 229, 255, 0.28), 0 8px 24px -8px rgba(0, 229, 255, 0.35);
+  --vn-shadow-3: 0 0 0 1px rgba(255, 46, 136, 0.35), 0 24px 60px -16px rgba(255, 46, 136, 0.45);
+  --vn-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect width='6' height='1' fill='rgb(0,229,255)' fill-opacity='0.05'/%3E%3C/svg%3E");
+  --cyber-glow: rgba(255, 92, 168, 0.35);
+}
+
+/* 昼 */
+[data-mode='day'] {
+  color-scheme: light;
+  --vn-bg: var(--vn-color-lengbai);
+  --vn-surface: var(--vn-color-huabai);
+  --vn-surface-sunken: var(--vn-color-yinhui);
+  --vn-fg: var(--vn-color-tanhei);
+  --vn-fg-strong: #000000;
+  --vn-fg-muted: #4A5068;
+  --vn-fg-subtle: #7A8099;
+  --vn-line: rgba(11, 13, 23, 0.12);
+  --vn-line-strong: #6B7590;
+  --vn-primary: var(--vn-color-tanhei);
+  --vn-on-primary: var(--vn-color-dianqing);
+  --vn-accent: #D4006A;
+  --vn-on-accent: #FFFFFF;
+  --vn-accent-fg: var(--vn-color-shenpin);
+  --vn-accent-wash: rgba(212, 0, 106, 0.08);
+  --vn-success: #006B43;
+  --vn-warning: #725A00;
+  --vn-danger: #C8102E;
+  --vn-info: #0057B8;
+  --vn-focus: #0080A0;
+  --vn-selection: rgba(0, 200, 230, 0.25);
+  --vn-overlay: rgba(11, 13, 23, 0.55);
+  --vn-frame: #1B2033;
+  --vn-trim: #00B8D4;
+  --vn-blossom: var(--vn-color-fenhong);
+  --vn-blossom-deep: #D4006A;
+  --vn-snow: #7FA3B8;
+  --vn-wind: #00A86B;
+  --vn-moon: #E9D7FF;
+  --vn-night-sky: #121628;
+  --vn-shadow-1: 0 1px 0 rgba(11, 13, 23, 0.08);
+  --vn-shadow-2: 0 0 0 1px rgba(11, 13, 23, 0.08), 0 10px 24px -12px rgba(0, 144, 168, 0.35);
+  --vn-shadow-3: 0 0 0 1px rgba(212, 0, 106, 0.2), 0 24px 56px -18px rgba(212, 0, 106, 0.35);
+  --vn-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M32 0H0V32' fill='none' stroke='rgb(11,13,23)' stroke-opacity='0.05'/%3E%3C/svg%3E");
+  --cyber-glow: transparent;
+}
+
+/* 跟随系统 */
+@media (prefers-color-scheme: light) {
+  [data-mode='auto'] {
+    color-scheme: light;
+    --vn-bg: var(--vn-color-lengbai);
+    --vn-surface: var(--vn-color-huabai);
+    --vn-surface-sunken: var(--vn-color-yinhui);
+    --vn-fg: var(--vn-color-tanhei);
+    --vn-fg-strong: #000000;
+    --vn-fg-muted: #4A5068;
+    --vn-fg-subtle: #7A8099;
+    --vn-line: rgba(11, 13, 23, 0.12);
+    --vn-line-strong: #6B7590;
+    --vn-primary: var(--vn-color-tanhei);
+    --vn-on-primary: var(--vn-color-dianqing);
+    --vn-accent: #D4006A;
+    --vn-on-accent: #FFFFFF;
+    --vn-accent-fg: var(--vn-color-shenpin);
+    --vn-accent-wash: rgba(212, 0, 106, 0.08);
+    --vn-success: #006B43;
+    --vn-warning: #725A00;
+    --vn-danger: #C8102E;
+    --vn-info: #0057B8;
+    --vn-focus: #0080A0;
+    --vn-selection: rgba(0, 200, 230, 0.25);
+    --vn-overlay: rgba(11, 13, 23, 0.55);
+    --vn-frame: #1B2033;
+    --vn-trim: #00B8D4;
+    --vn-blossom: var(--vn-color-fenhong);
+    --vn-blossom-deep: #D4006A;
+    --vn-snow: #7FA3B8;
+    --vn-wind: #00A86B;
+    --vn-moon: #E9D7FF;
+    --vn-night-sky: #121628;
+    --vn-shadow-1: 0 1px 0 rgba(11, 13, 23, 0.08);
+    --vn-shadow-2: 0 0 0 1px rgba(11, 13, 23, 0.08), 0 10px 24px -12px rgba(0, 144, 168, 0.35);
+    --vn-shadow-3: 0 0 0 1px rgba(212, 0, 106, 0.2), 0 24px 56px -18px rgba(212, 0, 106, 0.35);
+    --vn-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M32 0H0V32' fill='none' stroke='rgb(11,13,23)' stroke-opacity='0.05'/%3E%3C/svg%3E");
+    --cyber-glow: transparent;
+  }
+}
+
+/* 减少动态效果：所有时长归零，组件无需单独处理 CSS 过渡 */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --vn-duration-instant: 1ms;
+    --vn-duration-fast: 1ms;
+    --vn-duration-normal: 1ms;
+    --vn-duration-slow: 1ms;
+    --vn-duration-slower: 1ms;
+  }
+}
+
+/* 页面基础样式（:where 优先级为 0，可随意覆盖） */
+:where(html) {
+  background-color: var(--vn-bg);
+  background-image: var(--vn-texture);
+  color: var(--vn-fg);
+  font-family: var(--vn-font-body);
+  line-height: var(--vn-leading-normal);
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+:where([data-mode]:not(html)) {
+  background-color: var(--vn-bg);
+  color: var(--vn-fg);
+}
+::selection {
+  background-color: var(--vn-selection);
+}
+
+/* 主题对组件部件的调整（::part） */
+/* 卡片：左上、右下两个霓虹折角 */
+vn-card:not([variant='plain'])::part(card) {
+  background-image:
+    linear-gradient(135deg, var(--vn-accent) 0 6px, transparent 6px),
+    linear-gradient(315deg, var(--vn-trim) 0 6px, transparent 6px);
+  background-position: top left, bottom right;
+  background-size: 14px 14px;
+  background-repeat: no-repeat;
+}
+/* 标题：夜里一圈淡淡的辉光（昼间 --cyber-glow 为透明） */
+vn-heading::part(heading) {
+  text-shadow: 0 0 18px var(--cyber-glow);
+}

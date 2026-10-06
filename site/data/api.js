@@ -17,8 +17,8 @@ export const api = {
       },
       {
         "name": "effect",
-        "type": "'ink'|'blossom'|'snow'|'wind'|'none'",
-        "description": "点击效果，默认 ink（墨晕）"
+        "type": "string",
+        "description": "点击效果：auto（默认，由主题的 --vn-effect 决定：古风墨晕、赛博故障）、ink、blossom、snow、wind、glitch、spark、none，或 registerBurst 注册的名字"
       },
       {
         "name": "type",
@@ -545,11 +545,11 @@ export const api = {
   "vn-sky": {
     "file": "src/components/sky.js",
     "tag": "vn-sky",
-    "summary": "天气背景：雪、花、风，可选一轮月亮。铺满最近的定位祖先，不响应指针。",
+    "summary": "天气背景：雪、花、风、雨，可选一轮月亮。铺满最近的定位祖先，不响应指针。",
     "attrs": [
       {
         "name": "weather",
-        "type": "'snow'|'blossom'|'wind'|'none'",
+        "type": "'snow'|'blossom'|'wind'|'rain'|'none'",
         "description": "天气，默认 snow"
       },
       {

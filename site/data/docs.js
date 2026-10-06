@@ -13,7 +13,7 @@ export const docs = {
   button: {
     tag: 'vn-button',
     name: '按钮',
-    intro: '默认是墨色。朱砂色只留给一个视图里最重要的那一个操作；点击时墨晕散开，也可以换成落花、飞雪或风叶。',
+    intro: '默认是墨色。朱砂色（强调色）只留给一个视图里最重要的那一个操作。点击效果默认随主题：古风墨晕散开，赛博信号故障；也可以指定落花、飞雪、风叶、电火花。',
     demos: [
       {
         title: '四种外观',
@@ -31,6 +31,8 @@ export const docs = {
   <vn-button variant="cinnabar" effect="blossom">落花</vn-button>
   <vn-button variant="moon" effect="snow">飞雪</vn-button>
   <vn-button variant="moon" effect="wind">风叶</vn-button>
+  <vn-button variant="moon" effect="glitch">故障</vn-button>
+  <vn-button variant="moon" effect="spark">电火花</vn-button>
 </vn-stack>`,
       },
       {
@@ -244,7 +246,7 @@ saving.close();`,
   sky: {
     tag: 'vn-sky',
     name: '天气',
-    intro: '画布绘制的风、花、雪，可以加一轮月亮。铺满最近的定位祖先、不响应指针；离开视口自动暂停，开启“减少动态效果”时只画静止的一帧。',
+    intro: '画布绘制的风、花、雪、雨，可以加一轮月亮。铺满最近的定位祖先、不响应指针；离开视口自动暂停，开启“减少动态效果”时只画静止的一帧。',
     demos: [
       {
         html: `<div style="position: relative; height: 220px; border-radius: 4px; overflow: hidden">
@@ -252,10 +254,11 @@ saving.close();`,
 </div>`,
       },
       {
-        title: '风与雪',
+        title: '风、雪与雨',
         html: `<vn-stack direction="row" gap="4" wrap>
   <div style="position: relative; height: 160px; flex: 1 1 200px"><vn-sky weather="wind" wind="0.6"></vn-sky></div>
   <div style="position: relative; height: 160px; flex: 1 1 200px"><vn-sky weather="snow" density="2"></vn-sky></div>
+  <div style="position: relative; height: 160px; flex: 1 1 200px"><vn-sky weather="rain" wind="0.3"></vn-sky></div>
 </vn-stack>`,
       },
     ],

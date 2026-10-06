@@ -3,7 +3,18 @@
   <head>
     <meta charset="utf-8" />
     <title>Vunio theme fixture</title>
-    <link rel="stylesheet" href="../../themes/guofeng.css" />
+    <link rel="stylesheet" id="vn-theme" href="../../themes/guofeng.css" />
+    <!-- 首次渲染前应用保存的主题与昼夜，避免闪烁；?theme=cyber、?mode=night 可以临时指定 -->
+    <script>
+      try {
+        const query = new URLSearchParams(location.search);
+        const theme = query.get('theme') || localStorage.getItem('vunio-theme');
+        if (/^(guofeng|cyber)$/.test(theme)) {
+          for (const link of document.querySelectorAll('#vn-theme, #vn-theme-fonts')) link.href = link.getAttribute('href').replace('guofeng', theme);
+        }
+        document.documentElement.dataset.mode = query.get('mode') || localStorage.getItem('vunio-mode') || 'auto';
+      } catch {}
+    </script>
   </head>
   <body>
     <section id="island" data-mode="night"><p id="island-text">夜</p></section>

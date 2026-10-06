@@ -115,14 +115,14 @@ VnExample.define();
 
 **样式**
 - 样式只写在 `static styles` 里；选择器都在 Shadow DOM 内，用 `:host` 设置宿主。
-- 颜色、字体、间距、圆角、阴影、动效**只用主题的语义令牌** `var(--vn-*)`，不写死色值，也不用原色 `--vn-color-*`（完整变量表见 [古风设计系统](design/guofeng.md)）。常用的：
+- 颜色、字体、间距、圆角、阴影、动效**只用主题的语义令牌** `var(--vn-*)`，不写死色值，也不用原色 `--vn-color-*`。只能用[主题契约](rfc/0006-theme-contract.md)里的变量，构建时会检查（两套主题的取值见 [古风](design/guofeng.md)、[赛博](design/cyber.md)）。常用的：
   - 颜色：`--vn-bg` `--vn-surface` `--vn-surface-sunken` `--vn-fg` `--vn-fg-muted` `--vn-line` `--vn-line-strong`
     `--vn-primary`/`--vn-on-primary` `--vn-accent`/`--vn-on-accent` `--vn-accent-fg` `--vn-danger` `--vn-success`
   - 尺度：`--vn-space-1…9` `--vn-radius-sm|md|lg|full` `--vn-font-size-xs…5xl` `--vn-tracking-wider` `--vn-shadow-1|2|3`
-  - 动效：`--vn-duration-fast|normal|ink` 配 `--vn-ease-standard|ink|wind|petal`
-  - 纹理：`--vn-mask-stamp`（印章）、`--vn-mask-stroke`（笔触线）
-- 控件边框用 `--vn-line-strong`（对比度 ≥ 3），`--vn-line` 只用于装饰分隔线；朱砂色文字用 `--vn-accent-fg`，不要用 `--vn-accent`。
-- 毛笔字体 `--vn-font-display` 只用于 ≥ 28px 的标题；同一视图区域最多一个朱砂色的主操作。
+  - 动效：`--vn-duration-fast|normal|slower` 配 `--vn-ease-standard|enter|move|spring`
+  - 形状：`--vn-mask-stamp`（印记的质感）、`--vn-mask-stroke`（横向拉伸的线条）
+- 控件边框用 `--vn-line-strong`（对比度 ≥ 3），`--vn-line` 只用于装饰分隔线；强调色的文字用 `--vn-accent-fg`，不要用 `--vn-accent`。
+- 展示字体 `--vn-font-display`（古风为毛笔字）只用于 ≥ 28px 的标题；同一视图区域最多一个强调色（古风为朱砂）的主操作。
   组件私有变量用 `--_名字` 前缀；允许外部定制的用 `--vn-组件名-*` 并在注释 `@cssprop` 中说明。
 - 状态样式用自定义状态：`this.setState('open', true)` + `:host(:state(open))`。
 - 给关键元素加 `part="名字"`，让使用者可以用 `::part()` 微调。
@@ -187,7 +187,8 @@ VnExample.define();
 - [ ] 移除组件后，没有残留的事件、计时器、动画帧、订阅
 - [ ] 只用键盘就能完成所有操作
 - [ ] 开启系统“减少动态效果”后没有大幅动画
-- [ ] 页面切换 `data-mode="night"` 后，组件在夜间主题下同样好看、可读
+- [ ] 页面切换 `data-mode="night"` 后，组件在夜间同样好看、可读
+- [ ] 换成赛博主题（`themes/cyber.css`）后同样成立：不依赖某一套主题的颜色、字体或形状
 - [ ] 所有文案都能通过属性或插槽修改
 - [ ] 控制台没有错误和警告
 - [ ] 文件头部的 JSDoc 写清了 `@attr` / `@slot` / `@fires` / `@csspart` / `@cssprop`

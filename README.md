@@ -10,7 +10,7 @@
 - **资源有主**：事件、计时器、动画、订阅都归组件所有，组件移除时自动释放。
 - **零依赖、零构建**：直接用浏览器的 ES 模块运行。
 
-> 当前进度：核心基类、响应式内核、响应式模板、古风设计系统、风花雪月效果、第一批 12 个组件、路由与文档站已完成。详见 [路线图](docs/ROADMAP.md)。
+> 当前进度：核心基类、响应式内核、响应式模板、古风与赛博两套主题（主题契约）、点击效果与天气、第一批 12 个组件、路由与文档站已完成；CI 覆盖三种浏览器引擎。详见 [路线图](docs/ROADMAP.md)。
 
 ## 快速开始
 
@@ -138,17 +138,24 @@ html`
 
 设计细节见 [RFC 0002](docs/rfc/0002-templates.md)。
 
-## 古风设计系统
+## 主题：古风与赛博
 
-纸、墨、印、四时。组件只使用语义令牌（`--vn-fg`、`--vn-accent`、`--vn-space-4`……），
-切换 `data-mode` 时整页连同 Shadow DOM 里的组件一起换主题，组件不需要写任何代码。
+组件只描述结构和行为，风格全部来自主题。换一个 CSS 文件，同一套组件就换了一种气质：
 
-- **昼 / 夜两套主题**，38 组颜色搭配全部满足 WCAG AA 对比度，由测试保证。
-- **令牌是数据**：`themes/guofeng.tokens.js` 是唯一来源，CSS 和文档表格都由它生成，不会互相对不上。
+```html
+<link rel="stylesheet" href="themes/guofeng.css" />   <!-- 古风：宣纸、墨分五色、一点朱砂（默认昼） -->
+<link rel="stylesheet" href="themes/cyber.css" />     <!-- 赛博：霓虹、硬边、扫描线（默认夜） -->
+<html data-mode="auto">                               <!-- 昼夜：day | night | auto -->
+```
+
+- **主题契约**：每套主题都提供同一份变量，名字描述用途而不是风格（`--vn-font-display`、`--vn-ease-enter`、`--vn-mask-stamp`……）。
+  构建脚本检查每套主题是否完整，组件源码是否只用了契约里的变量。见 [RFC 0006](docs/rfc/0006-theme-contract.md)。
+- **对比度**：两套主题 × 昼夜两种模式，每种 24 组颜色搭配全部满足 WCAG AA，由测试保证；axe 审计覆盖两套主题。
+- **令牌是数据**：`themes/*.tokens.js` 是唯一来源，CSS、字体样式表和设计文档的表格都由它生成。
+- **效果也随主题**：按钮不写 `effect` 时，古风按下是墨晕，赛博按下是故障。
 - **减少动态效果**：用户开启后，主题把所有动效时长变为 1ms。
-- 宣纸纹理、印泥斑驳、笔触线条都是内联 SVG，不发网络请求。
 
-设计说明见 [docs/design/guofeng.md](docs/design/guofeng.md)，可视化展示见 `examples/theme.html`。
+设计说明见 [古风](docs/design/guofeng.md)、[赛博](docs/design/cyber.md)；文档站右上角可以现场切换。
 
 ## 组件
 
@@ -169,8 +176,8 @@ html`
 
 | 组件 | 说明 |
 |---|---|
-| `vn-button` | 墨 / 朱砂 / 月白 / 素四种；点击墨晕，可选落花、飞雪、风叶；可提交、重置表单 |
-| `vn-heading` | 1–3 级毛笔字；可盖朱印、加副标题、竖排 |
+| `vn-button` | 墨 / 朱砂 / 月白 / 素四种；点击效果随主题（墨晕 / 故障），可选落花、飞雪、风叶、电火花；可提交、重置表单 |
+| `vn-heading` | 1–3 级用展示字体（古风为毛笔字）；可盖印、加副标题、竖排 |
 | `vn-card` | 纸片 / 古籍双线框 / 留白；标题、操作、底部插槽 |
 | `vn-stack` | 纵横排列，间距取自主题 |
 | `vn-divider` | 两头尖的笔触线，可在中间写字；也可竖向 |
@@ -181,20 +188,22 @@ html`
 | `vn-switch` | 玉璧滑块；`variant="moon"` 时为日月 |
 | `vn-modal` | 基于原生 `<dialog>` 的立轴，打开时向上下展开 |
 | `toast()` | 带小印的消息：讯 · 成 · 慎 · 误 |
-| `vn-sky` | 风、花、雪天气背景，可加一轮月亮 |
+| `vn-sky` | 风、花、雪、雨天气背景，可加一轮月亮 |
 
 所有表单组件直接放进原生 `<form>`，支持 `FormData`、`reset`、`<fieldset disabled>` 和校验。完整 API 见 [RFC 0004](docs/rfc/0004-components.md)，效果见 `examples/components.html`。
 
-## 风花雪月效果
+## 效果
 
 ```js
-import { burst } from 'vunio';
-burst('blossom', layer, { x, y, animate: this.animate.bind(this) }); // 墨晕 ink · 落花 blossom · 飞雪 snow · 风叶 wind
+import { burst, registerBurst } from 'vunio';
+burst('blossom', layer, { x, y, animate: this.animate.bind(this) });
+// 古风：墨晕 ink · 落花 blossom · 飞雪 snow · 风叶 wind　赛博：故障 glitch · 电火花 spark
+registerBurst('heart', { layer: 'fx', run(layer, ctx) { /* … */ } }); // 之后 <vn-button effect="heart">
 ```
 
 ```html
 <section style="position: relative">
-  <vn-sky weather="blossom" moon></vn-sky>   <!-- snow | blossom | wind | none -->
+  <vn-sky weather="blossom" moon></vn-sky>   <!-- snow | blossom | wind | rain | none -->
 </section>
 ```
 
@@ -316,12 +325,13 @@ src/
   components/            组件（import 'vunio/components' 注册全部）
 site/                    文档站（用 Vunio 写成）
 themes/
+  base.js                主题契约、共享尺度、对比度规则、defineTheme
   guofeng.tokens.js      古风主题令牌（唯一来源）
-  guofeng.css            生成的主题 CSS
-  guofeng-fonts.css      可选的网络字体
+  cyber.tokens.js        赛博主题令牌
+  *.css / *-fonts.css    生成的主题 CSS 与可选的网络字体
 scripts/
   serve.js               本地服务器
-  build-theme.js         生成主题 CSS、刷新文档表格、检查对比度
+  build-theme.js         生成各主题的 CSS、刷新文档表格，检查契约与对比度
   build-docs.js          从组件 JSDoc 生成文档站 API 数据
   size.js                体积报告与预算
 bench/                   性能基准（npm run bench）
@@ -332,7 +342,7 @@ docs/
   ROADMAP.md             设计原则、里程碑、验收标准
   COMPONENT_SPEC.md      组件规范（也是给 AI 的提示词）
   rfc/                   框架设计文档
-  design/guofeng.md      古风设计系统
+  design/                古风、赛博两套设计系统
 ```
 
 ## 性能与体积
@@ -360,11 +370,11 @@ docs/
 
 | 入口 | 压缩后 | gzip | brotli |
 |---|---:|---:|---:|
-| `vunio/core`（Signals · 模板 · 组件基类） | 28.7 KB | 10.3 KB | 9.2 KB |
+| `vunio/core`（Signals · 模板 · 组件基类） | 29.7 KB | 10.5 KB | 9.6 KB |
 | `vunio/router`（不含 core） | 5.4 KB | 2.5 KB | 2.2 KB |
-| `vunio/effects`（不含 core） | 8.0 KB | 3.2 KB | 2.8 KB |
-| `vunio`（以上全部） | 42.1 KB | 15.3 KB | 13.8 KB |
-| `vunio/components`（13 个组件，含 core） | 86.2 KB | 24.8 KB | 21.6 KB |
+| `vunio/effects`（不含 core，六种点击效果 + 四种天气） | 10.8 KB | 4.0 KB | 3.6 KB |
+| `vunio`（以上全部） | 45.9 KB | 16.5 KB | 14.8 KB |
+| `vunio/components`（13 个组件，含 core） | 90.3 KB | 26.0 KB | 22.6 KB |
 
 ## 浏览器支持
 

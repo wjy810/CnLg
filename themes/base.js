@@ -157,7 +157,8 @@ export const svgUrl = (svg) =>
  * @param {string} [def.fontImport]   网络字体的样式表地址（生成 <名字>-fonts.css）
  * @param {string} [def.fontNote]     写进字体文件头部的说明
  * @param {Record<string, {name: string, hex: string, note?: string}>} def.palette  有名字的原色
- * @param {Record<'day'|'night', {colors: object, shadows: object, texture: string}>} def.modes
+ * @param {Record<'day'|'night', {colors: object, shadows: object, texture: string, vars?: Record<string, string>}>} def.modes
+ *   vars：主题私有、随模式变化的变量（名字不用 --vn- 开头），给 css 里的 ::part() 调整使用
  * @param {object} def.scales         font / radius / ease / duration，以及可选的共享尺度覆盖
  * @param {Record<string, string>} def.masks   stroke / stamp
  * @param {string} def.effect         按钮默认的点击效果
@@ -184,6 +185,7 @@ export function missingContract(theme) {
     for (const level of [1, 2, 3]) if (!def.shadows?.[level]) missing.push(`${mode}.shadows.${level}`);
     if (!def.texture) missing.push(`${mode}.texture`);
     for (const name of Object.keys(def.colors ?? {})) if (!CONTRACT_COLORS.includes(name)) missing.push(`${mode}.colors.${name} 不在契约中`);
+    for (const name of Object.keys(def.vars ?? {})) if (!/^--(?!vn-)[a-z0-9-]+$/.test(name)) missing.push(`${mode}.vars.${name} 应以 -- 开头且不用 --vn- 前缀`);
   }
   for (const [group, keys] of Object.entries(CONTRACT_SCALES)) {
     for (const key of keys) if (!theme.scales?.[group]?.[key]) missing.push(`scales.${group}.${key}`);

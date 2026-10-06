@@ -81,6 +81,8 @@ function modeBlock(theme, mode, indent) {
   for (const [name, value] of Object.entries(def.colors)) lines.push(`${pad}--vn-${name}: ${colorValue(value)};`);
   for (const [level, value] of Object.entries(def.shadows)) lines.push(`${pad}--vn-shadow-${level}: ${value};`);
   lines.push(`${pad}--vn-texture: ${def.texture};`);
+  // 主题私有、随模式变化的变量（供主题自己的 ::part() 调整使用）
+  for (const [name, value] of Object.entries(def.vars ?? {})) lines.push(`${pad}${name}: ${value};`);
   return lines.join('\n');
 }
 

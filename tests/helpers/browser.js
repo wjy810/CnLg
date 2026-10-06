@@ -1,11 +1,13 @@
 // 浏览器测试的公共部分：启动静态服务器和浏览器，打开测试页并收集错误
 // 默认用 Chromium；BROWSER=firefox 或 BROWSER=webkit 换浏览器（CI 三种都跑）
+// 默认用古风主题；THEME=cyber 让页面换成赛博主题（页面通过 ?theme= 读取）
 import { after, before } from 'node:test';
 import assert from 'node:assert/strict';
 import * as playwright from 'playwright';
 import { serve } from '../../scripts/serve.js';
 
 export const BROWSER = process.env.BROWSER || 'chromium';
+export const THEME = process.env.THEME || 'guofeng';
 if (!['chromium', 'firefox', 'webkit'].includes(BROWSER)) throw new Error(`未知的 BROWSER：${BROWSER}`);
 
 /**
@@ -27,7 +29,7 @@ export function useBrowser() {
     server?.close();
   });
 
-  return async function open(t, { reducedMotion, colorScheme, allowErrors = false, path = 'tests/fixtures/index.html' } = {}) {
+  return async function open(t, { reducedMotion, colorScheme, allowErrors = false, path = 'tests/fixtures/index.html', theme = THEME } = {}) {
     const page = await browser.newPage();
     if (reducedMotion || colorScheme) await page.emulateMedia({ reducedMotion, colorScheme });
     const errors = [];
@@ -37,7 +39,7 @@ export function useBrowser() {
       if (message.type() === 'error') errors.push(message.text());
       if (message.type() === 'warning') warnings.push(message.text());
     });
-    await page.goto(`${baseURL}/${path}`);
+    await page.goto(`${baseURL}/${withTheme(path, theme)}`);
     // 测试夹具页会在准备好后设置 window.ready；其他页面（如文档站）由测试自己等待
     if (path.startsWith('tests/fixtures/')) await page.waitForFunction(() => window.ready === true);
     t.after(async () => {
@@ -46,4 +48,11 @@ export function useBrowser() {
     });
     return { page, warnings, errors };
   };
+}
+
+/** 在路径的 hash 之前加上 ?theme=（古风是默认，不加） */
+function withTheme(path, theme) {
+  if (theme === 'guofeng') return path;
+  const [base, hash = ''] = path.split('#');
+  return `${base}${base.includes('?') ? '&' : '?'}theme=${theme}${hash ? `#${hash}` : ''}`;
 }

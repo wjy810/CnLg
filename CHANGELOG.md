@@ -17,6 +17,25 @@
 - 响应式模板 `html`：文字、属性（多段插值、class / style 对象）、`?布尔`、`.DOM属性`、`@事件` 五种绑定；
   `when`、`repeat`（带 key，按最长递增子序列最少移动）、`unsafeHTML`、`svg`。没有虚拟 DOM，插值天然防 XSS。
 
+### 主题（RFC 0006）
+
+- 主题契约：每套主题都提供同一份变量，名字描述用途；构建脚本检查主题是否完整、组件是否只用契约变量。
+- 第二套主题**赛博**（`themes/cyber.css`）：霓虹、硬边、扫描线，默认为夜。组件源码不变，测试在两套主题下都通过。
+- 点击效果随主题：`<vn-button>` 的 `effect` 默认 `auto`，读取 `--vn-effect`（古风 `ink`，赛博 `glitch`）。
+- 新效果：`glitch` 故障、`spark` 电火花；`registerBurst()` 注册自己的效果；`<vn-sky weather="rain">`。
+
+**迁移**（相对开发中的早期提交）
+
+| 旧 | 新 |
+|---|---|
+| `data-theme="day\|night\|auto"`、存储键 `vunio-theme` | `data-mode="…"`、存储键 `vunio-mode`（`vunio-theme` 现在存主题名） |
+| `--vn-font-brush` / `-serif` / `-kai` | `--vn-font-display` / `-body` / `-quote` |
+| `--vn-ease-brush` / `-ink` / `-wind` / `-petal` | `--vn-ease-standard` / `-enter` / `-move` / `-spring` |
+| `--vn-duration-ink` | `--vn-duration-slower` |
+| `--vn-mask-brush` / `--vn-mask-seal` / `--vn-texture-paper` | `--vn-mask-stroke` / `--vn-mask-stamp` / `--vn-texture` |
+| `--vn-wood` / `--vn-gilt` | `--vn-frame` / `--vn-trim` |
+| `themes/guofeng.tokens.js` 的命名导出 | 默认导出 `defineTheme({...})`；契约与对比度规则在 `themes/base.js` |
+
 ### 设计系统
 
 - 古风主题令牌（纸、墨、朱砂、黛青、泥金……）是唯一来源，生成 CSS 和文档表格。

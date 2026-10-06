@@ -37,9 +37,26 @@ export default () => html`
     }
   </style>
   <h1>设计系统</h1>
-  <p class="lead">纸、墨、印、四时。组件只使用语义令牌，切换 <code>data-mode</code> 时，连同 Shadow DOM 里的组件一起换昼夜。</p>
+  <p class="lead">组件只描述结构和行为，风格全部来自主题。Vunio 带两套主题：古风与赛博，用的是同一套组件。</p>
 
-  <h2>理念</h2>
+  <h2>主题契约</h2>
+  <p>
+    每套主题都提供同一份变量：颜色（昼、夜各一套）、字体、圆角、缓动、时长、形状遮罩、页面底纹，以及按钮默认的点击效果。
+    变量名描述<b>用途</b>而不是风格：<code>--vn-font-display</code> 而不是“毛笔字”，<code>--vn-ease-enter</code> 而不是“墨晕”。
+    构建脚本会检查每套主题是否完整、两种模式的对比度是否都达标，以及组件源码是否只用了契约里的变量。
+  </p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>主题</th><th>文件</th><th>默认</th><th>气质</th><th>点击效果</th></tr></thead>
+      <tbody>
+        <tr><td>古风</td><td><code>themes/guofeng.css</code></td><td>昼</td><td>宣纸、墨分五色、一点朱砂、毛笔字</td><td><code>ink</code> 墨晕</td></tr>
+        <tr><td>赛博</td><td><code>themes/cyber.css</code></td><td>夜</td><td>霓虹、硬边、扫描线、像素印记</td><td><code>glitch</code> 故障</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>右上角可以现场切换主题与昼夜；变量表、对比度表见 <code>docs/design/guofeng.md</code> 与 <code>docs/design/cyber.md</code>。下面以古风为例。</p>
+
+  <h2>古风的理念</h2>
   <ul>
     <li><b>留白</b>：间距宁大勿小，一屏只说一件事。</li>
     <li><b>墨分五色</b>：层次靠墨色深浅，而不是更多颜色。</li>

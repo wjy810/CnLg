@@ -43,9 +43,14 @@ burst('ink', layer, { x, y, animate: this.animate.bind(this) });  // 组件里�
 | 落花 | 十余片花瓣迸出后翻飞飘落 | `--vn-blossom` / `--vn-blossom-deep` | 1.4–2.2s | 完成、收藏、点赞 |
 | 飞雪 | 细小雪粒轻轻散开后缓缓下坠 | `--vn-snow` | 1.6–2.6s | 安静的确认 |
 | 风叶 | 几片竹叶被风横着吹走，带几道风痕 | `--vn-wind` | 0.9–1.4s | 发送、提交、前进 |
+| 故障 | 一道闪光加几条色带错位闪烁，像信号受了干扰 | `--vn-burst-ink`、`--vn-accent`、`--vn-info` | 0.2–0.4s | 赛博主题的默认按下反馈 |
+| 电火花 | 几道细光迸出，带几粒像素碎屑 | `--vn-accent-fg`、`--vn-info` | 0.3–0.65s | 完成、解锁、连接成功 |
 
-- **墨晕**需要容器裁切（`overflow: hidden`），其余三种需要不裁切的容器，粒子会飞出按钮边界。组件通常准备两层：裁切的“晕层”和不裁切的“飞层”。
-- **减少动态效果**：落花、飞雪、风叶不生成粒子；墨晕只做一次很淡的淡入淡出（保留“按下了”的反馈）。
+- **墨晕**、**故障**需要容器裁切（`overflow: hidden`），其余需要不裁切的容器，粒子会飞出按钮边界。组件通常准备两层：裁切的“晕层”和不裁切的“飞层”，`burstLayer(name)` 返回 `'wash'` 或 `'fx'`。
+- **减少动态效果**：落花、飞雪、风叶、电火花不生成粒子；墨晕、故障只做一次很淡的闪烁（保留“按下了”的反馈）。
+- **注册表**（[RFC 0006](0006-theme-contract.md) 加入）：效果都登记在注册表里，`registerBurst(name, { layer, reducedMotion, run })` 加入自己的效果，`<vn-button effect="name">` 即可使用。
+  `run(layer, ctx)` 拿到 `x`、`y`、`width`、`height`、`reduced` 以及 `particle(styles)`、`play(el, keyframes, timing)` 两个工具，返回各粒子的 Promise。
+- **随主题变化**：`<vn-button>` 不写 `effect` 时读取主题变量 `--vn-effect`（古风 `ink`，赛博 `glitch`）。
 
 花瓣用 `clip-path: path()` 画出带缺口的樱花瓣形状，竹叶用两端尖的圆角矩形；颜色写成 `var(--vn-*)`，所以粒子插入后自动取当前主题的颜色。
 
@@ -60,7 +65,7 @@ burst('ink', layer, { x, y, animate: this.animate.bind(this) });  // 组件里�
 
 | 属性 | 默认 | 说明 |
 |---|---|---|
-| `weather` | `snow` | `snow` · `blossom` · `wind` · `none` |
+| `weather` | `snow` | `snow` · `blossom` · `wind` · `rain` · `none` |
 | `density` | `1` | 粒子密度倍数（0–3） |
 | `wind` | `0` | 横向风力（-1 向左 … 1 向右） |
 | `moon` | — | 显示一轮月亮（昼间淡，夜间亮） |
@@ -73,6 +78,7 @@ burst('ink', layer, { x, y, animate: this.animate.bind(this) });  // 组件里�
 - **雪**：大小决定远近，大的落得快、更不透明（视差）；左右轻摆。
 - **花**：花瓣绕自身旋转，并用横向缩放模拟翻面；随风斜落。
 - **风**：竹叶横向疾行、上下起伏，偶尔有阵风让整体加速，并夹着几道淡淡的风痕。
+- **雨**：细长的雨丝快速斜落，越近越粗、越亮；`wind` 改变倾斜角度。颜色用 `--vn-snow`（古风里是春雨，赛博里是霓虹雨）。
 - **月**：DOM 元素，径向渐变加光晕，颜色 `--vn-moon`。
 - 颜色从组件的计算样式读取 `--vn-snow` 等令牌，每 500ms 刷新一次，以便跟上主题切换（包括祖先元素上的局部主题）。
 
@@ -88,6 +94,6 @@ burst('ink', layer, { x, y, animate: this.animate.bind(this) });  // 组件里�
 
 ## 4. 测试计划
 
-- `burst`：四种效果都生成粒子，动画结束后节点全部移除；未知效果名抛错；减少动态效果时不生成粒子（墨晕除外）；传入的 `animate` 被调用。
+- `burst`：每种效果都生成粒子，动画结束后节点全部移除；未知效果名抛错；减少动态效果时不生成粒子（墨晕、故障只闪一下）；传入的 `animate` 被调用；`registerBurst` 注册的效果可以被按钮使用。
 - `weather.js`：粒子数随面积和密度变化且有上限；推进后粒子会移动，出界后回到另一侧。
 - `<vn-sky>`：画布尺寸 = CSS 尺寸 × DPR；循环在运行；移出视口后暂停、移回后恢复；移除组件后不再绘制；减少动态效果时只画一帧；切换 `weather` 立即生效。

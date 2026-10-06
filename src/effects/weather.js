@@ -1,11 +1,11 @@
 /**
- * 天气粒子：雪、花、风（设计见 docs/rfc/0003-effects.md）
+ * 天气粒子：雪、花、风、雨（设计见 docs/rfc/0003-effects.md）
  *
  * 只有数据和绘制，不涉及 DOM 和动画循环，可在 Node 中测试。
  * 每种天气是一组纯函数：spawn 生成、step 推进、draw 绘制。
  */
 
-export const WEATHERS = ['snow', 'blossom', 'wind', 'none'];
+export const WEATHERS = ['snow', 'blossom', 'wind', 'rain', 'none'];
 
 const TAU = Math.PI * 2;
 const MAX_PARTICLES = 260;
@@ -129,12 +129,39 @@ const kinds = {
       ctx.restore();
     },
   },
+
+  rain: {
+    spawn(p, w, h, scatter) {
+      p.depth = Math.random();
+      p.length = 8 + p.depth * 18;
+      p.x = rand(-w * 0.2, w);
+      p.y = scatter ? rand(0, h) : rand(-60, -10);
+      p.vy = 420 + p.depth * 480;
+      p.width = 0.6 + p.depth * 0.9;
+      p.alpha = 0.16 + p.depth * 0.42;
+    },
+    step(p, dt, env) {
+      p.slant = 0.14 + env.wind * 0.4;
+      p.y += p.vy * dt;
+      p.x += p.vy * p.slant * dt;
+    },
+    draw(ctx, p, colors) {
+      ctx.globalAlpha = p.alpha;
+      ctx.strokeStyle = colors.snow;
+      ctx.lineWidth = p.width;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x - (p.slant ?? 0.14) * p.length, p.y - p.length);
+      ctx.stroke();
+    },
+  },
 };
 
 /** 一片天气：保存粒子并负责推进、绘制 */
 export class WeatherField {
   constructor() {
-    /** @type {'snow' | 'blossom' | 'wind' | 'none'} */
+    /** @type {'snow' | 'blossom' | 'wind' | 'rain' | 'none'} */
     this.kind = 'none';
     this.width = 0;
     this.height = 0;

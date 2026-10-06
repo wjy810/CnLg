@@ -70,7 +70,7 @@ test('burst：使用传入的 animate，取消时同样移除节点；未知效�
     }
     return { calls, left: layer.childElementCount, error };
   });
-  assert.deepEqual(result, { calls: 3, left: 0, error: '[Vunio] 未知的效果 "fire"，可选：ink | blossom | snow | wind' });
+  assert.deepEqual(result, { calls: 3, left: 0, error: '[Vunio] 未知的效果 "fire"，可选：ink | blossom | snow | wind | glitch | spark' });
 });
 
 test('burst：减少动态效果时粒子效果不播放，墨晕只做轻微反馈', async (t) => {
@@ -166,4 +166,71 @@ test('vn-sky：减少动态效果时只画一帧静止画面', async (t) => {
   assert.equal(first.running, false);
   assert.ok(first.frames >= 1, '画了静止的一帧');
   assert.equal(later.frames, first.frames, '之后不再重绘');
+});
+
+test('burst：赛博的故障与电火花生成粒子，结束后全部移除；减少动态效果时故障只闪一下', async (t) => {
+  const { page } = await open(t, { path: PAGE });
+  await setup(page);
+  const result = await page.evaluate(async () => {
+    const { burst, burstLayer } = window.vunio;
+    const layer = document.getElementById('layer');
+    const counts = {};
+    const done = [];
+    for (const kind of ['glitch', 'spark']) {
+      const before = layer.childElementCount;
+      done.push(burst(kind, layer, { x: 50, y: 30 }));
+      counts[kind] = layer.childElementCount - before;
+    }
+    document.getAnimations().forEach((a) => a.finish());
+    await Promise.all(done);
+    return { counts, left: layer.childElementCount, layers: [burstLayer('glitch'), burstLayer('spark'), burstLayer('ink')] };
+  });
+  assert.deepEqual(result.counts, { glitch: 6, spark: 12 }, '故障：1 道闪光 + 5 条色带；电火花：8 道光 + 4 粒碎屑');
+  assert.equal(result.left, 0);
+  assert.deepEqual(result.layers, ['wash', 'fx', 'wash']);
+
+  const { page: reduced } = await open(t, { path: PAGE, reducedMotion: 'reduce' });
+  await setup(reduced);
+  const counts = await reduced.evaluate(() => {
+    const { burst } = window.vunio;
+    const layer = document.getElementById('layer');
+    burst('glitch', layer);
+    const glitch = layer.childElementCount;
+    burst('spark', layer);
+    return { glitch, spark: layer.childElementCount - glitch };
+  });
+  assert.deepEqual(counts, { glitch: 1, spark: 0 });
+});
+
+test('vn-button：不写 effect 时由主题的 --vn-effect 决定；registerBurst 注册的效果可以直接使用', async (t) => {
+  const { page, warnings } = await open(t, { path: PAGE, theme: 'guofeng' });
+  await setup(page);
+  const result = await page.evaluate(async () => {
+    const { registerBurst } = window.vunio;
+    registerBurst('dot', {
+      layer: 'fx',
+      run: (layer, ctx) => [ctx.play(ctx.particle({ left: `${ctx.x}px`, top: `${ctx.y}px`, width: '4px', height: '4px' }), [{ opacity: 1 }, { opacity: 0 }], { duration: 50 })],
+    });
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<vn-button id="auto">默认</vn-button><vn-button id="themed" style="--vn-effect: spark">主题</vn-button><vn-button id="dot" effect="dot">自定义</vn-button><vn-button id="bad" effect="nope">未注册</vn-button>',
+    );
+    await new Promise((r) => requestAnimationFrame(r));
+    const el = (id) => document.getElementById(id);
+    const added = (id, ref) => {
+      const before = el(id).refs[ref].childElementCount;
+      el(id).refs.button.click();
+      return el(id).refs[ref].childElementCount - before;
+    };
+    return {
+      effects: ['auto', 'themed', 'dot'].map((id) => el(id).resolvedEffect),
+      autoWash: added('auto', 'wash'),
+      themedFx: added('themed', 'fx'),
+      dotFx: added('dot', 'fx'),
+      bad: (el('bad').refs.button.click(), el('bad').refs.fx.childElementCount + el('bad').refs.wash.childElementCount),
+    };
+  });
+  assert.deepEqual(result.effects, ['ink', 'spark', 'dot']);
+  assert.deepEqual([result.autoWash, result.themedFx, result.dotFx, result.bad], [1, 12, 1, 0]);
+  assert.equal(warnings.filter((w) => w.includes('effect="nope"')).length, 1);
 });

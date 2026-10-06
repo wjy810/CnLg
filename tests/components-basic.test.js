@@ -23,7 +23,7 @@ async function mount(t, markup, options = {}) {
 test('vn-button：墨晕在按钮内，其他效果在按钮外层，none 不产生粒子', async (t) => {
   const { page } = await mount(
     t,
-    '<vn-button id="a">落笔</vn-button><vn-button id="b" effect="blossom">赏花</vn-button><vn-button id="c" effect="none">无</vn-button>',
+    '<vn-button id="a" effect="ink">落笔</vn-button><vn-button id="b" effect="blossom">赏花</vn-button><vn-button id="c" effect="none">无</vn-button>',
   );
   // 统计“加入过”的粒子，而不是还在的：点击较慢的浏览器里，墨晕可能在统计前就已经播完并移除
   await page.evaluate(() => {
@@ -102,7 +102,7 @@ test('vn-button：type=submit 提交表单，type=reset 重置；默认 type=but
 });
 
 test('vn-button：键盘触发时墨晕从中心发出', async (t) => {
-  const { page } = await mount(t, '<vn-button id="k">落笔</vn-button>');
+  const { page } = await mount(t, '<vn-button id="k" effect="ink">落笔</vn-button>');
   await page.locator('#k').focus();
   await page.keyboard.press('Enter');
   const center = await page.evaluate(() => {
@@ -115,7 +115,7 @@ test('vn-button：键盘触发时墨晕从中心发出', async (t) => {
   assert.ok(Math.abs(center.x - center.w) < 1 && Math.abs(center.y - center.h) < 1);
 });
 
-test('vn-heading：role=heading 与层级；1–3 级毛笔字；印章与副标题；层级越界被修正', async (t) => {
+test('vn-heading：role=heading 与层级；1–3 级用展示字体（古风为毛笔字）；印章与副标题；层级越界被修正', async (t) => {
   const { page } = await mount(
     t,
     `<vn-heading id="h1" level="1" seal="雅" sub="副">题</vn-heading>
@@ -124,12 +124,14 @@ test('vn-heading：role=heading 与层级；1–3 级毛笔字；印章与副标
      <vn-heading id="h9" level="9">题</vn-heading>`,
   );
   const info = await page.evaluate(() => {
+    // 主题的展示字体（古风是毛笔字）的第一个字族
+    const display = getComputedStyle(document.documentElement).getPropertyValue('--vn-font-display').split(',')[0].replace(/['"]/g, '').trim();
     const read = (id) => {
       const el = document.getElementById(id);
       const title = el.root.querySelector('[role=heading]');
       return {
         level: title.getAttribute('aria-level'),
-        font: getComputedStyle(title).fontFamily.includes('Ma Shan Zheng'),
+        font: getComputedStyle(title).fontFamily.includes(display),
         seal: el.root.querySelector('.seal')?.getAttribute('aria-label') ?? null,
         sub: el.root.querySelector('.sub')?.textContent ?? null,
       };
@@ -138,7 +140,7 @@ test('vn-heading：role=heading 与层级；1–3 级毛笔字；印章与副标
   });
   assert.deepEqual(info.h1, { level: '1', font: true, seal: '印章：雅', sub: '副' });
   assert.deepEqual(info.h4, { level: '4', font: false, seal: null, sub: null });
-  assert.equal(info.hp.font, false, 'plain 不用毛笔字');
+  assert.equal(info.hp.font, false, 'plain 不用展示字体');
   assert.equal(info.h9.level, '6');
 });
 

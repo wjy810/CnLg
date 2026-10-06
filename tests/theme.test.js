@@ -52,7 +52,7 @@ const tokens = (page, selector, names) =>
   );
 
 test('浏览器：古风默认为昼，data-mode="night" 切换为夜，局部切换只影响子树', async (t) => {
-  const { page } = await open(t, { path: PAGE });
+  const { page } = await open(t, { theme: 'guofeng', path: PAGE });
   const day = await tokens(page, 'html', ['--vn-bg', '--vn-fg', 'color-scheme']);
   assert.deepEqual(day, { '--vn-bg': '#F4EEE2', '--vn-fg': '#2A2724', 'color-scheme': 'light' });
   const island = await page.evaluate(() => getComputedStyle(document.getElementById('island-text')).color);
@@ -63,7 +63,7 @@ test('浏览器：古风默认为昼，data-mode="night" 切换为夜，局部�
 });
 
 test('浏览器：data-mode="auto" 跟随系统', async (t) => {
-  const { page } = await open(t, { path: PAGE, colorScheme: 'dark' });
+  const { page } = await open(t, { theme: 'guofeng', path: PAGE, colorScheme: 'dark' });
   await page.evaluate(() => (document.documentElement.dataset.mode = 'auto'));
   assert.equal((await tokens(page, 'html', ['--vn-bg']))['--vn-bg'], '#14171D');
   await page.emulateMedia({ colorScheme: 'light' });
@@ -71,7 +71,7 @@ test('浏览器：data-mode="auto" 跟随系统', async (t) => {
 });
 
 test('浏览器：主题变量穿过 Shadow DOM，组件无需代码即可换主题', async (t) => {
-  const { page } = await open(t, { path: PAGE });
+  const { page } = await open(t, { theme: 'guofeng', path: PAGE });
   const color = () =>
     page.evaluate(() => {
       const el = document.querySelector('t-themed') ?? document.body.appendChild(document.createElement('t-themed'));
@@ -84,7 +84,24 @@ test('浏览器：主题变量穿过 Shadow DOM，组件无需代码即可换主
 });
 
 test('浏览器：减少动态效果时所有时长变为 1ms', async (t) => {
-  const { page } = await open(t, { path: PAGE, reducedMotion: 'reduce' });
+  const { page } = await open(t, { theme: 'guofeng', path: PAGE, reducedMotion: 'reduce' });
   const durations = await tokens(page, 'html', ['--vn-duration-fast', '--vn-duration-slower']);
   assert.deepEqual(durations, { '--vn-duration-fast': '1ms', '--vn-duration-slower': '1ms' });
+});
+
+test('浏览器：赛博主题默认为夜，data-mode="day" 切换为昼，组件随之变化', async (t) => {
+  const { page } = await open(t, { theme: 'cyber', path: PAGE });
+  await page.evaluate(() => document.documentElement.removeAttribute('data-mode'));
+  const night = await tokens(page, 'html', ['--vn-bg', '--vn-effect', '--vn-radius-sm', 'color-scheme']);
+  assert.deepEqual(night, { '--vn-bg': '#0A0B12', '--vn-effect': 'glitch', '--vn-radius-sm': '0', 'color-scheme': 'dark' });
+  const color = () =>
+    page.evaluate(() => {
+      const el = document.querySelector('t-themed') ?? document.body.appendChild(document.createElement('t-themed'));
+      return getComputedStyle(el.root.querySelector('p')).color;
+    });
+  assert.equal(await color(), 'rgb(255, 92, 168)', '夜：荧粉');
+  await page.evaluate(() => (document.documentElement.dataset.mode = 'day'));
+  await page.waitForTimeout(300);
+  assert.equal((await tokens(page, 'html', ['--vn-bg']))['--vn-bg'], '#EEF1F7');
+  assert.equal(await color(), 'rgb(192, 0, 96)', '昼：深品红');
 });

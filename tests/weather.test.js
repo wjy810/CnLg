@@ -25,7 +25,7 @@ test('切换天气重新生成，尺寸变化时增减粒子', () => {
   assert.equal(field.particles.length, 0);
 });
 
-for (const kind of ['snow', 'blossom', 'wind']) {
+for (const kind of ['snow', 'blossom', 'wind', 'rain']) {
   test(`${kind}：推进后粒子移动，长时间后仍都在可视范围附近`, () => {
     const field = new WeatherField();
     field.configure({ kind, width: 600, height: 400, density: 1.5 });

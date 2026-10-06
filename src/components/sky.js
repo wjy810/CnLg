@@ -4,9 +4,9 @@ import { WEATHERS, WeatherField } from '../effects/weather.js';
 const clamp = (value, min, max) => Math.min(max, Math.max(min, Number.isFinite(value) ? value : 0));
 
 /**
- * <vn-sky> 天气背景：雪、花、风，可选一轮月亮。铺满最近的定位祖先，不响应指针。
+ * <vn-sky> 天气背景：雪、花、风、雨，可选一轮月亮。铺满最近的定位祖先，不响应指针。
  *
- * @attr {'snow'|'blossom'|'wind'|'none'} weather - 天气，默认 snow
+ * @attr {'snow'|'blossom'|'wind'|'rain'|'none'} weather - 天气，默认 snow
  * @attr {number} density - 粒子密度倍数 0–3，默认 1
  * @attr {number} wind - 横向风力 -1（向左）… 1（向右），默认 0
  * @attr {boolean} moon - 显示月亮
