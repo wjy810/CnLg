@@ -147,5 +147,5 @@ export class VnTimelineItem extends VunioElement {
   }
 }
 
-VnTimeline.define();
 VnTimelineItem.define();
+VnTimeline.define();

@@ -17,3 +17,6 @@ export { VnTag } from './tag.js';
 export { VnProgress } from './progress.js';
 export { VnBreadcrumb, VnBreadcrumbItem } from './breadcrumb.js';
 export { VnTimeline, VnTimelineItem } from './timeline.js';
+export { VnTextarea } from './textarea.js';
+export { VnRadioGroup, VnRadio } from './radio.js';
+export { VnSlider } from './slider.js';

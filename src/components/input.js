@@ -1,5 +1,5 @@
 import { VunioFormElement, html, css, computed, when } from '../core/index.js';
-import { fieldStyles } from './shared.js';
+import { fieldStyles, validateText } from './shared.js';
 
 const TYPE_MESSAGES = {
   email: '请输入有效的邮箱地址',
@@ -162,23 +162,8 @@ export class VnInput extends VunioFormElement {
 
   validate() {
     const value = this.value;
-    if (value === '') return this.required ? { flags: { valueMissing: true }, message: '此项为必填' } : null;
-    const length = [...value].length;
-    if (this.minlength && length < this.minlength) {
-      return { flags: { tooShort: true }, message: `至少需要 ${this.minlength} 个字` };
-    }
-    if (this.maxlength && length > this.maxlength) {
-      return { flags: { tooLong: true }, message: `最多 ${this.maxlength} 个字` };
-    }
-    if (this.pattern) {
-      try {
-        if (!new RegExp(`^(?:${this.pattern})$`, 'u').test(value)) {
-          return { flags: { patternMismatch: true }, message: '格式不正确' };
-        }
-      } catch {
-        // 无效的正则：与原生一致，忽略
-      }
-    }
+    const text = validateText(value, this);
+    if (text || value === '') return text;
     if (this.type === 'number' && Number.isNaN(Number(value))) {
       return { flags: { badInput: true }, message: '请输入数字' };
     }

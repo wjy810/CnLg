@@ -73,3 +73,22 @@ export const fieldStyles = css`
     font-variant-numeric: tabular-nums;
   }
 `;
+
+/**
+ * 文字类控件共用的校验：必填、字数（按字符计，一个汉字算一个）、正则。
+ * @returns {{ flags: Partial<ValidityState>, message: string } | null}
+ */
+export function validateText(value, { required, minlength, maxlength, pattern }) {
+  if (value === '') return required ? { flags: { valueMissing: true }, message: '此项为必填' } : null;
+  const length = [...value].length;
+  if (minlength && length < minlength) return { flags: { tooShort: true }, message: `至少需要 ${minlength} 个字` };
+  if (maxlength && length > maxlength) return { flags: { tooLong: true }, message: `最多 ${maxlength} 个字` };
+  if (pattern) {
+    try {
+      if (!new RegExp(`^(?:${pattern})$`, 'u').test(value)) return { flags: { patternMismatch: true }, message: '格式不正确' };
+    } catch {
+      // 无效的正则：与原生一致，忽略
+    }
+  }
+  return null;
+}

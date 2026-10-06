@@ -286,6 +286,11 @@ vn-card:not([variant='plain'])::part(card) {
   background-size: 14px 14px;
   background-repeat: no-repeat;
 }
+/* 滑块与单选：方形的灯 */
+vn-slider::part(thumb),
+vn-radio::part(control) {
+  border-radius: var(--vn-radius-sm);
+}
 /* 标题：夜里一圈淡淡的辉光（昼间 --cyber-glow 为透明） */
 vn-heading::part(heading) {
   text-shadow: 0 0 18px var(--cyber-glow);

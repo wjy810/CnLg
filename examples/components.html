@@ -197,7 +197,7 @@
       </section>
 
       <section>
-        <h2>表单：<code>vn-input</code> · <code>vn-select</code> · <code>vn-checkbox</code> · <code>vn-switch</code></h2>
+        <h2>表单：<code>vn-input</code> · <code>vn-textarea</code> · <code>vn-select</code> · <code>vn-radio-group</code> · <code>vn-slider</code> · <code>vn-checkbox</code> · <code>vn-switch</code></h2>
         <form id="form">
           <fieldset id="fieldset" style="margin: 0; padding: 0; border: 0">
             <div class="form">
@@ -211,6 +211,14 @@
                 <option value="winter">冬</option>
                 <option value="none" disabled>无</option>
               </vn-select>
+              <vn-textarea name="note" label="批注" placeholder="写下你的读后感" maxlength="60" autosize></vn-textarea>
+              <vn-radio-group name="form" label="体裁" value="ci" direction="row">
+                <vn-radio value="shi">诗</vn-radio>
+                <vn-radio value="ci">词</vn-radio>
+                <vn-radio value="qu">曲</vn-radio>
+                <vn-radio value="fu" disabled>赋</vn-radio>
+              </vn-radio-group>
+              <vn-slider name="ink" label="墨色浓淡" min="0" max="100" step="5" value="60" unit="%"></vn-slider>
             </div>
             <vn-stack direction="row" gap="6" wrap style="margin-block: var(--vn-space-4)">
               <vn-checkbox name="agree" required>愿以诗会友</vn-checkbox>

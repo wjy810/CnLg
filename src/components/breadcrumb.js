@@ -125,5 +125,5 @@ export class VnBreadcrumbItem extends VunioElement {
   }
 }
 
-VnBreadcrumb.define();
 VnBreadcrumbItem.define();
+VnBreadcrumb.define();

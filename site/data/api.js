@@ -574,6 +574,114 @@ export const api = {
     ],
     "cssprops": []
   },
+  "vn-radio-group": {
+    "file": "src/components/radio.js",
+    "tag": "vn-radio-group",
+    "summary": "单选：一组 <vn-radio> 中选一个。值在组上，直接放进 <form>。键盘遵循 WAI-ARIA APG「Radio Group」：组内只有一个可聚焦的选项，方向键移动并选中。",
+    "attrs": [
+      {
+        "name": "label",
+        "type": "string",
+        "description": "标签（也是读屏名称）"
+      },
+      {
+        "name": "hint",
+        "type": "string",
+        "description": "帮助文字（出错时被错误信息替换）"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "表单字段名"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "description": "默认选中的值"
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "description": "必选"
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "description": "禁用"
+      },
+      {
+        "name": "direction",
+        "type": "'column'|'row'",
+        "description": "排列方向，默认 column"
+      }
+    ],
+    "slots": [
+      {
+        "name": "",
+        "description": "<vn-radio>"
+      }
+    ],
+    "events": [
+      {
+        "name": "input",
+        "description": "选中项变化时"
+      },
+      {
+        "name": "change",
+        "description": "选中项变化时"
+      }
+    ],
+    "parts": [
+      {
+        "name": "label",
+        "description": "标签"
+      },
+      {
+        "name": "options",
+        "description": "选项容器"
+      },
+      {
+        "name": "message",
+        "description": "提示 / 错误"
+      }
+    ],
+    "cssprops": []
+  },
+  "vn-radio": {
+    "file": "src/components/radio.js",
+    "tag": "vn-radio",
+    "summary": "单选中的一项，放在 <vn-radio-group> 里。",
+    "attrs": [
+      {
+        "name": "value",
+        "type": "string",
+        "description": "选中时组的值"
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "description": "禁用"
+      }
+    ],
+    "slots": [
+      {
+        "name": "",
+        "description": "文字"
+      }
+    ],
+    "events": [],
+    "parts": [
+      {
+        "name": "control",
+        "description": "圆点"
+      },
+      {
+        "name": "label",
+        "description": "文字"
+      }
+    ],
+    "cssprops": []
+  },
   "vn-select": {
     "file": "src/components/select.js",
     "tag": "vn-select",
@@ -688,6 +796,84 @@ export const api = {
       {
         "name": "moon",
         "description": "月亮"
+      }
+    ],
+    "cssprops": []
+  },
+  "vn-slider": {
+    "file": "src/components/slider.js",
+    "tag": "vn-slider",
+    "summary": "滑块：在一段范围里取一个数。轨道是主题的线条（--vn-mask-stroke），已选部分填强调色。键盘遵循 WAI-ARIA APG「Slider」；事件与原生 <input type=range> 一致：拖动中 input，松手 change。",
+    "attrs": [
+      {
+        "name": "label",
+        "type": "string",
+        "description": "标签（也是读屏名称）"
+      },
+      {
+        "name": "hint",
+        "type": "string",
+        "description": "帮助文字"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "表单字段名"
+      },
+      {
+        "name": "value",
+        "type": "number",
+        "description": "默认值；不写时取范围的中点"
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "description": "最小值，默认 0"
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "description": "最大值，默认 100"
+      },
+      {
+        "name": "step",
+        "type": "number",
+        "description": "步长，默认 1"
+      },
+      {
+        "name": "unit",
+        "type": "string",
+        "description": "显示在数值后面的单位，如 %"
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "description": "禁用"
+      }
+    ],
+    "slots": [],
+    "events": [
+      {
+        "name": "input",
+        "description": "值变化时（拖动中也会触发）"
+      },
+      {
+        "name": "change",
+        "description": "松手或按键后"
+      }
+    ],
+    "parts": [
+      {
+        "name": "track",
+        "description": "轨道"
+      },
+      {
+        "name": "fill",
+        "description": "已选部分"
+      },
+      {
+        "name": "thumb",
+        "description": "滑块（role=slider）"
       }
     ],
     "cssprops": []
@@ -847,6 +1033,99 @@ export const api = {
       {
         "name": "close",
         "description": "关闭按钮"
+      }
+    ],
+    "cssprops": []
+  },
+  "vn-textarea": {
+    "file": "src/components/textarea.js",
+    "tag": "vn-textarea",
+    "summary": "多行输入：与输入框相同的标签、提示、校验与字数统计。",
+    "attrs": [
+      {
+        "name": "label",
+        "type": "string",
+        "description": "标签"
+      },
+      {
+        "name": "placeholder",
+        "type": "string",
+        "description": "占位文字"
+      },
+      {
+        "name": "hint",
+        "type": "string",
+        "description": "帮助文字（出错时被错误信息替换）"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "表单字段名"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "description": "默认值"
+      },
+      {
+        "name": "rows",
+        "type": "number",
+        "description": "可见行数，默认 3"
+      },
+      {
+        "name": "autosize",
+        "type": "boolean",
+        "description": "随内容长高"
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "description": "必填"
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "description": "禁用"
+      },
+      {
+        "name": "readonly",
+        "type": "boolean",
+        "description": "只读"
+      },
+      {
+        "name": "minlength",
+        "type": "number",
+        "description": "最少字数"
+      },
+      {
+        "name": "maxlength",
+        "type": "number",
+        "description": "最多字数（显示字数统计）"
+      }
+    ],
+    "slots": [],
+    "events": [
+      {
+        "name": "input",
+        "description": "输入时"
+      },
+      {
+        "name": "change",
+        "description": "提交修改时"
+      }
+    ],
+    "parts": [
+      {
+        "name": "textarea",
+        "description": "内部的原生 textarea"
+      },
+      {
+        "name": "label",
+        "description": "标签"
+      },
+      {
+        "name": "message",
+        "description": "提示 / 错误"
       }
     ],
     "cssprops": []

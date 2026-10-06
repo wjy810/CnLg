@@ -4,7 +4,7 @@
 export const groups = [
   { title: '基础', items: ['button', 'heading', 'card', 'stack', 'divider', 'tag'] },
   { title: '导航', items: ['breadcrumb'] },
-  { title: '表单', items: ['input', 'select', 'checkbox', 'switch'] },
+  { title: '表单', items: ['input', 'textarea', 'select', 'radio', 'slider', 'checkbox', 'switch'] },
   { title: '反馈', items: ['loading', 'progress', 'modal', 'toast'] },
   { title: '叙事', items: ['timeline'] },
   { title: '效果', items: ['sky'] },
@@ -210,6 +210,54 @@ export const docs = {
   <vn-input name="line" label="名句" placeholder="明月几时有" hint="五到二十字" minlength="5" maxlength="20" required></vn-input>
   <vn-input name="mail" type="email" label="邮箱" placeholder="libai@tang.cn"></vn-input>
 </form>`,
+      },
+    ],
+  },
+  textarea: {
+    tag: 'vn-textarea',
+    name: '多行输入',
+    intro: '与输入框相同的标签、提示、校验和字数统计。autosize 时随内容长高，不出现滚动条。',
+    demos: [
+      {
+        html: `<form style="max-width: 420px">
+  <vn-textarea name="note" label="读后感" placeholder="写下你的读后感" hint="不超过一百字" maxlength="100" autosize required></vn-textarea>
+</form>`,
+      },
+    ],
+  },
+  radio: {
+    tag: 'vn-radio-group',
+    name: '单选',
+    intro: '一组里选一个。值在组上，直接放进 <form>；Tab 只停在选中的那一项，方向键移动并选中，跳过禁用项。',
+    demos: [
+      {
+        html: `<vn-stack gap="5">
+  <vn-radio-group name="form" label="体裁" value="ci">
+    <vn-radio value="shi">诗</vn-radio>
+    <vn-radio value="ci">词</vn-radio>
+    <vn-radio value="qu">曲</vn-radio>
+    <vn-radio value="fu" disabled>赋（缺）</vn-radio>
+  </vn-radio-group>
+  <vn-radio-group name="season" label="时节" direction="row" required hint="必选">
+    <vn-radio value="spring">春</vn-radio>
+    <vn-radio value="summer">夏</vn-radio>
+    <vn-radio value="autumn">秋</vn-radio>
+    <vn-radio value="winter">冬</vn-radio>
+  </vn-radio-group>
+</vn-stack>`,
+      },
+    ],
+  },
+  slider: {
+    tag: 'vn-slider',
+    name: '滑块',
+    intro: '在一段范围里取一个数。可以拖、可以点轨道、也可以用方向键 / PageUp / Home / End。拖动中派发 input，松手派发 change，与原生 range 一致。',
+    demos: [
+      {
+        html: `<vn-stack gap="5" style="max-width: 420px">
+  <vn-slider name="ink" label="墨色浓淡" value="60" unit="%"></vn-slider>
+  <vn-slider name="speed" label="风速" min="0" max="1" step="0.1" value="0.3" hint="0 无风，1 疾风"></vn-slider>
+</vn-stack>`,
       },
     ],
   },
