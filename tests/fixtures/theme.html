@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>Vunio theme fixture</title>
+    <link rel="stylesheet" href="../../themes/guofeng.css" />
+  </head>
+  <body>
+    <section id="island" data-theme="night"><p id="island-text">夜</p></section>
+    <script type="module">
+      import * as vunio from '../../src/index.js';
+      const { VunioElement, html, css } = vunio;
+      class TThemed extends VunioElement {
+        static tag = 't-themed';
+        static styles = css`
+          p {
+            color: var(--vn-accent-fg);
+            transition: color var(--vn-duration-normal) var(--vn-ease-brush);
+          }
+        `;
+        render() {
+          return html`<p>朱</p>`;
+        }
+      }
+      TThemed.define();
+      window.vunio = vunio;
+      window.ready = true;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,273 @@
+/*
+ * Vunio 古风主题：昼 / 夜
+ * 由 scripts/build-theme.js 根据 themes/guofeng.tokens.js 生成，请勿手改。
+ *
+ * 用法：
+ *   <link rel="stylesheet" href="themes/guofeng.css" />
+ *   <link rel="stylesheet" href="themes/guofeng-fonts.css" />   可选：网络字体
+ *   <html data-theme="night">   夜
+ *   <html data-theme="auto">    跟随系统
+ *   任意元素加 data-theme 可以局部切换主题
+ */
+
+:root {
+  /* 原色（组件不要直接使用） */
+  --vn-color-juanbai: #FBF8F2; /* 绢白 */
+  --vn-color-xuanzhi: #F4EEE2; /* 宣纸 */
+  --vn-color-chabai: #EAE2D2; /* 茶白 */
+  --vn-color-xiangse: #DCD1BC; /* 缃色 */
+  --vn-color-qingmo: #8A8276; /* 清墨 */
+  --vn-color-danmo: #6B645B; /* 淡墨 */
+  --vn-color-zhongmo: #47423C; /* 重墨 */
+  --vn-color-nongmo: #2A2724; /* 浓墨 */
+  --vn-color-jiaomo: #1A1816; /* 焦墨 */
+  --vn-color-zhusha: #B0382B; /* 朱砂 */
+  --vn-color-yanzhi: #9A2A30; /* 胭脂 */
+  --vn-color-taoyao: #E8A3AB; /* 桃夭 */
+  --vn-color-haitang: #C25565; /* 海棠 */
+  --vn-color-zhuqing: #5E8A6E; /* 竹青 */
+  --vn-color-qingci: #3A6B57; /* 青瓷 */
+  --vn-color-nijin: #8A6420; /* 泥金 */
+  --vn-color-dailan: #3B5166; /* 黛蓝 */
+  --vn-color-yuebai: #D6E3E8; /* 月白 */
+  --vn-color-shuang: #EEF2F4; /* 霜 */
+  --vn-color-xuanqing: #14171D; /* 玄青 */
+  --vn-color-yese: #1C2028; /* 夜色 */
+  --vn-color-daihei: #252A34; /* 黛黑 */
+  --vn-color-yinhui: #A6A094; /* 银灰 */
+  --vn-color-yueguang: #ECE6D9; /* 月光 */
+  --vn-color-dan: #E87A66; /* 丹 */
+  --vn-color-feise: #F08A8E; /* 绯 */
+  --vn-color-bise: #7FBFA5; /* 碧 */
+  --vn-color-jin: #D9B36A; /* 金 */
+  --vn-color-bilan: #8FB2D1; /* 碧蓝 */
+
+  /* 字体 */
+  --vn-font-brush: 'Ma Shan Zheng', 'STXingkai', 'Xingkai SC', 'STKaiti', 'KaiTi', serif;
+  --vn-font-kai: 'Kaiti SC', 'STKaiti', 'KaiTi', 'BiauKai', serif;
+  --vn-font-serif: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+  --vn-font-mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+
+  /* 字号 */
+  --vn-font-size-xs: 12px;
+  --vn-font-size-sm: 14px;
+  --vn-font-size-md: 16px;
+  --vn-font-size-lg: 18px;
+  --vn-font-size-xl: 22px;
+  --vn-font-size-2xl: 28px;
+  --vn-font-size-3xl: 36px;
+  --vn-font-size-4xl: 48px;
+  --vn-font-size-5xl: 64px;
+
+  /* 行高 */
+  --vn-leading-tight: 1.3;
+  --vn-leading-normal: 1.75;
+  --vn-leading-loose: 2;
+
+  /* 字距 */
+  --vn-tracking-normal: 0;
+  --vn-tracking-wide: 0.08em;
+  --vn-tracking-wider: 0.2em;
+  --vn-tracking-widest: 0.35em;
+
+  /* 字重 */
+  --vn-weight-regular: 400;
+  --vn-weight-medium: 600;
+  --vn-weight-bold: 700;
+
+  /* 间距 */
+  --vn-space-0: 0;
+  --vn-space-1: 4px;
+  --vn-space-2: 8px;
+  --vn-space-3: 12px;
+  --vn-space-4: 16px;
+  --vn-space-5: 24px;
+  --vn-space-6: 32px;
+  --vn-space-7: 48px;
+  --vn-space-8: 64px;
+  --vn-space-9: 96px;
+
+  /* 圆角 */
+  --vn-radius-none: 0;
+  --vn-radius-sm: 2px;
+  --vn-radius-md: 4px;
+  --vn-radius-lg: 8px;
+  --vn-radius-full: 999px;
+
+  /* 线宽 */
+  --vn-border-thin: 1px;
+  --vn-border-thick: 2px;
+
+  /* 缓动 */
+  --vn-ease-ink: cubic-bezier(0.16, 1, 0.3, 1);
+  --vn-ease-brush: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --vn-ease-wind: cubic-bezier(0.45, 0, 0.2, 1);
+  --vn-ease-petal: cubic-bezier(0.34, 1.36, 0.64, 1);
+
+  /* 时长 */
+  --vn-duration-instant: 100ms;
+  --vn-duration-fast: 180ms;
+  --vn-duration-normal: 320ms;
+  --vn-duration-slow: 600ms;
+  --vn-duration-ink: 900ms;
+
+  /* 层级 */
+  --vn-z-dropdown: 1000;
+  --vn-z-sticky: 1050;
+  --vn-z-overlay: 1100;
+  --vn-z-modal: 1110;
+  --vn-z-toast: 1200;
+
+  /* 行宽 */
+  --vn-measure-narrow: 22em;
+  --vn-measure-normal: 34em;
+  --vn-measure-wide: 48em;
+
+  /* 焦点 */
+  --vn-focus-ring: 2px solid var(--vn-focus);
+  --vn-focus-offset: 3px;
+
+  /* 纹理（用作 mask-image） */
+  --vn-mask-seal: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -6 4.7'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23n)'/%3E%3C/svg%3E");
+  --vn-mask-brush: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8' preserveAspectRatio='none'%3E%3Cpath d='M0 4.6C18 3.1 58 2.4 100 2.9S172 3.3 200 4.3C176 5.7 122 6.1 88 5.8S24 5.5 0 4.6Z'/%3E%3C/svg%3E");
+}
+
+/* 昼（默认） */
+:root,
+[data-theme='day'] {
+  color-scheme: light;
+  --vn-bg: var(--vn-color-xuanzhi);
+  --vn-surface: var(--vn-color-juanbai);
+  --vn-surface-sunken: var(--vn-color-chabai);
+  --vn-fg: var(--vn-color-nongmo);
+  --vn-fg-strong: var(--vn-color-jiaomo);
+  --vn-fg-muted: var(--vn-color-danmo);
+  --vn-fg-subtle: #8C8478;
+  --vn-line: rgba(42, 39, 36, 0.14);
+  --vn-line-strong: var(--vn-color-qingmo);
+  --vn-primary: var(--vn-color-nongmo);
+  --vn-on-primary: #F7F1E6;
+  --vn-accent: var(--vn-color-zhusha);
+  --vn-on-accent: #FBF5EC;
+  --vn-accent-fg: var(--vn-color-zhusha);
+  --vn-accent-wash: rgba(176, 56, 43, 0.1);
+  --vn-success: var(--vn-color-qingci);
+  --vn-warning: var(--vn-color-nijin);
+  --vn-danger: var(--vn-color-yanzhi);
+  --vn-info: var(--vn-color-dailan);
+  --vn-focus: var(--vn-color-zhusha);
+  --vn-selection: rgba(176, 56, 43, 0.18);
+  --vn-overlay: rgba(26, 24, 22, 0.42);
+  --vn-wind: var(--vn-color-zhuqing);
+  --vn-blossom: var(--vn-color-taoyao);
+  --vn-blossom-deep: var(--vn-color-haitang);
+  --vn-snow: #C9D4DC;
+  --vn-moon: var(--vn-color-yuebai);
+  --vn-shadow-1: 0 1px 2px rgba(70, 48, 26, 0.08);
+  --vn-shadow-2: 0 8px 20px -10px rgba(70, 48, 26, 0.28);
+  --vn-shadow-3: 0 22px 48px -18px rgba(70, 48, 26, 0.38);
+  --vn-texture-paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.36 0 0 0 0 0.27 0 0 0 0 0.18 0 0 0 0.110 0'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* 夜 */
+[data-theme='night'] {
+  color-scheme: dark;
+  --vn-bg: var(--vn-color-xuanqing);
+  --vn-surface: var(--vn-color-yese);
+  --vn-surface-sunken: var(--vn-color-daihei);
+  --vn-fg: var(--vn-color-yueguang);
+  --vn-fg-strong: #F7F2E8;
+  --vn-fg-muted: var(--vn-color-yinhui);
+  --vn-fg-subtle: #6F6C66;
+  --vn-line: rgba(236, 230, 217, 0.13);
+  --vn-line-strong: #7A766F;
+  --vn-primary: var(--vn-color-yueguang);
+  --vn-on-primary: var(--vn-color-xuanqing);
+  --vn-accent: #B8473A;
+  --vn-on-accent: #FFF4EC;
+  --vn-accent-fg: var(--vn-color-dan);
+  --vn-accent-wash: rgba(232, 122, 102, 0.14);
+  --vn-success: var(--vn-color-bise);
+  --vn-warning: var(--vn-color-jin);
+  --vn-danger: var(--vn-color-feise);
+  --vn-info: var(--vn-color-bilan);
+  --vn-focus: var(--vn-color-dan);
+  --vn-selection: rgba(232, 122, 102, 0.28);
+  --vn-overlay: rgba(5, 6, 8, 0.6);
+  --vn-wind: #8DB49A;
+  --vn-blossom: #E39AA4;
+  --vn-blossom-deep: #D46F7E;
+  --vn-snow: var(--vn-color-shuang);
+  --vn-moon: #F3EBD3;
+  --vn-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --vn-shadow-2: 0 10px 24px -10px rgba(0, 0, 0, 0.6);
+  --vn-shadow-3: 0 24px 56px -16px rgba(0, 0, 0, 0.7);
+  --vn-texture-paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.93 0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0.060 0'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* 跟随系统 */
+@media (prefers-color-scheme: dark) {
+  [data-theme='auto'] {
+    color-scheme: dark;
+    --vn-bg: var(--vn-color-xuanqing);
+    --vn-surface: var(--vn-color-yese);
+    --vn-surface-sunken: var(--vn-color-daihei);
+    --vn-fg: var(--vn-color-yueguang);
+    --vn-fg-strong: #F7F2E8;
+    --vn-fg-muted: var(--vn-color-yinhui);
+    --vn-fg-subtle: #6F6C66;
+    --vn-line: rgba(236, 230, 217, 0.13);
+    --vn-line-strong: #7A766F;
+    --vn-primary: var(--vn-color-yueguang);
+    --vn-on-primary: var(--vn-color-xuanqing);
+    --vn-accent: #B8473A;
+    --vn-on-accent: #FFF4EC;
+    --vn-accent-fg: var(--vn-color-dan);
+    --vn-accent-wash: rgba(232, 122, 102, 0.14);
+    --vn-success: var(--vn-color-bise);
+    --vn-warning: var(--vn-color-jin);
+    --vn-danger: var(--vn-color-feise);
+    --vn-info: var(--vn-color-bilan);
+    --vn-focus: var(--vn-color-dan);
+    --vn-selection: rgba(232, 122, 102, 0.28);
+    --vn-overlay: rgba(5, 6, 8, 0.6);
+    --vn-wind: #8DB49A;
+    --vn-blossom: #E39AA4;
+    --vn-blossom-deep: #D46F7E;
+    --vn-snow: var(--vn-color-shuang);
+    --vn-moon: #F3EBD3;
+    --vn-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --vn-shadow-2: 0 10px 24px -10px rgba(0, 0, 0, 0.6);
+    --vn-shadow-3: 0 24px 56px -16px rgba(0, 0, 0, 0.7);
+    --vn-texture-paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.93 0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0.060 0'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* 减少动态效果：所有时长归零，组件无需单独处理 CSS 过渡 */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --vn-duration-instant: 1ms;
+    --vn-duration-fast: 1ms;
+    --vn-duration-normal: 1ms;
+    --vn-duration-slow: 1ms;
+    --vn-duration-ink: 1ms;
+  }
+}
+
+/* 页面基础样式（:where 优先级为 0，可随意覆盖） */
+:where(html) {
+  background-color: var(--vn-bg);
+  background-image: var(--vn-texture-paper);
+  color: var(--vn-fg);
+  font-family: var(--vn-font-serif);
+  line-height: var(--vn-leading-normal);
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+:where([data-theme]:not(html)) {
+  background-color: var(--vn-bg);
+  color: var(--vn-fg);
+}
+::selection {
+  background-color: var(--vn-selection);
+}

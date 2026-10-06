@@ -6,13 +6,16 @@
   "main": "./src/index.js",
   "exports": {
     ".": "./src/index.js",
-    "./core/*": "./src/core/*"
+    "./core/*": "./src/core/*",
+    "./themes/*": "./themes/*"
   },
   "files": [
-    "src"
+    "src",
+    "themes"
   ],
   "scripts": {
     "dev": "node scripts/serve.js",
+    "build:theme": "node scripts/build-theme.js",
     "test": "node --test \"tests/**/*.test.js\""
   },
   "engines": {

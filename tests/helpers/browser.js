@@ -23,9 +23,9 @@ export function useBrowser() {
     server?.close();
   });
 
-  return async function open(t, { reducedMotion, allowErrors = false } = {}) {
+  return async function open(t, { reducedMotion, colorScheme, allowErrors = false, path = 'tests/fixtures/index.html' } = {}) {
     const page = await browser.newPage();
-    if (reducedMotion) await page.emulateMedia({ reducedMotion });
+    if (reducedMotion || colorScheme) await page.emulateMedia({ reducedMotion, colorScheme });
     const errors = [];
     const warnings = [];
     page.on('pageerror', (error) => errors.push(error.message));
@@ -33,7 +33,7 @@ export function useBrowser() {
       if (message.type() === 'error') errors.push(message.text());
       if (message.type() === 'warning') warnings.push(message.text());
     });
-    await page.goto(`${baseURL}/tests/fixtures/index.html`);
+    await page.goto(`${baseURL}/${path}`);
     await page.waitForFunction(() => window.ready === true);
     t.after(async () => {
       await page.close();

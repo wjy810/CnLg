@@ -1,0 +1,6 @@
+/*
+ * 古风主题的网络字体（可选）。
+ * 马善政毛笔楷书：标题；思源宋体：正文。
+ * 正式项目建议自托管字体文件并按需子集化，再删掉这个文件。
+ */
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600;700&display=swap');
