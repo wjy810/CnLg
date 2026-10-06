@@ -256,6 +256,37 @@ test('repeat：在 <tbody> 中渲染行', async (t) => {
   assert.deepEqual(rows, ['静夜思', '春晓']);
 });
 
+test('repeat：清空后行内订阅释放，前后兄弟节点不受影响，反复重建不留残余节点', async (t) => {
+  const { page } = await open(t);
+  const result = await page.evaluate(() => {
+    const { html, render, signal, repeat } = window.vunio;
+    const host = document.createElement('ul');
+    const tick = signal(0);
+    let reads = 0;
+    const list = signal([]);
+    const make = (n) => Array.from({ length: n }, (_, i) => ({ id: i }));
+    const row = (item) => html`<li>${() => (reads++, `${item.id}:${tick.value}`)}</li>`;
+    render(html`<li>首</li>${repeat(list, (i) => i.id, row)}<li>尾</li>`, host);
+
+    const counts = [];
+    for (let round = 0; round < 3; round++) {
+      list.value = make(50);
+      list.value = [];
+      counts.push(host.childNodes.length);
+    }
+    list.value = make(3);
+    const rebuilt = [...host.querySelectorAll('li')].map((li) => li.textContent);
+    list.value = [];
+    reads = 0;
+    tick.value++;
+    return { counts, rebuilt, after: host.textContent, readsAfterClear: reads };
+  });
+  assert.equal(new Set(result.counts).size, 1, `每轮清空后的节点数应相同：${result.counts}`);
+  assert.deepEqual(result.rebuilt, ['首', '0:0', '1:0', '2:0', '尾']);
+  assert.equal(result.after, '首尾');
+  assert.equal(result.readsAfterClear, 0, '清空后行内的绑定不再响应');
+});
+
 test('when：只在真假变化时切换，旧分支的订阅被释放', async (t) => {
   const { page } = await open(t);
   const result = await page.evaluate(() => {

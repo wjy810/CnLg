@@ -444,13 +444,24 @@ function stringifyAttribute(name, value) {
 
 const marker = () => document.createComment('');
 
-/** 删除 start 与 end 之间的节点（不含两端） */
+/**
+ * 删除 start 与 end 之间的节点（不含两端）。
+ * 不用 Range：Range 在被回收前一直是“活的”，每次 DOM 修改浏览器都要更新它们，大量删除时会变成 O(n²)。
+ */
 function removeBetween(start, end) {
-  if (start.nextSibling === end) return;
-  const range = document.createRange();
-  range.setStartAfter(start);
-  range.setEndBefore(end);
-  range.deleteContents();
+  let node = start.nextSibling;
+  while (node && node !== end) {
+    const next = node.nextSibling;
+    node.remove();
+    node = next;
+  }
+}
+
+/** 删除 start…end（含两端） */
+function removeRange(start, end) {
+  removeBetween(start, end);
+  start.remove();
+  end.remove();
 }
 
 /** 把 start…end（含两端）移动到 anchor 之前 */
@@ -644,6 +655,15 @@ class ChildPart {
     const state = this.content;
     const { rows } = state;
 
+    // 快速路径：清空整个列表
+    if (items.length === 0) {
+      if (state.order.length) {
+        this.clear();
+        this.commitRepeat(directive, items);
+      }
+      return;
+    }
+
     const keys = new Array(items.length);
     const seen = new Set();
     for (let i = 0; i < items.length; i++) {
@@ -663,10 +683,7 @@ class ChildPart {
     for (const row of state.order) {
       if (!seen.has(row.key)) {
         row.scope.dispose();
-        const range = document.createRange();
-        range.setStartBefore(row.part.start);
-        range.setEndAfter(row.part.end);
-        range.deleteContents();
+        removeRange(row.part.start, row.part.end);
         rows.delete(row.key);
       }
     }

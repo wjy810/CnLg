@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>Vunio 性能基准</title>
+    <style>
+      .danger { color: crimson; }
+    </style>
+  </head>
+  <body>
+    <table><tbody id="tbody"></tbody></table>
+    <script type="module">
+      // 参照 js-framework-benchmark 的操作集；每个操作测量“脚本 + 样式计算 + 布局”的时间
+      import { html, render, signal, computed, effect, batch, repeat } from '../src/index.js';
+
+      const A = ['宁静', '清冷', '微茫', '空阔', '幽远', '明净', '孤高', '萧疏', '淡雅', '沉郁'];
+      const N = ['明月', '清风', '落花', '飞雪', '远山', '江流', '孤舟', '寒鸦', '疏桐', '晚钟'];
+      let nextId = 1;
+      const build = (count) =>
+        Array.from({ length: count }, () => ({ id: nextId++, label: `${A[(Math.random() * A.length) | 0]}的${N[(Math.random() * N.length) | 0]}` }));
+
+      const rows = signal([]);
+      const selected = signal(0);
+      const tbody = document.getElementById('tbody');
+      render(
+        html`${repeat(
+          rows,
+          (row) => row.id,
+          (row) => html`<tr class=${() => (selected.value === row.id ? 'danger' : '')}>
+            <td>${row.id}</td><td><a>${row.label}</a></td><td><button>×</button></td>
+          </tr>`,
+        )}`,
+        tbody,
+      );
+
+      const measure = (fn) => {
+        const start = performance.now();
+        fn();
+        document.body.offsetHeight; // 强制同步布局
+        return performance.now() - start;
+      };
+
+      window.bench = {
+        create1k: () => measure(() => (rows.value = build(1000))),
+        replace1k: () => measure(() => (rows.value = build(1000))),
+        update10th: () =>
+          measure(() => (rows.value = rows.peek().map((r, i) => (i % 10 === 0 ? { ...r, label: `${r.label} !!!` } : r)))),
+        select: () => measure(() => (selected.value = rows.peek()[500].id)),
+        swap: () =>
+          measure(() => {
+            const list = [...rows.peek()];
+            [list[1], list[998]] = [list[998], list[1]];
+            rows.value = list;
+          }),
+        remove: () => measure(() => (rows.value = rows.peek().filter((_, i) => i !== 500))),
+        create10k: () => measure(() => (rows.value = build(10000))),
+        append1k: () => measure(() => (rows.value = [...rows.peek(), ...build(1000)])),
+        clear: () => measure(() => (rows.value = [])),
+        rowCount: () => tbody.querySelectorAll('tr').length,
+
+        // signal 微基准：1000 层 computed 链、1000 个 effect 依赖同一个 signal
+        signalChain: () => {
+          const head = signal(0);
+          let tail = head;
+          for (let i = 0; i < 1000; i++) {
+            const prev = tail;
+            tail = computed(() => prev.value + 1);
+          }
+          let seen = 0;
+          const stop = effect(() => (seen = tail.value));
+          const start = performance.now();
+          for (let i = 1; i <= 100; i++) head.value = i;
+          const time = performance.now() - start;
+          stop();
+          if (seen !== 1100) throw new Error(`链式计算结果不对：${seen}`);
+          return time;
+        },
+        signalFanout: () => {
+          const source = signal(0);
+          let runs = 0;
+          const stops = Array.from({ length: 1000 }, () => effect(() => (source.value, runs++)));
+          const start = performance.now();
+          for (let i = 1; i <= 100; i++) batch(() => (source.value = i));
+          const time = performance.now() - start;
+          stops.forEach((stop) => stop());
+          if (runs !== 101000) throw new Error(`effect 运行次数不对：${runs}`);
+          return time;
+        },
+      };
+      window.ready = true;
+    </script>
+  </body>
+</html>
