@@ -20,6 +20,7 @@
   "scripts": {
     "dev": "node scripts/serve.js",
     "build:theme": "node scripts/build-theme.js",
+    "build:docs": "node scripts/build-docs.js",
     "test": "node --test \"tests/**/*.test.js\""
   },
   "engines": {

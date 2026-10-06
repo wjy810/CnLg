@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vunio</title>
+    <meta name="description" content="Vunio：一个古风的 Web Components 框架。原生组件、精确更新、纸墨朱印的设计系统与风花雪月的动效。" />
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem('vunio-theme') || 'auto';
+      } catch {}
+    </script>
+    <link rel="stylesheet" href="../themes/guofeng.css" />
+    <link rel="stylesheet" href="../themes/guofeng-fonts.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      a {
+        color: var(--vn-accent-fg);
+        text-underline-offset: 3px;
+      }
+      .skip {
+        position: absolute;
+        inset-inline-start: var(--vn-space-3);
+        inset-block-start: var(--vn-space-2);
+        z-index: var(--vn-z-overlay);
+        padding: var(--vn-space-2) var(--vn-space-3);
+        background: var(--vn-primary);
+        color: var(--vn-on-primary);
+        transform: translateY(-200%);
+      }
+      .skip:focus {
+        transform: none;
+      }
+
+      /* 顶栏 */
+      .topbar {
+        position: sticky;
+        inset-block-start: 0;
+        z-index: var(--vn-z-sticky);
+        display: flex;
+        align-items: center;
+        gap: var(--vn-space-5);
+        block-size: 60px;
+        padding-inline: max(16px, calc((100vw - 1200px) / 2 + 24px));
+        border-block-end: var(--vn-border-thin) solid var(--vn-line);
+        background: color-mix(in srgb, var(--vn-bg) 88%, transparent);
+        backdrop-filter: blur(8px);
+      }
+      .brand {
+        color: var(--vn-fg);
+        font: 400 28px / 1 var(--vn-font-brush);
+        letter-spacing: var(--vn-tracking-wide);
+        text-decoration: none;
+      }
+      .top-links {
+        display: flex;
+        gap: var(--vn-space-5);
+        margin-inline-start: auto;
+      }
+      .top-links a {
+        color: var(--vn-fg-muted);
+        letter-spacing: var(--vn-tracking-wider);
+        text-decoration: none;
+      }
+      .top-links a:hover,
+      .top-links a[aria-current='page'] {
+        color: var(--vn-fg);
+      }
+      .menu {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+        inline-size: 36px;
+        block-size: 36px;
+        padding: 0 8px;
+        border: 0;
+        background: none;
+        cursor: pointer;
+      }
+      .menu span {
+        block-size: 1.5px;
+        background: var(--vn-fg);
+      }
+
+      /* 布局 */
+      .layout {
+        display: grid;
+        grid-template-columns: 200px minmax(0, 1fr);
+        gap: var(--vn-space-8);
+        max-inline-size: 1200px;
+        margin-inline: auto;
+        padding-inline: 24px;
+      }
+      .layout.home {
+        display: block;
+        max-inline-size: none;
+        padding: 0;
+      }
+      .layout.home .sidebar,
+      .layout.home .scrim {
+        display: none;
+      }
+      .sidebar {
+        position: sticky;
+        inset-block-start: 60px;
+        align-self: start;
+        max-block-size: calc(100vh - 60px);
+        overflow-y: auto;
+        padding-block: var(--vn-space-6);
+      }
+      .sidebar section + section {
+        margin-block-start: var(--vn-space-5);
+      }
+      .sidebar h2 {
+        margin: 0 0 var(--vn-space-2);
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-xs);
+        font-weight: var(--vn-weight-regular);
+        letter-spacing: var(--vn-tracking-wider);
+      }
+      .sidebar a {
+        display: block;
+        padding: 5px var(--vn-space-3);
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-sm);
+        letter-spacing: var(--vn-tracking-wide);
+        text-decoration: none;
+        transition: color var(--vn-duration-fast) var(--vn-ease-brush);
+      }
+      .sidebar a:hover {
+        color: var(--vn-fg);
+      }
+      /* 当前页：左边一道朱砂，像书签 */
+      .sidebar a[aria-current='page'] {
+        color: var(--vn-fg);
+        font-weight: var(--vn-weight-medium);
+        box-shadow: inset 2px 0 0 var(--vn-accent);
+        background: linear-gradient(90deg, var(--vn-accent-wash), transparent 70%);
+      }
+      .scrim {
+        display: none;
+      }
+
+      /* 正文 */
+      .doc {
+        min-inline-size: 0;
+        max-inline-size: var(--vn-measure-wide);
+        padding-block: var(--vn-space-7) var(--vn-space-9);
+        outline: none;
+      }
+      .layout.home .doc {
+        max-inline-size: none;
+        padding: 0;
+      }
+      .doc h1 {
+        margin: 0 0 var(--vn-space-4);
+        font: 400 var(--vn-font-size-3xl) / var(--vn-leading-tight) var(--vn-font-brush);
+        letter-spacing: var(--vn-tracking-wide);
+        outline: none;
+      }
+      .doc h2 {
+        margin: var(--vn-space-8) 0 var(--vn-space-3);
+        padding-block-end: var(--vn-space-2);
+        border-block-end: var(--vn-border-thin) solid var(--vn-line);
+        font-size: var(--vn-font-size-xl);
+        font-weight: var(--vn-weight-medium);
+        letter-spacing: var(--vn-tracking-wide);
+      }
+      .doc h3 {
+        margin: var(--vn-space-6) 0 var(--vn-space-2);
+        font-size: var(--vn-font-size-lg);
+        font-weight: var(--vn-weight-medium);
+      }
+      .doc p,
+      .doc li {
+        line-height: var(--vn-leading-normal);
+      }
+      .doc .lead {
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-lg);
+      }
+      .doc :not(pre) > code {
+        padding: 1px 5px;
+        border-radius: var(--vn-radius-sm);
+        background: var(--vn-surface-sunken);
+        font-family: var(--vn-font-mono);
+        font-size: 0.86em;
+      }
+      .doc table {
+        inline-size: 100%;
+        margin-block: var(--vn-space-4);
+        border-collapse: collapse;
+        font-size: var(--vn-font-size-sm);
+      }
+      .doc th,
+      .doc td {
+        padding: var(--vn-space-2) var(--vn-space-3);
+        border-block-end: var(--vn-border-thin) solid var(--vn-line);
+        text-align: start;
+        vertical-align: top;
+      }
+      .doc th {
+        color: var(--vn-fg-muted);
+        font-weight: var(--vn-weight-regular);
+        white-space: nowrap;
+      }
+      .doc td:first-child code {
+        white-space: nowrap;
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      .doc blockquote {
+        margin: var(--vn-space-5) 0;
+        padding: var(--vn-space-1) var(--vn-space-4);
+        border-inline-start: 2px solid var(--vn-accent);
+        color: var(--vn-fg-muted);
+        font-family: var(--vn-font-kai);
+      }
+      .live {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--vn-space-3);
+        padding: var(--vn-space-5);
+        border-radius: var(--vn-radius-md);
+        background: var(--vn-surface);
+        box-shadow: inset 0 0 0 1px var(--vn-line);
+      }
+      .pager {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--vn-space-4);
+        margin-block-start: var(--vn-space-8);
+        padding-block-start: var(--vn-space-5);
+        border-block-start: var(--vn-border-thin) solid var(--vn-line);
+      }
+      .pager a {
+        display: grid;
+        gap: 2px;
+        color: var(--vn-fg);
+        letter-spacing: var(--vn-tracking-wide);
+        text-decoration: none;
+      }
+      .pager a:hover {
+        color: var(--vn-accent-fg);
+      }
+      .pager .next {
+        text-align: end;
+      }
+      .pager small {
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-xs);
+      }
+
+      .footer {
+        padding: var(--vn-space-6) 16px var(--vn-space-7);
+        border-block-start: var(--vn-border-thin) solid var(--vn-line);
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-sm);
+        letter-spacing: var(--vn-tracking-wide);
+        text-align: center;
+      }
+      .footer p {
+        margin: 0;
+      }
+
+      /* 窄屏：目录收进抽屉 */
+      @media (max-width: 860px) {
+        .menu {
+          display: flex;
+        }
+        .top-links {
+          display: none;
+        }
+        .brand {
+          margin-inline-end: auto;
+        }
+        .layout {
+          display: block;
+          padding-inline: 16px;
+        }
+        .sidebar {
+          position: fixed;
+          inset: 60px auto 0 0;
+          z-index: var(--vn-z-overlay);
+          inline-size: min(280px, 80vw);
+          max-block-size: none;
+          padding: var(--vn-space-5);
+          background: var(--vn-surface);
+          box-shadow: var(--vn-shadow-3);
+          transform: translateX(-105%);
+          transition: transform var(--vn-duration-normal) var(--vn-ease-wind);
+        }
+        .sidebar[data-open] {
+          transform: none;
+        }
+        .scrim:not([hidden]) {
+          display: block;
+          position: fixed;
+          inset: 60px 0 0;
+          z-index: calc(var(--vn-z-overlay) - 1);
+          background: var(--vn-overlay);
+        }
+        .doc {
+          padding-block-start: var(--vn-space-6);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

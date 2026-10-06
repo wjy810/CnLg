@@ -34,7 +34,8 @@ export function useBrowser() {
       if (message.type() === 'warning') warnings.push(message.text());
     });
     await page.goto(`${baseURL}/${path}`);
-    await page.waitForFunction(() => window.ready === true);
+    // 测试夹具页会在准备好后设置 window.ready；其他页面（如文档站）由测试自己等待
+    if (path.startsWith('tests/fixtures/')) await page.waitForFunction(() => window.ready === true);
     t.after(async () => {
       await page.close();
       if (!allowErrors) assert.deepEqual(errors, [], '页面不应有错误');

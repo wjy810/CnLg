@@ -10,7 +10,7 @@
 - **资源有主**：事件、计时器、动画、订阅都归组件所有，组件移除时自动释放。
 - **零依赖、零构建**：直接用浏览器的 ES 模块运行。
 
-> 当前进度：核心基类、响应式内核、响应式模板、古风设计系统、风花雪月效果、第一批 12 个组件已完成。下一步：路由与文档站。详见 [路线图](docs/ROADMAP.md)。
+> 当前进度：核心基类、响应式内核、响应式模板、古风设计系统、风花雪月效果、第一批 12 个组件、路由与文档站已完成。详见 [路线图](docs/ROADMAP.md)。
 
 ## 快速开始
 
@@ -18,11 +18,13 @@ ES 模块不能用 `file://` 直接打开，需要一个本地服务器：
 
 ```bash
 npm install          # 只安装测试用的 Playwright
-npm run dev          # 组件示例 http://localhost:5173/examples/
+npm run dev          # 文档站   http://localhost:5173/site/
+                     # 组件示例 http://localhost:5173/examples/
                      # 组件     http://localhost:5173/examples/components.html
                      # 设计系统 http://localhost:5173/examples/theme.html
 npm test             # 测试（signals、主题检查在 Node 中运行，其余在浏览器中运行）
 npm run build:theme  # 修改主题令牌后重新生成 CSS 和文档表格
+npm run build:docs   # 修改组件 JSDoc 后重新生成文档站的 API 数据
 ```
 
 页面里引入主题：
@@ -195,6 +197,28 @@ burst('blossom', layer, { x, y, animate: this.animate.bind(this) }); // 墨晕 i
 
 颜色来自主题；开启“减少动态效果”时粒子不播放；`<vn-sky>` 离开视口自动暂停、按 DPR 绘制。设计见 [RFC 0003](docs/rfc/0003-effects.md)。
 
+## 路由
+
+```js
+import { createRouter, html, render } from 'vunio';
+
+const router = createRouter({
+  routes: [
+    { path: '/', view: () => html`<h1>首页</h1>` },
+    { path: '/poems/:id', title: (p) => `第 ${p.id} 首`, view: ({ params }) => html`<h1>${params.id}</h1>` },
+    { path: '/guide/*', load: () => import('./guide.js') },
+  ],
+});
+router.start();
+render(html`<main>${router.outlet()}</main>`, document.body);
+```
+
+当前路由是一个 signal；默认 hash 模式，放在静态托管上就能用。换页后设置标题、恢复滚动、把焦点移到新页面的主标题。设计见 [RFC 0005](docs/rfc/0005-router.md)。
+
+## 文档站
+
+`site/` 是用 Vunio 自己写成的文档站：首页、指南、设计系统，以及每个组件的现场演示和 API 表。组件的 API 表由源码头部的 JSDoc 生成（`npm run build:docs`），测试会检查它和源码一致。
+
 ## 生命周期
 
 ```
@@ -285,7 +309,9 @@ src/
   core/props.js          属性 ↔ attribute ↔ signal
   core/styles.js         共享样式表
   effects/               点击效果 burst、天气粒子
+  router/                路由
   components/            组件（import 'vunio/components' 注册全部）
+site/                    文档站（用 Vunio 写成）
 themes/
   guofeng.tokens.js      古风主题令牌（唯一来源）
   guofeng.css            生成的主题 CSS
@@ -293,6 +319,7 @@ themes/
 scripts/
   serve.js               本地服务器
   build-theme.js         生成主题 CSS、刷新文档表格、检查对比度
+  build-docs.js          从组件 JSDoc 生成文档站 API 数据
 examples/                示例组件、store、组件示例页、设计系统展示页
 tests/                   测试（signals、主题检查在 Node 中，其余在浏览器中）
 docs/
