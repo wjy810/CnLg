@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>Vunio core fixture</title>
+  </head>
+  <body>
+    <t-late id="late"></t-late>
+    <form id="late-form"><t-late-field id="late-field" name="late"></t-late-field></form>
+    <script type="module">
+      import * as fixtures from './components.js';
+      import * as vunio from '../../src/index.js';
+      window.fx = fixtures;
+      window.vunio = vunio;
+      window.ready = true;
+    </script>
+  </body>
+</html>

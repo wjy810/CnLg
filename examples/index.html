@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vunio 基类示例</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --paper: #f5efe3;
+        --ink: #2b2a27;
+        --ink-soft: #8b847a;
+        --line: rgba(43, 42, 39, 0.16);
+        --cinnabar: #b5352a;
+        color-scheme: light;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+        line-height: 1.7;
+      }
+      main {
+        max-inline-size: 760px;
+        margin-inline: auto;
+        padding: 56px 16px 96px;
+      }
+      header h1 {
+        margin: 0;
+        font: 400 clamp(40px, 9vw, 64px) / 1.1 'Ma Shan Zheng', 'STKaiti', 'KaiTi', serif;
+        letter-spacing: 0.08em;
+      }
+      header p {
+        margin: 8px 0 0;
+        color: var(--ink-soft);
+        letter-spacing: 0.15em;
+      }
+      section {
+        margin-block-start: 56px;
+        padding-block-start: 28px;
+        border-block-start: 1px solid var(--line);
+      }
+      h2 {
+        margin: 0 0 4px;
+        font-size: 20px;
+        letter-spacing: 0.12em;
+      }
+      h2 small {
+        color: var(--cinnabar);
+        font-size: 13px;
+        margin-inline-end: 10px;
+      }
+      .note {
+        margin: 0 0 20px;
+        color: var(--ink-soft);
+        font-size: 14px;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 20px;
+      }
+      pre {
+        margin: 20px 0 0;
+        padding: 14px 16px;
+        overflow-x: auto;
+        background: rgba(43, 42, 39, 0.04);
+        border-inline-start: 2px solid var(--cinnabar);
+        font: 13px/1.6 ui-monospace, 'SFMono-Regular', Menlo, monospace;
+      }
+      .log {
+        margin-top: 12px;
+        min-height: 1.7em;
+        color: var(--ink-soft);
+        font-size: 14px;
+      }
+      form {
+        display: grid;
+        gap: 4px;
+        max-inline-size: 420px;
+      }
+      fieldset {
+        display: grid;
+        gap: 4px;
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-block-start: 8px;
+      }
+      button.plain {
+        padding: 6px 18px;
+        border: 1px solid var(--ink);
+        border-radius: 2px;
+        background: transparent;
+        color: var(--ink);
+        font: inherit;
+        letter-spacing: 0.2em;
+        cursor: pointer;
+      }
+      button.plain.solid {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      label.check {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        font-size: 14px;
+        color: var(--ink-soft);
+      }
+      #ticker-box {
+        min-block-size: 88px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Vunio</h1>
+        <p>VunioElement 基类示例 · 三个最小组件</p>
+      </header>
+
+      <section>
+        <h2><small>壹</small>属性 · 事件 · 动画</h2>
+        <p class="note">
+          &lt;demo-seal&gt;：text / tone / size 三个属性，点击时播放盖章动画并派发 vn-stamp 事件。
+          tone 只接受 cinnabar | ink，写错会回退默认值并在控制台警告。
+        </p>
+        <div class="row">
+          <demo-seal text="风花雪月"></demo-seal>
+          <demo-seal text="闲章" tone="ink" size="64"></demo-seal>
+          <demo-seal text="雅" size="56"></demo-seal>
+          <demo-seal text="错值" tone="gold" size="56"></demo-seal>
+        </div>
+        <div class="log" id="stamp-log">点一下印章试试</div>
+        <pre>&lt;demo-seal text="风花雪月"&gt;&lt;/demo-seal&gt;
+&lt;demo-seal text="闲章" tone="ink" size="64"&gt;&lt;/demo-seal&gt;
+
+seal.addEventListener('vn-stamp', (e) =&gt; console.log(e.detail.text));</pre>
+      </section>
+
+      <section>
+        <h2><small>贰</small>表单关联</h2>
+        <p class="note">
+          &lt;demo-field&gt; 继承 VunioFormElement：直接放进原生 &lt;form&gt;，支持 required、重置、
+          &lt;fieldset disabled&gt;。错误提示只在离开输入框或提交失败后出现。
+        </p>
+        <form id="poem-form">
+          <fieldset id="poem-fieldset">
+            <demo-field name="title" label="题目" value="水调歌头" required></demo-field>
+            <demo-field name="line" label="名句" placeholder="明月几时有" required></demo-field>
+          </fieldset>
+          <label class="check"><input type="checkbox" id="toggle-disabled" /> 禁用整个 fieldset</label>
+          <div class="actions">
+            <button class="plain solid">提交</button>
+            <button class="plain" type="reset">重置</button>
+          </div>
+        </form>
+        <div class="log" id="form-log">提交后这里显示 FormData</div>
+      </section>
+
+      <section>
+        <h2><small>叁</small>自动清理</h2>
+        <p class="note">
+          &lt;demo-ticker&gt; 用 this.loop() 每帧转动指针。组件被移除时，loop 会自动停止，不需要手写
+          cancelAnimationFrame。
+        </p>
+        <div class="row" id="ticker-box"><demo-ticker></demo-ticker></div>
+        <div class="actions">
+          <button class="plain" id="add-ticker">添加</button>
+          <button class="plain" id="remove-ticker">移除一个</button>
+        </div>
+        <div class="log" id="ticker-log"></div>
+      </section>
+    </main>
+
+    <script type="module">
+      import './seal.js';
+      import './field.js';
+      import { stats } from './ticker.js';
+
+      // 壹
+      const stampLog = document.getElementById('stamp-log');
+      document.addEventListener('vn-stamp', (e) => {
+        stampLog.textContent = `收到 vn-stamp 事件：${e.detail.text}`;
+      });
+
+      // 贰
+      const form = document.getElementById('poem-form');
+      const formLog = document.getElementById('form-log');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        formLog.textContent = `FormData：${JSON.stringify(Object.fromEntries(new FormData(form)))}`;
+      });
+      form.addEventListener('reset', () => {
+        formLog.textContent = '已重置为默认值';
+      });
+      document.getElementById('toggle-disabled').addEventListener('change', (e) => {
+        document.getElementById('poem-fieldset').disabled = e.target.checked;
+      });
+
+      // 叁
+      const box = document.getElementById('ticker-box');
+      const tickerLog = document.getElementById('ticker-log');
+      const showStats = ({ running }) => {
+        tickerLog.textContent = `运行中的动画循环：${running}`;
+      };
+      window.addEventListener('ticker-stats', (e) => showStats(e.detail));
+      showStats(stats);
+      document.getElementById('add-ticker').addEventListener('click', () => {
+        box.append(document.createElement('demo-ticker'));
+      });
+      document.getElementById('remove-ticker').addEventListener('click', () => {
+        box.lastElementChild?.remove();
+      });
+    </script>
+  </body>
+</html>

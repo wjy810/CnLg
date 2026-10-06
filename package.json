@@ -1,0 +1,24 @@
+{
+  "name": "vunio",
+  "version": "0.1.0",
+  "description": "Vunio —— 基于 Web Components 的风格化组件框架",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./core/*": "./src/core/*"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "dev": "node scripts/serve.js",
+    "test": "node --test \"tests/**/*.test.js\""
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}
