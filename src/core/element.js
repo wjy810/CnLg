@@ -4,16 +4,21 @@
  * 生命周期（顺序固定）：
  *
  *   constructor            创建 internals、Shadow DOM，挂上共享样式（不读 attribute、不碰子元素）
- *   connectedCallback      首次：render() 写入 Shadow DOM，收集 data-ref
- *                          每次：update(全部) → mounted()
- *   属性 / attribute 变化  同一微任务内合并，统一调用一次 update(changed)
- *   disconnectedCallback   自动解绑 on() 事件，停止 loop / timeout / observe* / animate，
+ *   connectedCallback      首次：render() 写入 Shadow DOM（模板绑定进入“渲染作用域”），收集 data-ref
+ *                          再次：恢复渲染作用域，补上离开期间错过的变化
+ *                          每次：update(全部) → mounted()（在“连接作用域”中执行）
+ *   属性 / attribute 变化  属性的 signal 立即更新（模板绑定随之更新）；
+ *                          同一微任务内合并，统一调用一次 update(changed)
+ *   disconnectedCallback   暂停渲染作用域；释放连接作用域（其中的 effect 停止）；
+ *                          自动解绑 on() 事件，停止 loop / timeout / observe* / animate，
  *                          执行 onCleanup 注册的函数，然后调用 unmounted()
  *
  * 组件只需要写四个钩子：render / update / mounted / unmounted。
  */
-import { STORE, propsOf } from './props.js';
+import { STORE, propsOf, syncAttribute } from './props.js';
+import { createScope, effect, untrack } from './signals.js';
 import { stylesFor } from './styles.js';
+import { TemplateResult, render as renderTemplate } from './template.js';
 
 const reducedMotion =
   typeof matchMedia === 'function' ? matchMedia('(prefers-reduced-motion: reduce)') : null;
@@ -88,6 +93,10 @@ export class VunioElement extends HTMLElement {
   #changed = new Set();
   /** @type {Promise<void> | null} */
   #pending = null;
+  /** @type {import('./signals.js').Scope | null} 连接作用域：mounted 中创建的 effect，移出时释放 */
+  #scope = null;
+  /** @type {import('./signals.js').Scope | null} 渲染作用域：模板绑定，移出时暂停 */
+  #renderScope = null;
 
   constructor() {
     super();
@@ -103,28 +112,28 @@ export class VunioElement extends HTMLElement {
 
   connectedCallback() {
     this.#conn = { controller: new AbortController(), cleanups: new Set(), animations: new Set() };
+    this.#scope = createScope(null);
 
     if (!this.#rendered) {
       this.#upgradeProps();
-      this.#guard('render', () => {
-        if (!this.root.hasChildNodes()) {
-          const out = this.render();
-          if (out != null) this.root.innerHTML = String(out);
-        }
-        this.collectRefs();
-      });
+      this.#guard('render', () => untrack(() => this.#renderOnce()));
       this.#rendered = true;
+    } else {
+      this.#renderScope?.resume();
     }
 
     this.#changed.clear();
-    this.#guard('update', () => this.update(new Changes(true, propsOf(this.constructor).defs.keys())));
-    this.#guard('mounted', () => this.mounted());
+    this.#guard('update', () => this.#inScope(() => this.update(new Changes(true, propsOf(this.constructor).defs.keys()))));
+    this.#guard('mounted', () => this.#inScope(() => this.mounted()));
   }
 
   disconnectedCallback() {
     const conn = this.#conn;
     if (!conn) return;
     this.#conn = null;
+    this.#renderScope?.pause();
+    this.#scope?.dispose();
+    this.#scope = null;
     conn.controller.abort();
     for (const animation of conn.animations) animation.cancel();
     for (const cleanup of [...conn.cleanups].reverse()) this.#guard('cleanup', cleanup);
@@ -133,16 +142,19 @@ export class VunioElement extends HTMLElement {
 
   attributeChangedCallback(attr, oldValue, newValue) {
     if (oldValue === newValue) return;
-    const name = propsOf(this.constructor).byAttr.get(attr);
-    if (name) this.requestUpdate(name);
+    const def = propsOf(this.constructor).byAttr.get(attr);
+    if (!def) return;
+    syncAttribute(this, def, newValue);
+    this.requestUpdate(def.name);
   }
 
   // ───────────────────────── 组件要写的钩子 ─────────────────────────
 
   /**
-   * 返回 Shadow DOM 的初始结构（只调用一次）。
-   * 用 data-ref="名字" 标记需要操作的元素，之后通过 this.refs.名字 访问。
-   * @returns {string | import('./template.js').SafeHTML | null}
+   * 返回 Shadow DOM 的结构（只调用一次）。
+   * 返回 html`…` 时，其中的 signal / 函数绑定会自动更新；返回字符串时按 HTML 写入。
+   * 用 data-ref="名字" 标记需要操作的静态元素，之后通过 this.refs.名字 访问。
+   * @returns {TemplateResult | string | null}
    */
   render() {
     return '<slot></slot>';
@@ -173,7 +185,7 @@ export class VunioElement extends HTMLElement {
         if (!this.#conn) return void this.#changed.clear();
         const changed = new Changes(false, this.#changed);
         this.#changed = new Set();
-        this.#guard('update', () => this.update(changed));
+        this.#guard('update', () => this.#inScope(() => this.update(changed)));
       });
     }
     return this.#pending;
@@ -187,6 +199,17 @@ export class VunioElement extends HTMLElement {
   }
 
   // ───────────────────────── 自动清理的工具 ─────────────────────────
+
+  /**
+   * 创建 effect：立即运行，依赖的 signal（包括组件属性）变化时重新运行，组件移除时自动释放。
+   * fn 可以返回清理函数，在下次运行前和释放时调用。
+   * @param {() => (void | (() => void))} fn
+   * @returns {() => void} 手动释放
+   */
+  effect(fn) {
+    this.#require('effect');
+    return this.#scope.run(() => effect(fn));
+  }
 
   /**
    * 绑定事件，组件移除时自动解绑。handler 里的 this 指向组件。
@@ -398,6 +421,20 @@ export class VunioElement extends HTMLElement {
   }
 
   // ───────────────────────── 内部 ─────────────────────────
+
+  #renderOnce() {
+    if (!this.root.hasChildNodes()) {
+      const out = this.render();
+      if (out instanceof TemplateResult) this.#renderScope = renderTemplate(out, this.root, { host: this });
+      else if (out != null) this.root.innerHTML = String(out);
+    }
+    this.collectRefs();
+  }
+
+  /** 在连接作用域中、不追踪依赖地执行（组件代码不会把依赖泄漏给外层 effect） */
+  #inScope(fn) {
+    return untrack(() => this.#scope.run(fn));
+  }
 
   #require(method) {
     if (!this.#conn) {

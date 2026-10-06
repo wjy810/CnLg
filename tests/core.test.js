@@ -1,42 +1,9 @@
 // VunioElement / VunioFormElement 的浏览器测试（Playwright + node:test）
-import { after, before, test } from 'node:test';
+import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { chromium } from 'playwright';
-import { serve } from '../scripts/serve.js';
+import { useBrowser } from './helpers/browser.js';
 
-let server;
-let baseURL;
-let browser;
-
-before(async () => {
-  ({ server, url: baseURL } = await serve(0));
-  browser = await chromium.launch();
-});
-
-after(async () => {
-  await browser?.close();
-  server?.close();
-});
-
-/** 打开测试页，收集页面错误；测试结束时断言没有错误 */
-async function open(t, { reducedMotion } = {}) {
-  const page = await browser.newPage();
-  if (reducedMotion) await page.emulateMedia({ reducedMotion });
-  const errors = [];
-  const warnings = [];
-  page.on('pageerror', (error) => errors.push(error.message));
-  page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text());
-    if (message.type() === 'warning') warnings.push(message.text());
-  });
-  await page.goto(`${baseURL}/tests/fixtures/index.html`);
-  await page.waitForFunction(() => window.ready === true);
-  t.after(async () => {
-    await page.close();
-    assert.deepEqual(errors, [], '页面不应有错误');
-  });
-  return { page, warnings };
-}
+const open = useBrowser();
 
 test('属性：attribute 与属性双向同步、默认值、类型转换', async (t) => {
   const { page } = await open(t);
@@ -396,16 +363,10 @@ test('表单：<fieldset disabled> 中不提交，isDisabled 为 true', async (t
   assert.deepEqual(result, { data: {}, isDisabled: true, inputDisabled: true, matchesDisabled: true });
 });
 
-test('html``：插值转义，嵌套模板和数组原样拼接', async (t) => {
+test('escapeHTML 转义特殊字符', async (t) => {
   const { page } = await open(t);
-  const out = await page.evaluate(() => {
-    const { html, unsafeHTML } = window.vunio;
-    const items = ['<b>', '"q"'];
-    return String(
-      html`<p title="${'"x"'}">${items.map((i) => html`<i>${i}</i>`)}${null}${false}${unsafeHTML('<br>')}</p>`,
-    );
-  });
-  assert.equal(out, '<p title="&quot;x&quot;"><i>&lt;b&gt;</i><i>&quot;q&quot;</i><br></p>');
+  const out = await page.evaluate(() => window.vunio.escapeHTML(`<a href="x" title='y'>&</a>`));
+  assert.equal(out, '&lt;a href=&quot;x&quot; title=&#39;y&#39;&gt;&amp;&lt;/a&gt;');
 });
 
 test('减少动态效果：animate() 直接跳到结束状态', async (t) => {

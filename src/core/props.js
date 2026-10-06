@@ -3,13 +3,15 @@
  *
  * 规则：
  * - String / Number / Boolean 属性以 attribute 为唯一真相：
- *   读属性 = 读 attribute，写属性 = 写 attribute。
+ *   写属性 = 写 attribute；attribute 变化时同步到内部的 signal。
  * - Object / Array（或 attribute: false）只存在 JS 属性上，不出现在 HTML 里。
  * - 驼峰属性名对应短横线 attribute：maxLength ↔ max-length。
  * - Boolean 遵循 HTML 习惯：只看有没有这个 attribute，disabled="false" 也算 true。
+ * - 每个属性由一个 signal 承载，所以在 computed / effect / 模板中读取会自动建立依赖。
  */
+import { signal } from './signals.js';
 
-/** 实例上存放非 attribute 属性值的位置 */
+/** 实例上存放属性 signal 的位置 */
 export const STORE = Symbol('vunio.props');
 
 const cache = new WeakMap();
@@ -65,6 +67,26 @@ function parse(def, raw, tag) {
   return raw;
 }
 
+/** 属性对应的 signal（首次访问时按当前 attribute 创建） */
+function propSignal(element, def) {
+  const store = element[STORE];
+  let state = store.get(def.name);
+  if (!state) {
+    const initial = def.attribute
+      ? parse(def, element.getAttribute(def.attribute), element.localName)
+      : defaultOf(def);
+    state = signal(initial);
+    store.set(def.name, state);
+  }
+  return state;
+}
+
+/** attribute 变化时调用：把新值同步到属性的 signal */
+export function syncAttribute(element, def, raw) {
+  const state = element[STORE].get(def.name);
+  if (state) state.value = parse(def, raw, element.localName);
+}
+
 function defineAccessor(proto, def) {
   // 组件自己写了同名 getter/setter 时，尊重组件的实现
   if (Object.getOwnPropertyDescriptor(proto, def.name)) return;
@@ -74,30 +96,27 @@ function defineAccessor(proto, def) {
     configurable: true,
     enumerable: true,
     get() {
-      if (attribute) return parse(def, this.getAttribute(attribute), this.localName);
-      const store = this[STORE];
-      if (!store.has(name)) store.set(name, defaultOf(def));
-      return store.get(name);
+      return propSignal(this, def).value;
     },
     set(value) {
       if (attribute) {
-        // 写 attribute 后由 attributeChangedCallback 触发更新
+        // 写 attribute 后由 attributeChangedCallback 同步 signal 并触发 update
         if (def.type === Boolean) this.toggleAttribute(attribute, Boolean(value));
         else if (value == null) this.removeAttribute(attribute);
         else this.setAttribute(attribute, String(value));
         return;
       }
-      const store = this[STORE];
-      const old = store.get(name);
-      store.set(name, value);
-      if (!Object.is(old, value)) this.requestUpdate(name);
+      const state = propSignal(this, def);
+      if (Object.is(state.peek(), value)) return;
+      state.value = value;
+      this.requestUpdate(name);
     },
   });
 }
 
 /**
  * 组件类（含父类）合并后的属性定义。首次调用时在原型上生成访问器。
- * @returns {{ defs: Map<string, object>, byAttr: Map<string, string> }}
+ * @returns {{ defs: Map<string, any>, byAttr: Map<string, any> }}
  */
 export function propsOf(cls) {
   let result = cache.get(cls);
@@ -115,8 +134,9 @@ export function propsOf(cls) {
     }
   }
 
+  /** @type {Map<string, object>} attribute 名 → 属性定义 */
   const byAttr = new Map();
-  for (const def of defs.values()) if (def.attribute) byAttr.set(def.attribute, def.name);
+  for (const def of defs.values()) if (def.attribute) byAttr.set(def.attribute, def);
 
   result = { defs, byAttr };
   cache.set(cls, result);

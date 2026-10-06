@@ -10,8 +10,12 @@
  * - value attribute 是默认值，value 属性是当前值；
  * - 用户（或代码）改过 value 属性之后，attribute 不再影响当前值；
  * - form.reset() 时回到 attribute 里的默认值。
+ *
+ * value、touched、userInvalid、isDisabled、validationMessage 都是响应式的，
+ * 可以直接在模板里用：${() => (this.userInvalid ? this.validationMessage : '')}
  */
 import { VunioElement } from './element.js';
+import { batch, signal, untrack } from './signals.js';
 
 export class VunioFormElement extends VunioElement {
   static formAssociated = true;
@@ -27,11 +31,14 @@ export class VunioFormElement extends VunioElement {
     return [...new Set([...super.observedAttributes, 'value'])];
   }
 
-  #value = '';
+  #value = signal('');
   #dirty = false;
   #ready = false;
-  #touched = false;
-  #formDisabled = false;
+  #touched = signal(false);
+  #formDisabled = signal(false);
+  #userInvalid = signal(false);
+  /** 每次重新校验时 +1，让 validity / validationMessage 可以被追踪 */
+  #validityVersion = signal(0);
   #customMessage = '';
 
   connectedCallback() {
@@ -57,7 +64,7 @@ export class VunioFormElement extends VunioElement {
   // ───────────────────────── 值 ─────────────────────────
 
   get value() {
-    return this.#value;
+    return this.#value.value;
   }
 
   set value(value) {
@@ -67,12 +74,17 @@ export class VunioFormElement extends VunioElement {
 
   /** 禁用状态：自身 disabled 或所在 <fieldset disabled> */
   get isDisabled() {
-    return this.hasAttribute('disabled') || this.#formDisabled;
+    return Boolean(/** @type {any} */ (this).disabled) || this.#formDisabled.value;
   }
 
   /** 用户是否已经离开过这个控件（或提交过表单） */
   get touched() {
-    return this.#touched;
+    return this.#touched.value;
+  }
+
+  /** 交互过且当前无效：用它决定是否显示错误 */
+  get userInvalid() {
+    return this.#userInvalid.value;
   }
 
   // ───────────────────────── 子类可以覆盖的部分 ─────────────────────────
@@ -109,7 +121,7 @@ export class VunioFormElement extends VunioElement {
   /** 把当前值和校验结果同步给表单。子类改了影响提交值的内部状态后调用。 */
   syncForm() {
     if (!this.#ready) return;
-    this.internals.setFormValue(this.formValue());
+    untrack(() => this.internals.setFormValue(this.formValue()));
     this.#syncValidity();
   }
 
@@ -124,10 +136,12 @@ export class VunioFormElement extends VunioElement {
   }
 
   get validity() {
+    this.#validityVersion.value;
     return this.internals.validity;
   }
 
   get validationMessage() {
+    this.#validityVersion.value;
     return this.internals.validationMessage;
   }
 
@@ -154,12 +168,12 @@ export class VunioFormElement extends VunioElement {
   formResetCallback() {
     this.resetValue();
     this.#dirty = false;
-    this.#touched = false;
+    this.#touched.value = false;
     this.syncForm();
   }
 
   formDisabledCallback(disabled) {
-    this.#formDisabled = disabled;
+    this.#formDisabled.value = disabled;
     this.internals.ariaDisabled = disabled ? 'true' : null;
     this.requestUpdate('disabled');
   }
@@ -171,29 +185,37 @@ export class VunioFormElement extends VunioElement {
   // ───────────────────────── 内部 ─────────────────────────
 
   #setValue(value) {
-    if (value === this.#value) return;
-    this.#value = value;
-    this.syncForm();
+    if (value === this.#value.peek()) return;
+    batch(() => {
+      this.#value.value = value;
+      this.syncForm();
+    });
     this.requestUpdate('value');
   }
 
   #touch() {
-    if (this.#touched) return;
-    this.#touched = true;
+    if (this.#touched.peek()) return;
+    this.#touched.value = true;
     this.#syncValidity();
   }
 
   #syncValidity() {
     if (!this.#ready) return;
-    const result = this.#customMessage
-      ? { flags: { customError: true }, message: this.#customMessage }
-      : this.validate();
-    if (result) this.internals.setValidity(result.flags, result.message || '无效的值', this.validationAnchor);
-    else this.internals.setValidity({});
+    untrack(() => {
+      const result = this.#customMessage
+        ? { flags: { customError: true }, message: this.#customMessage }
+        : this.validate();
+      if (result) this.internals.setValidity(result.flags, result.message || '无效的值', this.validationAnchor);
+      else this.internals.setValidity({});
 
-    const userInvalid = this.#touched && !this.internals.validity.valid;
-    this.setState('user-invalid', userInvalid);
-    // 让组件有机会刷新错误提示
+      const userInvalid = this.#touched.peek() && !this.internals.validity.valid;
+      this.setState('user-invalid', userInvalid);
+      batch(() => {
+        this.#userInvalid.value = userInvalid;
+        this.#validityVersion.value = this.#validityVersion.peek() + 1;
+      });
+    });
+    // 兼容 update(changed) 写法
     this.requestUpdate('validity');
   }
 }
