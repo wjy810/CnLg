@@ -126,20 +126,27 @@
       #ticker-box {
         min-block-size: 88px;
       }
+      demo-poem-stats {
+        display: block;
+        margin-block-start: 8px;
+      }
+      demo-anthology {
+        margin-block-start: 8px;
+      }
     </style>
   </head>
   <body>
     <main>
       <header>
         <h1>Vunio</h1>
-        <p>VunioElement 基类示例 · 三个最小组件</p>
+        <p>响应式组件示例 · 四个小组件</p>
       </header>
 
       <section>
-        <h2><small>壹</small>属性 · 事件 · 动画</h2>
+        <h2><small>壹</small>属性 · 模板 · 动画</h2>
         <p class="note">
-          &lt;demo-seal&gt;：text / tone / size 三个属性，点击时播放盖章动画并派发 vn-stamp 事件。
-          tone 只接受 cinnabar | ink，写错会回退默认值并在控制台警告。
+          &lt;demo-seal&gt;：text / tone / size 三个属性直接绑定在模板里，改 attribute 立即生效。
+          点击时播放盖章动画并派发 vn-stamp 事件。tone 只接受 cinnabar | ink，写错会回退默认值并在控制台警告。
         </p>
         <div class="row">
           <demo-seal text="风花雪月"></demo-seal>
@@ -148,17 +155,20 @@
           <demo-seal text="错值" tone="gold" size="56"></demo-seal>
         </div>
         <div class="log" id="stamp-log">点一下印章试试</div>
-        <pre>&lt;demo-seal text="风花雪月"&gt;&lt;/demo-seal&gt;
-&lt;demo-seal text="闲章" tone="ink" size="64"&gt;&lt;/demo-seal&gt;
-
-seal.addEventListener('vn-stamp', (e) =&gt; console.log(e.detail.text));</pre>
+        <pre>render() {
+  return html`
+    &lt;button aria-label=${() =&gt; `印章：${this.text}`} @click=${this.stamp}&gt;
+      ${() =&gt; this.text}
+    &lt;/button&gt;`;
+}</pre>
       </section>
 
       <section>
         <h2><small>贰</small>表单关联</h2>
         <p class="note">
           &lt;demo-field&gt; 继承 VunioFormElement：直接放进原生 &lt;form&gt;，支持 required、重置、
-          &lt;fieldset disabled&gt;。错误提示只在离开输入框或提交失败后出现。
+          &lt;fieldset disabled&gt;。错误提示写在模板里：${() =&gt; this.userInvalid ? this.validationMessage : ''}，
+          只在离开输入框或提交失败后出现。
         </p>
         <form id="poem-form">
           <fieldset id="poem-fieldset">
@@ -187,11 +197,29 @@ seal.addEventListener('vn-stamp', (e) =&gt; console.log(e.detail.text));</pre>
         </div>
         <div class="log" id="ticker-log"></div>
       </section>
+
+      <section>
+        <h2><small>肆</small>响应式：共享状态 · 列表 · 条件</h2>
+        <p class="note">
+          诗句存在一个 store（模块里的 signal）中，下面的列表和这一行计数是两个组件，读取同一份数据。
+          列表用 repeat 按 id 复用节点：点“打乱”时，只有真正被移动的行会重新晕开一次，其余 DOM 原地不动。
+          <demo-poem-stats></demo-poem-stats>
+        </p>
+        <demo-anthology></demo-anthology>
+        <pre>// stores/poems.js
+export const poems = signal([...]);
+export const visible = computed(() =&gt;
+  onlyFavorites.value ? poems.value.filter((p) =&gt; p.favorite) : poems.value);
+
+// 组件模板
+${repeat(visible, (p) =&gt; p.id, (p) =&gt; html`&lt;li&gt;${p.text}&lt;/li&gt;`)}</pre>
+      </section>
     </main>
 
     <script type="module">
       import './seal.js';
       import './field.js';
+      import './anthology.js';
       import { stats } from './ticker.js';
 
       // 壹

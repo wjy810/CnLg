@@ -1,8 +1,14 @@
-// 示例组件：印章。演示 属性 / 枚举 / 自定义状态 / 事件 / 动画。
+// 示例组件：印章。演示 属性 / 枚举 / 响应式模板 / 自定义状态 / 事件 / 动画。
 import { VunioElement, html, css } from '../src/index.js';
 
 const NOISE =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -6 4.7'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
+
+/** 字越多，字号越小 */
+const fontScale = (text) => {
+  const count = [...text].length;
+  return count === 1 ? 0.56 : count === 2 ? 0.4 : 0.34;
+};
 
 export class DemoSeal extends VunioElement {
   static tag = 'demo-seal';
@@ -49,23 +55,23 @@ export class DemoSeal extends VunioElement {
   `;
 
   render() {
-    return html`<button class="seal" data-ref="seal" part="seal"><span class="chars" data-ref="chars"></span></button>`;
-  }
-
-  update(changed) {
-    const { seal, chars } = this.refs;
-    if (changed.has('text')) {
-      const count = [...this.text].length;
-      chars.textContent = this.text;
-      seal.setAttribute('aria-label', `印章：${this.text}`);
-      seal.style.setProperty('--_font', `calc(var(--_size) * ${count === 1 ? 0.56 : count === 2 ? 0.4 : 0.34})`);
-    }
-    if (changed.has('tone')) this.setState('ink', this.tone === 'ink');
-    if (changed.has('size')) seal.style.setProperty('--_size', `${this.size}px`);
+    return html`
+      <button
+        class="seal"
+        part="seal"
+        data-ref="seal"
+        aria-label=${() => `印章：${this.text}`}
+        style=${() => ({ '--_size': `${this.size}px`, '--_font': `calc(var(--_size) * ${fontScale(this.text)})` })}
+        @click=${this.stamp}
+      >
+        <span class="chars">${() => this.text}</span>
+      </button>
+    `;
   }
 
   mounted() {
-    this.on(this.refs.seal, 'click', this.stamp);
+    // 宿主自身的状态不在模板里，用 effect 同步
+    this.effect(() => this.setState('ink', this.tone === 'ink'));
   }
 
   /** 盖章：落下动画 + 派发 vn-stamp 事件 */

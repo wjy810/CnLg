@@ -1,5 +1,5 @@
-// 示例组件：题字输入框。演示 VunioFormElement 的表单关联与校验。
-import { VunioFormElement, html, css } from '../src/index.js';
+// 示例组件：题字输入框。演示 VunioFormElement 的表单关联，以及纯模板写法的校验提示。
+import { VunioFormElement, html, css, computed } from '../src/index.js';
 
 export class DemoField extends VunioFormElement {
   static tag = 'demo-field';
@@ -57,33 +57,25 @@ export class DemoField extends VunioFormElement {
   render() {
     return html`
       <label>
-        <span class="label" data-ref="label"></span>
-        <input data-ref="input" part="input" />
+        <span class="label">${() => this.label}</span>
+        <input
+          part="input"
+          data-ref="input"
+          placeholder=${() => this.placeholder}
+          .value=${computed(() => this.value)}
+          ?required=${() => this.required}
+          ?disabled=${() => this.isDisabled}
+          aria-invalid=${() => String(this.userInvalid)}
+          @input=${this.handleInput}
+          @change=${() => this.emit('change')}
+        />
       </label>
-      <div class="error" data-ref="error" aria-live="polite"></div>
+      <div class="error" aria-live="polite">${() => (this.userInvalid ? this.validationMessage : '')}</div>
     `;
   }
 
-  update(changed) {
-    const { label, input, error } = this.refs;
-    if (changed.has('label')) label.textContent = this.label;
-    if (changed.has('placeholder')) input.placeholder = this.placeholder;
-    if (changed.has('value') && input.value !== this.value) input.value = this.value;
-    if (changed.has('disabled')) input.disabled = this.isDisabled;
-    if (changed.has('required')) input.required = this.required;
-    if (changed.has('validity')) {
-      const show = this.hasState('user-invalid');
-      error.textContent = show ? this.validationMessage : '';
-      input.setAttribute('aria-invalid', String(show));
-    }
-  }
-
-  mounted() {
-    this.on(this.refs.input, 'input', () => {
-      this.value = this.refs.input.value;
-    });
-    // change 事件不会穿出 Shadow DOM，需要在宿主上重新派发
-    this.on(this.refs.input, 'change', () => this.emit('change'));
+  handleInput(event) {
+    this.value = event.target.value;
   }
 
   get validationAnchor() {
