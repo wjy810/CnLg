@@ -3,7 +3,7 @@
 这份文档是写 Vunio 组件的唯一标准，人和 AI 都按它来。
 **用 AI 生成组件时，把整份文档连同你的需求一起发过去**（文末有可直接复制的提示词）。
 
-相关设计：[RFC 0001 响应式内核](rfc/0001-signals.md) · [RFC 0002 响应式模板](rfc/0002-templates.md)
+相关设计：[RFC 0001 响应式内核](rfc/0001-signals.md) · [RFC 0002 响应式模板](rfc/0002-templates.md) · [古风设计系统](design/guofeng.md)
 
 ---
 
@@ -115,7 +115,14 @@ VnExample.define();
 
 **样式**
 - 样式只写在 `static styles` 里；选择器都在 Shadow DOM 内，用 `:host` 设置宿主。
-- 颜色、字体、圆角、阴影、动效曲线**只用主题变量** `var(--vn-*)`，不写死色值（变量表见 `themes/`）。
+- 颜色、字体、间距、圆角、阴影、动效**只用主题的语义令牌** `var(--vn-*)`，不写死色值，也不用原色 `--vn-color-*`（完整变量表见 [古风设计系统](design/guofeng.md)）。常用的：
+  - 颜色：`--vn-bg` `--vn-surface` `--vn-surface-sunken` `--vn-fg` `--vn-fg-muted` `--vn-line` `--vn-line-strong`
+    `--vn-primary`/`--vn-on-primary` `--vn-accent`/`--vn-on-accent` `--vn-accent-fg` `--vn-danger` `--vn-success`
+  - 尺度：`--vn-space-1…9` `--vn-radius-sm|md|lg|full` `--vn-font-size-xs…5xl` `--vn-tracking-wider` `--vn-shadow-1|2|3`
+  - 动效：`--vn-duration-fast|normal|ink` 配 `--vn-ease-brush|ink|wind|petal`
+  - 纹理：`--vn-mask-seal`（印章）、`--vn-mask-brush`（笔触线）
+- 控件边框用 `--vn-line-strong`（对比度 ≥ 3），`--vn-line` 只用于装饰分隔线；朱砂色文字用 `--vn-accent-fg`，不要用 `--vn-accent`。
+- 毛笔字体 `--vn-font-brush` 只用于 ≥ 28px 的标题；同一视图区域最多一个朱砂色的主操作。
   组件私有变量用 `--_名字` 前缀；允许外部定制的用 `--vn-组件名-*` 并在注释 `@cssprop` 中说明。
 - 状态样式用自定义状态：`this.setState('open', true)` + `:host(:state(open))`。
 - 给关键元素加 `part="名字"`，让使用者可以用 `::part()` 微调。
@@ -178,7 +185,7 @@ VnExample.define();
 - [ ] 移除组件后，没有残留的事件、计时器、动画帧、订阅
 - [ ] 只用键盘就能完成所有操作
 - [ ] 开启系统“减少动态效果”后没有大幅动画
-- [ ] 切换主题变量后，组件颜色随之改变
+- [ ] 页面切换 `data-theme="night"` 后，组件在夜间主题下同样好看、可读
 - [ ] 所有文案都能通过属性或插槽修改
 - [ ] 控制台没有错误和警告
 - [ ] 文件头部的 JSDoc 写清了 `@attr` / `@slot` / `@fires` / `@csspart` / `@cssprop`

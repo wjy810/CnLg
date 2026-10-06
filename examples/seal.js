@@ -1,9 +1,6 @@
 // 示例组件：印章。演示 属性 / 枚举 / 响应式模板 / 自定义状态 / 事件 / 动画。
 import { VunioElement, html, css } from '../src/index.js';
 
-const NOISE =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -6 4.7'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
-
 /** 字越多，字号越小 */
 const fontScale = (text) => {
   const count = [...text].length;
@@ -22,11 +19,12 @@ export class DemoSeal extends VunioElement {
   static styles = css`
     :host {
       display: inline-block;
-      --_color: #b5352a;
-      --_paper: #f6efe2;
+      --_color: var(--vn-accent);
+      --_paper: var(--vn-on-accent);
     }
     :host(:state(ink)) {
-      --_color: #2b2a27;
+      --_color: var(--vn-primary);
+      --_paper: var(--vn-on-primary);
     }
     .seal {
       inline-size: var(--_size);
@@ -35,17 +33,17 @@ export class DemoSeal extends VunioElement {
       place-items: center;
       padding: 0;
       border: 0;
-      border-radius: 6px;
+      border-radius: var(--vn-radius-md);
       background: var(--_color);
       color: var(--_paper);
       box-shadow:
         inset 0 0 0 calc(var(--_size) * 0.05) var(--_color),
         inset 0 0 0 calc(var(--_size) * 0.075) var(--_paper);
-      font: 700 var(--_font) / 1.02 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+      font: 700 var(--_font) / 1.02 var(--vn-font-serif);
       cursor: pointer;
       transform: rotate(-2deg);
-      -webkit-mask: ${NOISE};
-      mask: ${NOISE};
+      -webkit-mask: var(--vn-mask-seal);
+      mask: var(--vn-mask-seal);
     }
     .chars {
       writing-mode: vertical-rl;

@@ -12,42 +12,42 @@ export class DemoField extends VunioFormElement {
   static styles = css`
     :host {
       display: block;
-      color: #2b2a27;
+      color: var(--vn-fg);
     }
     label {
       display: grid;
       gap: 6px;
     }
     .label {
-      font-size: 13px;
-      letter-spacing: 0.2em;
-      color: #8b847a;
+      font-size: var(--vn-font-size-sm);
+      letter-spacing: var(--vn-tracking-wider);
+      color: var(--vn-fg-muted);
     }
     input {
       inline-size: 100%;
       padding: 6px 2px;
       border: 0;
-      border-block-end: 1px solid rgba(43, 42, 39, 0.25);
+      border-block-end: var(--vn-border-thin) solid var(--vn-line-strong);
       background: transparent;
       font: inherit;
-      font-size: 17px;
+      font-size: var(--vn-font-size-lg);
       color: inherit;
       outline: none;
-      transition: border-color 0.3s;
+      transition: border-color var(--vn-duration-normal) var(--vn-ease-brush);
     }
     input:focus {
-      border-block-end-color: #2b2a27;
+      border-block-end-color: var(--vn-fg);
     }
     input::placeholder {
-      color: #b8b0a3;
+      color: var(--vn-fg-muted);
     }
     .error {
       min-block-size: 1.4em;
-      font-size: 12px;
-      color: #b5352a;
+      font-size: var(--vn-font-size-xs);
+      color: var(--vn-danger);
     }
     :host(:state(user-invalid)) input {
-      border-block-end-color: #b5352a;
+      border-block-end-color: var(--vn-danger);
     }
     :host(:disabled) {
       opacity: 0.5;

@@ -1,97 +1,104 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="auto">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Vunio 基类示例</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <title>Vunio 组件示例</title>
+    <!-- 尽早应用保存的主题，避免闪烁 -->
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem('vunio-theme') || 'auto';
+      } catch {}
+    </script>
+    <link rel="stylesheet" href="../themes/guofeng.css" />
+    <link rel="stylesheet" href="../themes/guofeng-fonts.css" />
     <style>
-      :root {
-        --paper: #f5efe3;
-        --ink: #2b2a27;
-        --ink-soft: #8b847a;
-        --line: rgba(43, 42, 39, 0.16);
-        --cinnabar: #b5352a;
-        color-scheme: light;
-      }
       * {
         box-sizing: border-box;
       }
       body {
         margin: 0;
-        background: var(--paper);
-        color: var(--ink);
-        font-family: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
-        line-height: 1.7;
       }
       main {
         max-inline-size: 760px;
         margin-inline: auto;
-        padding: 56px 16px 96px;
+        padding: var(--vn-space-8) 16px var(--vn-space-9);
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: var(--vn-space-4);
       }
       header h1 {
         margin: 0;
-        font: 400 clamp(40px, 9vw, 64px) / 1.1 'Ma Shan Zheng', 'STKaiti', 'KaiTi', serif;
-        letter-spacing: 0.08em;
+        font: 400 clamp(40px, 9vw, var(--vn-font-size-5xl)) / 1.1 var(--vn-font-brush);
+        letter-spacing: var(--vn-tracking-wide);
       }
       header p {
-        margin: 8px 0 0;
-        color: var(--ink-soft);
-        letter-spacing: 0.15em;
+        margin: var(--vn-space-2) 0 0;
+        color: var(--vn-fg-muted);
+        letter-spacing: var(--vn-tracking-wider);
+      }
+      header nav {
+        display: flex;
+        align-items: center;
+        gap: var(--vn-space-4);
+        font-size: var(--vn-font-size-sm);
+      }
+      a {
+        color: var(--vn-accent-fg);
       }
       section {
-        margin-block-start: 56px;
-        padding-block-start: 28px;
-        border-block-start: 1px solid var(--line);
+        margin-block-start: var(--vn-space-8);
+        padding-block-start: var(--vn-space-5);
+        border-block-start: var(--vn-border-thin) solid var(--vn-line);
       }
       h2 {
-        margin: 0 0 4px;
-        font-size: 20px;
-        letter-spacing: 0.12em;
+        margin: 0 0 var(--vn-space-1);
+        font-size: var(--vn-font-size-xl);
+        font-weight: var(--vn-weight-medium);
+        letter-spacing: var(--vn-tracking-wider);
       }
       h2 small {
-        color: var(--cinnabar);
-        font-size: 13px;
-        margin-inline-end: 10px;
+        margin-inline-end: var(--vn-space-3);
+        color: var(--vn-accent-fg);
+        font-size: var(--vn-font-size-sm);
       }
       .note {
-        margin: 0 0 20px;
-        color: var(--ink-soft);
-        font-size: 14px;
+        margin: 0 0 var(--vn-space-5);
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-sm);
       }
       .row {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: 20px;
+        gap: var(--vn-space-5);
       }
       pre {
-        margin: 20px 0 0;
-        padding: 14px 16px;
+        margin: var(--vn-space-5) 0 0;
+        padding: var(--vn-space-3) var(--vn-space-4);
         overflow-x: auto;
-        background: rgba(43, 42, 39, 0.04);
-        border-inline-start: 2px solid var(--cinnabar);
-        font: 13px/1.6 ui-monospace, 'SFMono-Regular', Menlo, monospace;
+        border-inline-start: 2px solid var(--vn-accent);
+        background: var(--vn-surface-sunken);
+        font: 13px / 1.6 var(--vn-font-mono);
       }
       .log {
-        margin-top: 12px;
-        min-height: 1.7em;
-        color: var(--ink-soft);
-        font-size: 14px;
+        min-block-size: 1.75em;
+        margin-block-start: var(--vn-space-3);
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-sm);
       }
       form {
         display: grid;
-        gap: 4px;
+        gap: var(--vn-space-1);
         max-inline-size: 420px;
       }
       fieldset {
         display: grid;
-        gap: 4px;
+        gap: var(--vn-space-1);
         margin: 0;
         padding: 0;
         border: 0;
@@ -99,47 +106,56 @@
       .actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
-        margin-block-start: 8px;
+        gap: var(--vn-space-3);
+        margin-block-start: var(--vn-space-2);
       }
       button.plain {
         padding: 6px 18px;
-        border: 1px solid var(--ink);
-        border-radius: 2px;
+        border: var(--vn-border-thin) solid var(--vn-primary);
+        border-radius: var(--vn-radius-sm);
         background: transparent;
-        color: var(--ink);
+        color: var(--vn-fg);
         font: inherit;
-        letter-spacing: 0.2em;
+        letter-spacing: var(--vn-tracking-wider);
         cursor: pointer;
       }
       button.plain.solid {
-        background: var(--ink);
-        color: var(--paper);
+        background: var(--vn-primary);
+        color: var(--vn-on-primary);
       }
       label.check {
         display: flex;
-        gap: 6px;
         align-items: center;
-        font-size: 14px;
-        color: var(--ink-soft);
+        gap: 6px;
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-sm);
+      }
+      label.check input {
+        accent-color: var(--vn-accent);
       }
       #ticker-box {
         min-block-size: 88px;
       }
       demo-poem-stats {
         display: block;
-        margin-block-start: 8px;
+        margin-block-start: var(--vn-space-2);
       }
       demo-anthology {
-        margin-block-start: 8px;
+        margin-block-start: var(--vn-space-2);
       }
     </style>
   </head>
   <body>
     <main>
       <header>
-        <h1>Vunio</h1>
-        <p>响应式组件示例 · 四个小组件</p>
+        <div>
+          <h1>Vunio</h1>
+          <p>响应式组件示例 · 四个小组件</p>
+        </div>
+        <nav>
+          <a href="./theme.html">设计系统</a>
+          <demo-theme-switch></demo-theme-switch>
+        </nav>
       </header>
 
       <section>
@@ -220,6 +236,8 @@ ${repeat(visible, (p) =&gt; p.id, (p) =&gt; html`&lt;li&gt;${p.text}&lt;/li&gt;`
       import './seal.js';
       import './field.js';
       import './anthology.js';
+      import './theme-switch.js';
+      import './stores/theme.js';
       import { stats } from './ticker.js';
 
       // 壹

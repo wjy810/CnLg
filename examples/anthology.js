@@ -12,25 +12,19 @@ import {
   visible,
 } from './stores/poems.js';
 
+// 风花雪月四个主题色，全部来自主题变量（昼夜自动切换）
 const palette = css`
-  :host {
-    --_ink: #2b2a27;
-    --_paper: #f6efe2;
-    --_muted: #8b847a;
-    --_line: rgba(43, 42, 39, 0.16);
-    --_accent: #b5352a;
-  }
   [data-theme='风'] {
-    --_c: #5f8a7a;
+    --_c: var(--vn-wind);
   }
   [data-theme='花'] {
-    --_c: #c4626f;
+    --_c: var(--vn-blossom-deep);
   }
   [data-theme='雪'] {
-    --_c: #4f6b85;
+    --_c: var(--vn-info);
   }
   [data-theme='月'] {
-    --_c: #b08d4a;
+    --_c: var(--vn-warning);
   }
 `;
 
@@ -42,7 +36,7 @@ export class DemoAnthology extends VunioElement {
     css`
       :host {
         display: block;
-        color: var(--_ink);
+        color: var(--vn-fg);
       }
       button {
         font: inherit;
@@ -59,19 +53,19 @@ export class DemoAnthology extends VunioElement {
         min-inline-size: 0;
         padding: 8px 2px;
         border: 0;
-        border-block-end: 1px solid rgba(43, 42, 39, 0.25);
+        border-block-end: var(--vn-border-thin) solid var(--vn-line-strong);
         background: transparent;
         font: inherit;
-        font-size: 16px;
+        font-size: var(--vn-font-size-md);
         color: inherit;
         outline: none;
-        transition: border-color 0.3s;
+        transition: border-color var(--vn-duration-normal) var(--vn-ease-brush);
       }
       .draft:focus {
-        border-block-end-color: var(--_ink);
+        border-block-end-color: var(--vn-fg);
       }
       .draft::placeholder {
-        color: #b8b0a3;
+        color: var(--vn-fg-muted);
       }
       .themes {
         display: flex;
@@ -81,14 +75,14 @@ export class DemoAnthology extends VunioElement {
         inline-size: 32px;
         block-size: 32px;
         padding: 0;
-        border: 1px solid var(--_line);
-        border-radius: 50%;
+        border: var(--vn-border-thin) solid var(--vn-line-strong);
+        border-radius: var(--vn-radius-full);
         background: transparent;
-        color: var(--_muted);
+        color: var(--vn-fg-muted);
         transition:
-          background-color 0.2s,
-          color 0.2s,
-          border-color 0.2s;
+          background-color var(--vn-duration-fast) var(--vn-ease-brush),
+          color var(--vn-duration-fast) var(--vn-ease-brush),
+          border-color var(--vn-duration-fast) var(--vn-ease-brush);
       }
       .chip:hover {
         border-color: var(--_c);
@@ -97,15 +91,15 @@ export class DemoAnthology extends VunioElement {
       .chip[aria-pressed='true'] {
         border-color: var(--_c);
         background: var(--_c);
-        color: var(--_paper);
+        color: var(--vn-surface);
       }
       .submit {
         padding: 6px 20px;
         border: 0;
-        border-radius: 2px;
-        background: var(--_ink);
-        color: var(--_paper);
-        letter-spacing: 0.3em;
+        border-radius: var(--vn-radius-sm);
+        background: var(--vn-primary);
+        color: var(--vn-on-primary);
+        letter-spacing: var(--vn-tracking-widest);
       }
       .submit:disabled {
         opacity: 0.3;
@@ -116,11 +110,11 @@ export class DemoAnthology extends VunioElement {
         flex-wrap: wrap;
         align-items: center;
         gap: 6px 18px;
-        margin-block: 16px 6px;
+        margin-block: var(--vn-space-4) 6px;
         padding-block-end: 10px;
-        border-block-end: 1px solid var(--_line);
-        font-size: 14px;
-        color: var(--_muted);
+        border-block-end: var(--vn-border-thin) solid var(--vn-line);
+        font-size: var(--vn-font-size-sm);
+        color: var(--vn-fg-muted);
       }
       .link {
         padding: 0;
@@ -128,11 +122,11 @@ export class DemoAnthology extends VunioElement {
         background: none;
         color: inherit;
         text-decoration: underline;
-        text-decoration-color: var(--_line);
+        text-decoration-color: var(--vn-line-strong);
         text-underline-offset: 4px;
       }
       .link:hover {
-        color: var(--_ink);
+        color: var(--vn-fg);
       }
       .toggle {
         display: inline-flex;
@@ -142,14 +136,14 @@ export class DemoAnthology extends VunioElement {
       }
       .toggle input {
         margin: 0;
-        accent-color: var(--_accent);
+        accent-color: var(--vn-accent);
       }
       .moves {
         margin-inline-start: auto;
-        font-size: 12px;
+        font-size: var(--vn-font-size-xs);
       }
       .moves b {
-        color: var(--_accent);
+        color: var(--vn-accent-fg);
       }
       .list {
         margin: 0;
@@ -162,15 +156,15 @@ export class DemoAnthology extends VunioElement {
         align-items: center;
         gap: 12px;
         padding: 12px 2px;
-        border-block-end: 1px dashed var(--_line);
+        border-block-end: var(--vn-border-thin) dashed var(--vn-line);
         /* 新插入或被移动的行会重新播放：直观看到 repeat 只动了哪些节点 */
-        animation: ink-in 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        animation: ink-in var(--vn-duration-ink) var(--vn-ease-ink);
       }
       @keyframes ink-in {
         from {
           opacity: 0;
           filter: blur(3px);
-          background-color: rgba(181, 53, 42, 0.14);
+          background-color: var(--vn-accent-wash);
         }
       }
       .theme {
@@ -178,53 +172,53 @@ export class DemoAnthology extends VunioElement {
         place-items: center;
         inline-size: 26px;
         block-size: 26px;
-        border-radius: 50%;
+        border-radius: var(--vn-radius-full);
         background: var(--_c);
-        color: var(--_paper);
+        color: var(--vn-surface);
         font-size: 13px;
       }
       .text {
-        font-size: 17px;
+        font-size: var(--vn-font-size-lg);
         line-height: 1.6;
-        letter-spacing: 0.08em;
+        letter-spacing: var(--vn-tracking-wide);
       }
       .fav {
         inline-size: 28px;
         block-size: 28px;
         padding: 0;
-        border: 1px solid rgba(181, 53, 42, 0.5);
-        border-radius: 3px;
+        border: var(--vn-border-thin) solid var(--vn-accent-fg);
+        border-radius: var(--vn-radius-sm);
         background: transparent;
-        color: var(--_accent);
+        color: var(--vn-accent-fg);
         font-size: 13px;
         transition:
-          background-color 0.2s,
-          color 0.2s;
+          background-color var(--vn-duration-fast) var(--vn-ease-brush),
+          color var(--vn-duration-fast) var(--vn-ease-brush);
       }
       .fav[aria-pressed='true'] {
-        border-color: var(--_accent);
-        background: var(--_accent);
-        color: var(--_paper);
+        border-color: var(--vn-accent);
+        background: var(--vn-accent);
+        color: var(--vn-on-accent);
       }
       .remove {
         inline-size: 28px;
         block-size: 28px;
         padding: 0;
         border: 0;
-        border-radius: 50%;
+        border-radius: var(--vn-radius-full);
         background: none;
-        color: var(--_muted);
+        color: var(--vn-fg-muted);
         font-size: 18px;
         line-height: 1;
       }
       .remove:hover {
-        background: rgba(43, 42, 39, 0.06);
-        color: var(--_ink);
+        background: var(--vn-surface-sunken);
+        color: var(--vn-fg);
       }
       .empty {
-        margin: 20px 0 0;
-        color: var(--_muted);
-        letter-spacing: 0.1em;
+        margin: var(--vn-space-5) 0 0;
+        color: var(--vn-fg-muted);
+        letter-spacing: var(--vn-tracking-wide);
       }
     `,
   ];
@@ -332,13 +326,13 @@ export class DemoPoemStats extends VunioElement {
 
   static styles = css`
     :host {
-      font-size: 13px;
-      letter-spacing: 0.1em;
-      color: #8b847a;
+      font-size: var(--vn-font-size-sm);
+      letter-spacing: var(--vn-tracking-wide);
+      color: var(--vn-fg-muted);
     }
     b {
-      font-weight: 600;
-      color: #b5352a;
+      font-weight: var(--vn-weight-medium);
+      color: var(--vn-accent-fg);
     }
   `;
 

@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>古风设计系统 · Vunio</title>
+    <!-- 尽早应用保存的主题，避免闪烁 -->
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem('vunio-theme') || 'auto';
+      } catch {}
+    </script>
+    <link rel="stylesheet" href="../themes/guofeng.css" />
+    <link rel="stylesheet" href="../themes/guofeng-fonts.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      main {
+        max-inline-size: 980px;
+        margin-inline: auto;
+        padding: var(--vn-space-8) 16px var(--vn-space-9);
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: var(--vn-space-4);
+      }
+      h1 {
+        margin: 0;
+        font: 400 clamp(40px, 9vw, var(--vn-font-size-5xl)) / 1.1 var(--vn-font-brush);
+        letter-spacing: var(--vn-tracking-wide);
+      }
+      header p {
+        margin: var(--vn-space-2) 0 0;
+        color: var(--vn-fg-muted);
+        letter-spacing: var(--vn-tracking-wider);
+      }
+      section {
+        margin-block-start: var(--vn-space-8);
+      }
+      h2 {
+        display: flex;
+        align-items: baseline;
+        gap: var(--vn-space-3);
+        margin: 0 0 var(--vn-space-2);
+        padding-block-end: var(--vn-space-3);
+        border-block-end: var(--vn-border-thin) solid var(--vn-line);
+        font-size: var(--vn-font-size-xl);
+        font-weight: var(--vn-weight-medium);
+        letter-spacing: var(--vn-tracking-wider);
+      }
+      h2 small {
+        color: var(--vn-accent-fg);
+        font-size: var(--vn-font-size-sm);
+      }
+      h3 {
+        margin: var(--vn-space-5) 0 var(--vn-space-3);
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-sm);
+        font-weight: var(--vn-weight-regular);
+        letter-spacing: var(--vn-tracking-wider);
+      }
+      .lead {
+        max-inline-size: var(--vn-measure-wide);
+        margin: var(--vn-space-3) 0 0;
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-sm);
+      }
+      code {
+        font-family: var(--vn-font-mono);
+        font-size: 0.86em;
+      }
+
+      /* 色板 */
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+        gap: var(--vn-space-4) var(--vn-space-3);
+      }
+      .swatch {
+        margin: 0;
+      }
+      .swatch .chip {
+        block-size: 64px;
+        border-radius: var(--vn-radius-md);
+        box-shadow: inset 0 0 0 1px var(--vn-line);
+      }
+      .swatch figcaption {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-block-start: var(--vn-space-2);
+        font-size: var(--vn-font-size-sm);
+      }
+      .swatch figcaption code {
+        color: var(--vn-fg-muted);
+      }
+
+      /* 语义令牌 */
+      .tokens {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 0 var(--vn-space-6);
+      }
+      .token {
+        display: grid;
+        grid-template-columns: 22px 1fr auto;
+        align-items: center;
+        gap: var(--vn-space-3);
+        padding: var(--vn-space-2) 0;
+        border-block-end: var(--vn-border-thin) dashed var(--vn-line);
+        font-size: var(--vn-font-size-sm);
+      }
+      .token .dot {
+        inline-size: 22px;
+        block-size: 22px;
+        border-radius: var(--vn-radius-full);
+        box-shadow: inset 0 0 0 1px var(--vn-line);
+      }
+      .token .value {
+        color: var(--vn-fg-muted);
+      }
+
+      /* 字体 */
+      .specimen {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: var(--vn-space-6);
+        align-items: start;
+      }
+      @media (max-width: 720px) {
+        .specimen {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      .brush {
+        margin: 0;
+        font: 400 var(--vn-font-size-5xl) / var(--vn-leading-tight) var(--vn-font-brush);
+      }
+      .prose {
+        max-inline-size: var(--vn-measure-normal);
+        margin: 0;
+        font-size: var(--vn-font-size-md);
+        line-height: var(--vn-leading-normal);
+      }
+      .quote {
+        margin: var(--vn-space-4) 0 0;
+        padding-inline-start: var(--vn-space-4);
+        border-inline-start: 2px solid var(--vn-accent);
+        color: var(--vn-fg-muted);
+        font-family: var(--vn-font-kai);
+        font-size: var(--vn-font-size-lg);
+      }
+      .ladder {
+        display: grid;
+        gap: var(--vn-space-2);
+      }
+      .ladder div {
+        display: grid;
+        grid-template-columns: 64px 1fr;
+        align-items: baseline;
+        gap: var(--vn-space-3);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .ladder code {
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-xs);
+      }
+
+      /* 间距、圆角、阴影 */
+      .three {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--vn-space-6);
+      }
+      @media (max-width: 720px) {
+        .three {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      .space-row {
+        display: grid;
+        grid-template-columns: 72px 1fr;
+        align-items: center;
+        gap: var(--vn-space-3);
+        margin-block-end: var(--vn-space-2);
+        font-size: var(--vn-font-size-xs);
+        color: var(--vn-fg-muted);
+      }
+      .space-row span:last-child {
+        block-size: 10px;
+        background: var(--vn-accent-wash);
+        box-shadow: inset 0 0 0 1px var(--vn-accent-fg);
+      }
+      .radii {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--vn-space-3);
+      }
+      .radius {
+        display: grid;
+        place-items: end start;
+        inline-size: 64px;
+        block-size: 64px;
+        padding: var(--vn-space-1) var(--vn-space-2);
+        border: var(--vn-border-thin) solid var(--vn-line-strong);
+        font-size: var(--vn-font-size-xs);
+        color: var(--vn-fg-muted);
+      }
+      .papers {
+        display: grid;
+        gap: var(--vn-space-4);
+      }
+      .paper {
+        padding: var(--vn-space-4);
+        border-radius: var(--vn-radius-md);
+        background: var(--vn-surface);
+        font-size: var(--vn-font-size-sm);
+      }
+      .paper b {
+        display: block;
+        margin-block-end: var(--vn-space-1);
+        letter-spacing: var(--vn-tracking-wider);
+      }
+      .paper span {
+        color: var(--vn-fg-muted);
+      }
+
+      /* 动效 */
+      .ease {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        align-items: center;
+        gap: var(--vn-space-4);
+        padding: var(--vn-space-3) 0;
+        border-block-end: var(--vn-border-thin) dashed var(--vn-line);
+      }
+      @media (max-width: 560px) {
+        .ease {
+          grid-template-columns: minmax(0, 1fr);
+          gap: var(--vn-space-2);
+        }
+      }
+      .ease-name b {
+        display: block;
+        letter-spacing: var(--vn-tracking-wider);
+      }
+      .ease-name small {
+        color: var(--vn-fg-muted);
+      }
+      .track {
+        position: relative;
+        block-size: 28px;
+        border-radius: var(--vn-radius-full);
+        background: var(--vn-surface-sunken);
+      }
+      .track i {
+        position: absolute;
+        inset-block-start: 4px;
+        inset-inline-start: 4px;
+        inline-size: 20px;
+        block-size: 20px;
+        border-radius: var(--vn-radius-full);
+        background: var(--vn-accent);
+        transition: inset-inline-start var(--vn-duration-ink) var(--_ease);
+      }
+      .moved .track i {
+        inset-inline-start: calc(100% - 24px);
+      }
+      .play {
+        margin-block-start: var(--vn-space-4);
+        padding: var(--vn-space-2) var(--vn-space-5);
+        border: 0;
+        border-radius: var(--vn-radius-sm);
+        background: var(--vn-primary);
+        color: var(--vn-on-primary);
+        font: inherit;
+        letter-spacing: var(--vn-tracking-wider);
+        cursor: pointer;
+      }
+
+      /* 纹理 */
+      .seal {
+        display: grid;
+        place-items: center;
+        inline-size: 104px;
+        block-size: 104px;
+        border-radius: var(--vn-radius-md);
+        background: var(--vn-accent);
+        color: var(--vn-on-accent);
+        box-shadow:
+          inset 0 0 0 5px var(--vn-accent),
+          inset 0 0 0 8px var(--vn-on-accent);
+        font: 700 32px / 1.05 var(--vn-font-serif);
+        transform: rotate(-2deg);
+        -webkit-mask: var(--vn-mask-seal);
+        mask: var(--vn-mask-seal);
+      }
+      .seal span {
+        /* 两字一列，从右往左读：风花 / 雪月 */
+        writing-mode: vertical-rl;
+        inline-size: 2.1em;
+        text-align: center;
+      }
+      .brush-line {
+        block-size: 10px;
+        background: var(--vn-fg);
+        -webkit-mask: var(--vn-mask-brush) center / 100% 100% no-repeat;
+        mask: var(--vn-mask-brush) center / 100% 100% no-repeat;
+      }
+      .paper-sample {
+        block-size: 104px;
+        border-radius: var(--vn-radius-md);
+        background-color: var(--vn-bg);
+        background-image: var(--vn-texture-paper);
+        box-shadow: inset 0 0 0 1px var(--vn-line);
+      }
+      .caption {
+        margin-block-start: var(--vn-space-2);
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-xs);
+      }
+
+      /* 对比度 */
+      table {
+        inline-size: 100%;
+        border-collapse: collapse;
+        font-size: var(--vn-font-size-sm);
+      }
+      th,
+      td {
+        padding: var(--vn-space-2) var(--vn-space-3);
+        border-block-end: var(--vn-border-thin) solid var(--vn-line);
+        text-align: start;
+      }
+      th {
+        color: var(--vn-fg-muted);
+        font-weight: var(--vn-weight-regular);
+      }
+      td.num {
+        font-variant-numeric: tabular-nums;
+      }
+      .sample {
+        display: inline-block;
+        padding: 0 var(--vn-space-2);
+        border-radius: var(--vn-radius-sm);
+      }
+      .pass {
+        color: var(--vn-success);
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      footer {
+        margin-block-start: var(--vn-space-8);
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-sm);
+      }
+      a {
+        color: var(--vn-accent-fg);
+      }
+    </style>
+  </head>
+  <body>
+    <main id="app"></main>
+
+    <script type="module">
+      import { html, render, signal, computed } from '../src/index.js';
+      import { palette, themes, scales, easeNotes, contrastRules } from '../themes/guofeng.tokens.js';
+      import { resolvedTheme } from './stores/theme.js';
+      import './theme-switch.js';
+
+      const groups = [
+        ['纸', ['juanbai', 'xuanzhi', 'chabai', 'xiangse']],
+        ['墨分五色', ['qingmo', 'danmo', 'zhongmo', 'nongmo', 'jiaomo']],
+        ['印与彩', ['zhusha', 'yanzhi', 'taoyao', 'haitang', 'zhuqing', 'qingci', 'nijin', 'dailan', 'yuebai', 'shuang']],
+        ['夜', ['xuanqing', 'yese', 'daihei', 'yinhui', 'yueguang', 'dan', 'feise', 'bise', 'jin', 'bilan']],
+      ];
+
+      const theme = computed(() => themes[resolvedTheme.value]);
+      const hexOf = (value) => (typeof value === 'object' ? palette[value.ref].hex : value);
+      const describe = (value) => (typeof value === 'object' ? `${palette[value.ref].name} ${palette[value.ref].hex}` : value);
+
+      // WCAG 对比度
+      const luminance = (hex) => {
+        const [r, g, b] = [1, 3, 5]
+          .map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+          .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      };
+      const contrast = (a, b) => {
+        const [x, y] = [luminance(a), luminance(b)].sort((p, q) => q - p);
+        return (x + 0.05) / (y + 0.05);
+      };
+      const contrastRows = computed(() =>
+        contrastRules.map(([fg, bg, min, usage]) => {
+          const ratio = contrast(hexOf(theme.value.colors[fg]), hexOf(theme.value.colors[bg]));
+          return { fg, bg, min, usage, ratio, pass: ratio >= min };
+        }),
+      );
+
+      const moved = signal(false);
+      const sizes = Object.keys(scales['font-size']);
+
+      const view = html`
+        <header>
+          <div>
+            <h1>古风设计系统</h1>
+            <p>纸 · 墨 · 印 · 四时</p>
+          </div>
+          <demo-theme-switch></demo-theme-switch>
+        </header>
+        <p class="lead">
+          留白、墨分五色、一点朱。组件只使用语义令牌，切换右上角的昼 / 夜，整页（包括 Shadow DOM 里的组件）随之变化。
+          设计说明见 docs/design/guofeng.md。
+        </p>
+
+        <section>
+          <h2><small>壹</small>原色</h2>
+          ${groups.map(
+            ([title, keys]) => html`
+              <h3>${title}</h3>
+              <div class="swatches">
+                ${keys.map(
+                  (key) => html`
+                    <figure class="swatch">
+                      <div class="chip" style=${{ background: palette[key].hex }}></div>
+                      <figcaption><b>${palette[key].name}</b><code>${palette[key].hex}</code></figcaption>
+                    </figure>
+                  `,
+                )}
+              </div>
+            `,
+          )}
+        </section>
+
+        <section>
+          <h2><small>贰</small>语义令牌 <span class="lead" style="margin: 0">当前：${() => theme.value.label}</span></h2>
+          <div class="tokens">
+            ${Object.keys(themes.day.colors).map(
+              (name) => html`
+                <div class="token">
+                  <span class="dot" style=${{ background: `var(--vn-${name})` }}></span>
+                  <code>--vn-${name}</code>
+                  <span class="value">${() => describe(theme.value.colors[name])}</span>
+                </div>
+              `,
+            )}
+          </div>
+        </section>
+
+        <section>
+          <h2><small>叁</small>字体</h2>
+          <div class="specimen">
+            <div>
+              <p class="brush">风花雪月</p>
+              <p class="caption">--vn-font-brush · 仅用于 ≥ 28px 的标题</p>
+              <h3>正文 · --vn-font-serif</h3>
+              <p class="prose">
+                清风徐来，水波不兴。举酒属客，诵明月之诗，歌窈窕之章。少焉，月出于东山之上，徘徊于斗牛之间。白露横江，水光接天。
+              </p>
+              <p class="quote">人生如逆旅，我亦是行人。</p>
+            </div>
+            <div class="ladder">
+              ${sizes.map(
+                (key) => html`
+                  <div>
+                    <code>${key} · ${scales['font-size'][key]}</code>
+                    <span style=${{ fontSize: `var(--vn-font-size-${key})` }}>落霞孤鹜</span>
+                  </div>
+                `,
+              )}
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2><small>肆</small>间距 · 圆角 · 层次</h2>
+          <div class="three">
+            <div>
+              <h3>间距</h3>
+              ${Object.entries(scales.space)
+                .filter(([key]) => key !== '0')
+                .map(
+                  ([key, value]) => html`
+                    <div class="space-row"><span>${key} · ${value}</span><span style=${{ inlineSize: value }}></span></div>
+                  `,
+                )}
+            </div>
+            <div>
+              <h3>圆角</h3>
+              <div class="radii">
+                ${Object.entries(scales.radius).map(
+                  ([key, value]) => html`<div class="radius" style=${{ borderRadius: value === '999px' ? '50%' : value }}>${key}</div>`,
+                )}
+              </div>
+            </div>
+            <div>
+              <h3>层次</h3>
+              <div class="papers">
+                <div class="paper" style="box-shadow: var(--vn-shadow-1)"><b>贴纸</b><span>--vn-shadow-1</span></div>
+                <div class="paper" style="box-shadow: var(--vn-shadow-2)"><b>浮纸</b><span>--vn-shadow-2 · 卡片悬停、下拉</span></div>
+                <div class="paper" style="box-shadow: var(--vn-shadow-3)"><b>卷轴</b><span>--vn-shadow-3 · 弹窗</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2><small>伍</small>动效</h2>
+          <div class=${() => (moved.value ? 'moved' : '')}>
+            ${Object.entries(scales.ease).map(
+              ([key, value]) => html`
+                <div class="ease" style=${{ '--_ease': value }}>
+                  <div class="ease-name"><b>${easeNotes[key].split('：')[0]}</b><small>--vn-ease-${key}</small></div>
+                  <div>
+                    <div class="track"><i></i></div>
+                    <p class="caption">${easeNotes[key].split('：')[1]}</p>
+                  </div>
+                </div>
+              `,
+            )}
+          </div>
+          <button class="play" @click=${() => (moved.value = !moved.value)}>${() => (moved.value ? '收' : '演示')}</button>
+        </section>
+
+        <section>
+          <h2><small>陆</small>纹理</h2>
+          <div class="three">
+            <div>
+              <div class="paper-sample"></div>
+              <p class="caption">--vn-texture-paper · 宣纸纤维</p>
+            </div>
+            <div>
+              <div class="seal" role="img" aria-label="印章：风花雪月"><span>风花雪月</span></div>
+              <p class="caption">--vn-mask-seal · 印泥斑驳</p>
+            </div>
+            <div>
+              <div class="brush-line" style="margin-block-start: 48px"></div>
+              <p class="caption" style="margin-block-start: 46px">--vn-mask-brush · 两头尖的笔触</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2><small>柒</small>对比度 <span class="lead" style="margin: 0">WCAG 2.1 AA · ${() => theme.value.label}</span></h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>用途</th><th>示例</th><th>对比度</th><th>要求</th><th></th></tr>
+              </thead>
+              <tbody>
+                ${() =>
+                  contrastRows.value.map(
+                    (row) => html`
+                      <tr>
+                        <td>${row.usage}</td>
+                        <td>
+                          <span class="sample" style=${{ color: `var(--vn-${row.fg})`, background: `var(--vn-${row.bg})` }}>
+                            ${row.fg} / ${row.bg}
+                          </span>
+                        </td>
+                        <td class="num">${row.ratio.toFixed(2)}</td>
+                        <td class="num">≥ ${row.min}</td>
+                        <td class=${row.pass ? 'pass' : ''}>${row.pass ? '达标' : '不足'}</td>
+                      </tr>
+                    `,
+                  )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <footer>Vunio · <a href="./">组件示例</a></footer>
+      `;
+
+      render(view, document.getElementById('app'));
+    </script>
+  </body>
+</html>

@@ -16,8 +16,8 @@ export class DemoTicker extends VunioElement {
       inline-size: 88px;
       aspect-ratio: 1;
       border-radius: 50%;
-      background: radial-gradient(circle, #fbf7ee 55%, #ece3d2 100%);
-      box-shadow: inset 0 0 0 1px rgba(43, 42, 39, 0.2);
+      background: radial-gradient(circle, var(--vn-surface) 55%, var(--vn-surface-sunken) 100%);
+      box-shadow: inset 0 0 0 1px var(--vn-line);
       position: relative;
     }
     .hand {
@@ -27,14 +27,14 @@ export class DemoTicker extends VunioElement {
       inline-size: 3px;
       block-size: calc(50% - 10px);
       border-radius: 3px;
-      background: linear-gradient(#2b2a27, rgba(43, 42, 39, 0.2));
+      background: linear-gradient(var(--vn-fg), transparent);
       transform-origin: 50% 100%;
     }
     .dot {
       inline-size: 8px;
       aspect-ratio: 1;
       border-radius: 50%;
-      background: #b5352a;
+      background: var(--vn-accent);
     }
   `;
 

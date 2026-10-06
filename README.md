@@ -10,7 +10,7 @@
 - **资源有主**：事件、计时器、动画、订阅都归组件所有，组件移除时自动释放。
 - **零依赖、零构建**：直接用浏览器的 ES 模块运行。
 
-> 当前进度：核心基类、响应式内核、响应式模板已完成。下一步：古风设计系统。详见 [路线图](docs/ROADMAP.md)。
+> 当前进度：核心基类、响应式内核、响应式模板、古风设计系统已完成。下一步：风花雪月效果。详见 [路线图](docs/ROADMAP.md)。
 
 ## 快速开始
 
@@ -18,8 +18,18 @@ ES 模块不能用 `file://` 直接打开，需要一个本地服务器：
 
 ```bash
 npm install          # 只安装测试用的 Playwright
-npm run dev          # http://localhost:5173/examples/
-npm test             # 测试（signals 在 Node 中运行，其余在浏览器中运行）
+npm run dev          # 组件示例 http://localhost:5173/examples/
+                     # 设计系统 http://localhost:5173/examples/theme.html
+npm test             # 测试（signals、主题检查在 Node 中运行，其余在浏览器中运行）
+npm run build:theme  # 修改主题令牌后重新生成 CSS 和文档表格
+```
+
+页面里引入主题：
+
+```html
+<html data-theme="auto">   <!-- day | night | auto（跟随系统） -->
+<link rel="stylesheet" href="themes/guofeng.css" />
+<link rel="stylesheet" href="themes/guofeng-fonts.css" />  <!-- 可选：网络字体 -->
 ```
 
 ## 写一个组件
@@ -122,6 +132,18 @@ html`
 
 设计细节见 [RFC 0002](docs/rfc/0002-templates.md)。
 
+## 古风设计系统
+
+纸、墨、印、四时。组件只使用语义令牌（`--vn-fg`、`--vn-accent`、`--vn-space-4`……），
+切换 `data-theme` 时整页连同 Shadow DOM 里的组件一起换主题，组件不需要写任何代码。
+
+- **昼 / 夜两套主题**，38 组颜色搭配全部满足 WCAG AA 对比度，由测试保证。
+- **令牌是数据**：`themes/guofeng.tokens.js` 是唯一来源，CSS 和文档表格都由它生成，不会互相对不上。
+- **减少动态效果**：用户开启后，主题把所有动效时长变为 1ms。
+- 宣纸纹理、印泥斑驳、笔触线条都是内联 SVG，不发网络请求。
+
+设计说明见 [docs/design/guofeng.md](docs/design/guofeng.md)，可视化展示见 `examples/theme.html`。
+
 ## 生命周期
 
 ```
@@ -211,12 +233,20 @@ src/
   core/template.js       响应式模板：html / svg / when / repeat / render
   core/props.js          属性 ↔ attribute ↔ signal
   core/styles.js         共享样式表
-examples/                示例组件、store 和演示页
-tests/                   测试（signals 在 Node 中，其余在浏览器中）
+themes/
+  guofeng.tokens.js      古风主题令牌（唯一来源）
+  guofeng.css            生成的主题 CSS
+  guofeng-fonts.css      可选的网络字体
+scripts/
+  serve.js               本地服务器
+  build-theme.js         生成主题 CSS、刷新文档表格、检查对比度
+examples/                示例组件、store、组件示例页、设计系统展示页
+tests/                   测试（signals、主题检查在 Node 中，其余在浏览器中）
 docs/
   ROADMAP.md             设计原则、里程碑、验收标准
   COMPONENT_SPEC.md      组件规范（也是给 AI 的提示词）
-  rfc/                   设计文档
+  rfc/                   框架设计文档
+  design/guofeng.md      古风设计系统
 ```
 
 ## 浏览器支持
