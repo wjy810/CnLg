@@ -16,6 +16,7 @@
   "include": [
     "src/core",
     "src/effects",
+    "src/router",
     "src/index.js"
   ]
 }

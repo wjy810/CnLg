@@ -6,5 +6,6 @@
  */
 export * from './core/index.js';
 export * from './effects/index.js';
+export * from './router/index.js';
 
 export const version = '0.1.0';

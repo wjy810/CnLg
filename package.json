@@ -10,7 +10,8 @@
     "./effects": "./src/effects/index.js",
     "./components": "./src/components/index.js",
     "./components/*": "./src/components/*",
-    "./themes/*": "./themes/*"
+    "./themes/*": "./themes/*",
+    "./router": "./src/router/index.js"
   },
   "files": [
     "src",
