@@ -31,7 +31,7 @@ export default () => html`
     }
   </style>
   <h1>组件</h1>
-  <p class="lead">第一批十二件，加上天气背景。全部用主题令牌，昼夜自动切换；表单组件直接放进原生 &lt;form&gt;。</p>
+  <p class="lead">二十五件组件。全部只用主题契约里的变量，古风、赛博两套主题与昼夜都成立；表单组件直接放进原生 &lt;form&gt;，键盘与读屏遵循 WAI-ARIA APG。</p>
   ${code(`import 'vunio/components';   // 注册全部组件`)}
   ${groups.map(
     (group) => html`

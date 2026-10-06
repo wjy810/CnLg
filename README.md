@@ -10,7 +10,7 @@
 - **资源有主**：事件、计时器、动画、订阅都归组件所有，组件移除时自动释放。
 - **零依赖、零构建**：直接用浏览器的 ES 模块运行。
 
-> 当前进度：核心基类、响应式内核、响应式模板、古风与赛博两套主题（主题契约）、点击效果与天气、第一批 12 个组件、路由与文档站已完成；CI 覆盖三种浏览器引擎。详见 [路线图](docs/ROADMAP.md)。
+> 当前进度：核心基类、响应式内核、响应式模板、古风与赛博两套主题（主题契约）、点击效果与天气、25 个组件、路由与文档站已完成；CI 覆盖三种浏览器引擎。详见 [路线图](docs/ROADMAP.md)。
 
 ## 快速开始
 
@@ -189,8 +189,20 @@ html`
 | `vn-modal` | 基于原生 `<dialog>` 的立轴，打开时向上下展开 |
 | `toast()` | 带小印的消息：讯 · 成 · 慎 · 误 |
 | `vn-sky` | 风、花、雪、雨天气背景，可加一轮月亮 |
+| `vn-tag` | 标签：六种颜色，可移除 |
+| `vn-progress` | 进度：主题的线条逐渐写满；不确定进度来回游走 |
+| `vn-breadcrumb` | 面包屑：最后一项是当前页 |
+| `vn-tabs` | 标签页：方向键切换，当前标签下的线滑过去 |
+| `vn-pagination` | 分页：长列表折叠为省略号 |
+| `vn-textarea` | 多行输入：与输入框相同的校验与字数统计，可随内容长高 |
+| `vn-radio-group` | 单选：Tab 只停在选中项，方向键移动并选中 |
+| `vn-slider` | 滑块：拖、点、方向键 / PageUp / Home / End |
+| `vn-tooltip` | 提示：悬停或聚焦时显示，文字同时给读屏 |
+| `vn-drawer` | 抽屉：从任一边缘滑出，行为与弹窗一致 |
+| `vn-collapse` | 折叠面板：原生 details，可设为手风琴 |
+| `vn-timeline` | 时间线：圆点或小印 |
 
-所有表单组件直接放进原生 `<form>`，支持 `FormData`、`reset`、`<fieldset disabled>` 和校验。完整 API 见 [RFC 0004](docs/rfc/0004-components.md)，效果见 `examples/components.html`。
+所有表单组件直接放进原生 `<form>`，支持 `FormData`、`reset`、`<fieldset disabled>` 和校验；键盘与读屏遵循 WAI-ARIA APG。完整 API 见 [RFC 0004](docs/rfc/0004-components.md)、[RFC 0007](docs/rfc/0007-components-2.md) 与文档站，效果见 `examples/components.html`。
 
 ## 效果
 
@@ -374,7 +386,7 @@ docs/
 | `vunio/router`（不含 core） | 5.4 KB | 2.5 KB | 2.2 KB |
 | `vunio/effects`（不含 core，六种点击效果 + 四种天气） | 10.8 KB | 4.0 KB | 3.6 KB |
 | `vunio`（以上全部） | 45.9 KB | 16.5 KB | 14.8 KB |
-| `vunio/components`（13 个组件，含 core） | 90.3 KB | 26.0 KB | 22.6 KB |
+| `vunio/components`（25 个组件，含 core） | 130.3 KB | 35.1 KB | 29.1 KB |
 
 ## 浏览器支持
 

@@ -1,6 +1,6 @@
 # RFC 0007：第二批组件
 
-- 状态：实施中
+- 状态：已实现
 - 依赖：[RFC 0004 第一批组件](0004-components.md) · [RFC 0006 主题契约](0006-theme-contract.md) · [组件规范](../COMPONENT_SPEC.md)
 
 ## 1. 目标
