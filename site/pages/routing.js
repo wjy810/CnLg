@@ -32,6 +32,7 @@ render(html\`<main>\${router.outlet()}</main>\`, document.body);`)}
   <h2>导航</h2>
   ${code(`router.navigate('/poems/7');
 router.navigate('/search?q=月', { replace: true });
+router.setQuery({ q: '月', page: null });        // 只改查询参数：不滚动、不抢焦点
 router.href('/poems/7');                         // '#/poems/7'
 router.isActive('/components');                  // 响应式，用于导航高亮
 router.route.value;                              // { path, params, query, hash, def }`)}

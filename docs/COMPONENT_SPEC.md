@@ -129,6 +129,8 @@ VnExample.define();
 
 **副作用与资源**
 - 依赖数据的副作用用 `this.effect(fn)`，写在 `mounted()` 里；组件移除时自动释放。
+- effect 只依赖 signal，不要依赖“这一轮刚渲染出来的 DOM”：组件可能是在别的 effect 里渲染的（例如路由页面），
+  那时模板要等这一轮更新结束才变化。需要测量或操作新渲染的节点时，放进 `queueMicrotask`。
 - 事件、计时器、动画帧、Observer、动画**只能**用基类工具创建：
   模板里的 `@event`，或 `this.on` / `this.timeout` / `this.loop` / `this.observeResize` /
   `this.observeIntersection` / `this.observeMutation` / `this.animate`；其他资源用 `this.onCleanup` 注册释放。

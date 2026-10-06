@@ -23,7 +23,7 @@ async function visit(t, path, theme) {
   return page;
 }
 
-const PAGES = ['site/#/', 'site/#/start', 'site/#/components/input', 'site/#/design', 'examples/components.html', 'examples/'];
+const PAGES = ['site/#/', 'site/#/start', 'site/#/components/input', 'site/#/design', 'examples/components.html', 'examples/', 'examples/app/#/', 'examples/app/#/poem/7', 'examples/app/#/new'];
 
 for (const theme of ['day', 'night']) {
   for (const path of PAGES) {

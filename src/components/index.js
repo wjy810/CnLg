@@ -11,6 +11,7 @@ export { VnSwitch } from './switch.js';
 export { VnSelect } from './select.js';
 export { VnModal } from './modal.js';
 export { VnToaster, toast } from './toast.js';
+export { confirm } from './confirm.js';
 export { VnSky } from './sky.js';
 // 第二批（docs/rfc/0007-components-2.md）
 export { VnTag } from './tag.js';

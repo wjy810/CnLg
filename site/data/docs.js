@@ -5,7 +5,7 @@ export const groups = [
   { title: '基础', items: ['button', 'heading', 'card', 'stack', 'divider', 'tag'] },
   { title: '导航', items: ['tabs', 'breadcrumb', 'pagination'] },
   { title: '表单', items: ['input', 'textarea', 'select', 'radio', 'slider', 'checkbox', 'switch'] },
-  { title: '反馈', items: ['loading', 'progress', 'tooltip', 'modal', 'drawer', 'toast'] },
+  { title: '反馈', items: ['loading', 'progress', 'tooltip', 'modal', 'drawer', 'toast', 'confirm'] },
   { title: '叙事', items: ['collapse', 'timeline'] },
   { title: '效果', items: ['sky'] },
 ];
@@ -418,6 +418,7 @@ poem.addEventListener('vn-close', (e) => console.log(e.detail.returnValue));`,
   },
   toast: {
     tag: 'vn-toaster',
+    fn: 'toast()',
     name: '消息',
     intro: '调用 toast() 显示一条带小印的消息：讯 · 成 · 慎 · 误。默认 3 秒后消失，鼠标悬停时暂停计时。',
     usage: `import { toast } from 'vunio/components';
@@ -446,6 +447,44 @@ saving.close();`,
           for (const button of stage.querySelectorAll('[data-type]')) {
             button.addEventListener('click', () => toast(text[button.dataset.type], { type: button.dataset.type }));
           }
+        },
+      },
+    ],
+  },
+  confirm: {
+    tag: 'vn-modal',
+    fn: 'confirm()',
+    name: '确认框',
+    intro: '基于弹窗的确认：返回 Promise，确认为 true，取消、Esc、点遮罩为 false。打开时焦点落在“取消”上，误按回车不会执行危险操作；关闭后焦点回到原处、弹窗自动移除。',
+    usage: `import { confirm } from 'vunio/components';
+
+if (await confirm({ heading: '删除这首诗？', message: '删除后不能恢复。', confirmText: '删除', danger: true })) {
+  removePoem(id);
+}`,
+    options: [
+      { name: 'heading', type: 'string', description: '标题，默认“确认”' },
+      { name: 'message', type: 'string', description: '正文' },
+      { name: 'confirmText', type: 'string', description: '确认按钮的文字，默认“确定”' },
+      { name: 'cancelText', type: 'string', description: '取消按钮的文字，默认“取消”' },
+      { name: 'danger', type: 'boolean', description: '危险操作：确认按钮用强调色（古风为朱砂）' },
+    ],
+    demos: [
+      {
+        html: `<vn-stack direction="row" gap="3" align="center">
+  <vn-button variant="moon" id="ask">删除这首诗</vn-button>
+  <span id="answer"></span>
+</vn-stack>`,
+        js: `ask.addEventListener('click', async () => {
+  const ok = await confirm({ heading: '删除《静夜思》？', message: '删除后不能恢复。', confirmText: '删除', danger: true });
+  answer.textContent = ok ? '已删除' : '已取消';
+});`,
+        async setup(stage) {
+          const { confirm } = await import('../../src/components/index.js');
+          const answer = stage.querySelector('#answer');
+          stage.querySelector('#ask').addEventListener('click', async () => {
+            const ok = await confirm({ heading: '删除《静夜思》？', message: '删除后不能恢复。', confirmText: '删除', danger: true });
+            answer.textContent = ok ? '已删除' : '已取消';
+          });
         },
       },
     ],

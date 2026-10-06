@@ -188,6 +188,7 @@ html`
 | `vn-switch` | 玉璧滑块；`variant="moon"` 时为日月 |
 | `vn-modal` | 基于原生 `<dialog>` 的立轴，打开时向上下展开 |
 | `toast()` | 带小印的消息：讯 · 成 · 慎 · 误 |
+| `confirm()` | 确认框：`await confirm({ heading, message, danger })` 返回 true / false |
 | `vn-sky` | 风、花、雪、雨天气背景，可加一轮月亮 |
 | `vn-tag` | 标签：六种颜色，可移除 |
 | `vn-progress` | 进度：主题的线条逐渐写满；不确定进度来回游走 |
@@ -237,7 +238,22 @@ router.start();
 render(html`<main>${router.outlet()}</main>`, document.body);
 ```
 
-当前路由是一个 signal；默认 hash 模式，放在静态托管上就能用。换页后设置标题、恢复滚动、把焦点移到新页面的主标题。设计见 [RFC 0005](docs/rfc/0005-router.md)。
+当前路由是一个 signal；默认 hash 模式，放在静态托管上就能用。换页后设置标题、恢复滚动、把焦点移到新页面的主标题。
+搜索、筛选、翻页用 `router.setQuery({ q, page })`：只改查询参数，不滚动、不抢焦点。设计见 [RFC 0005](docs/rfc/0005-router.md)。
+
+## 示例应用：诗笺
+
+`examples/app/` 是一个用 Vunio 写成的完整小应用：诗作列表（搜索、标签筛选、分页，条件都在地址栏里）、详情（标签页）、新建与修改（表单）、
+收藏、设置（主题、昼夜、字号）。数据存在 localStorage。它只用到框架公开的 API，可以当作项目的起点来读。
+
+```
+examples/app/
+  index.html    页面骨架与样式
+  app.js        布局 + 路由出口
+  router.js     路由表（页面按需加载）
+  store.js      数据：signal + computed + 写操作函数，自动存进 localStorage
+  pages/        列表、详情、新建 / 修改、收藏、设置
+```
 
 ## 文档站
 

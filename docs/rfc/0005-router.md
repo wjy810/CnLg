@@ -32,6 +32,8 @@ router.start();                       // 开始监听地址变化（history 模�
 router.route.value;                   // { path, params, query, hash, def }，是响应式的
 router.navigate('/components/button');
 router.navigate('/search?q=月', { replace: true });
+router.navigate('/poems/7', { scroll: false, focus: false });   // 不滚动到顶部、不移动焦点
+router.setQuery({ q: '月', page: null });                        // 只改查询参数：合并，null / '' 删除
 router.href('/components/button');    // 按模式生成链接：'#/components/button'
 router.isActive('/components', { exact: false });   // 响应式，给导航高亮用
 
@@ -63,7 +65,9 @@ router.stop();
 - history 模式下 `start()` 会接管站内 `<a>` 的点击：同源、无 `target`、无 `download`、未按修饰键、链接在 `base` 之下。
 - 新页面滚动到顶部；地址带 `#锚点`（history 模式）时滚动到对应元素；前进 / 后退时恢复之前的滚动位置。
 - hash 模式下，不以 `#/` 开头的 hash（如 `<a href="#section">`）是页内锚点：滚动并聚焦到该元素，地址栏还原为当前路由，不产生新的历史记录。
-- 切换后把焦点移到页面的主标题（`outlet()` 容器内第一个 `h1` 或 `[role=heading]`），读屏用户能感知到页面变了。
+- 切换后把焦点移到页面的主标题（`outlet()` 容器内第一个 `h1` 或 `[role=heading]`，也会进入组件的开放 Shadow DOM，例如 `<vn-heading>`），读屏用户能感知到页面变了。
+- `setQuery(patch)` 只改查询参数（搜索、筛选、翻页）：默认替换历史记录、不滚动、不移动焦点，边输入边更新也不会打断用户。
+  页面模板不变时，换查询参数只会原地更新页面，输入框不会失去焦点。
 
 ## 3. 文档站
 

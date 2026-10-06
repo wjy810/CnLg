@@ -204,3 +204,26 @@ test('vn-collapse：键盘 Enter 收起时先播动画再关闭；show() / hide(
   await page.waitForTimeout(500);
   assert.deepEqual((await collapseState(page)).details, [true, true], '不是 accordion 时可以同时展开');
 });
+
+test('vn-tabs：在 effect / batch 中渲染（例如路由页面里）时，面板内容和下划线照样正确', async (t) => {
+  const { page } = await mount(t, '');
+  const result = await page.evaluate(async () => {
+    const { batch, html, render } = window.vunio;
+    const host = document.createElement('div');
+    document.body.append(host);
+    batch(() =>
+      render(
+        html`<vn-tabs id="bt"><vn-tab-panel name="a" label="甲">甲页</vn-tab-panel><vn-tab-panel name="b" label="乙">乙页</vn-tab-panel></vn-tabs>`,
+        host,
+      ),
+    );
+    await new Promise((r) => requestAnimationFrame(r));
+    const tabs = document.getElementById('bt');
+    const shown = [...tabs.root.querySelectorAll('[role=tabpanel]')].find((p) => !p.hidden);
+    return {
+      assigned: shown.querySelector('slot').assignedElements().map((el) => el.textContent),
+      indicator: tabs.refs.indicator.offsetWidth === tabs.root.querySelector('[role=tab]').offsetWidth,
+    };
+  });
+  assert.deepEqual(result, { assigned: ['甲页'], indicator: true });
+});

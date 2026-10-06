@@ -28,6 +28,7 @@ async function setup(page, { mode = 'hash', base = '', extra = '' } = {}) {
             load: () => window.slowLoaded.then(() => ({ default: () => html`<h1>慢页面</h1>` })),
           },
           { path: '/broken', load: () => Promise.reject(new Error('坏了')) },
+          { path: '/shadow', view: () => html`<vn-breadcrumb><vn-breadcrumb-item>首页</vn-breadcrumb-item></vn-breadcrumb><vn-heading level="1">影中题</vn-heading>` },
         ],
         notFound: ({ path }) => html`<h1>找不到 ${path}</h1>`,
         loading: () => html`<p class="loading">加载中</p>`,
@@ -104,6 +105,14 @@ test('导航后焦点移到新页面的主标题；首次打开时不移动焦�
   await page.evaluate(() => window.router.navigate('/slow'));
   await page.evaluate(() => window.resolveSlow());
   await page.waitForFunction(() => document.activeElement?.textContent === '慢页面');
+  // 标题在组件的 Shadow DOM 里（<vn-heading>）也能找到
+  await page.evaluate(() => window.router.navigate('/shadow'));
+  await tick(page);
+  const focused = await page.evaluate(() => {
+    const host = document.activeElement;
+    return [host.localName, host.root?.activeElement?.getAttribute('role'), host.textContent.trim()];
+  });
+  assert.deepEqual(focused, ['vn-heading', 'heading', '影中题']);
 });
 
 test('isActive 是响应式的', async (t) => {
@@ -196,4 +205,30 @@ test('hash 模式：#section 这样的页内锚点不改变路由，只滚动过
   await page.evaluate(() => (location.hash = '#section'));
   await page.waitForFunction(() => location.hash === '#/poems/3');
   assert.equal(await view(page), '诗 3');
+});
+
+test('setQuery：合并查询参数，替换历史记录，不滚动、不移动焦点；值为空时删除', async (t) => {
+  const { page } = await open(t, { path: PAGE });
+  await setup(page, { extra: '<input id="search" /><div style="height: 3000px"></div>' });
+  await page.evaluate(() => window.router.navigate('/poems/7'));
+  await page.waitForTimeout(50);
+  await page.evaluate(() => {
+    document.getElementById('search').focus({ preventScroll: true });
+    window.scrollTo(0, 800);
+  });
+  const before = await page.evaluate(() => history.length);
+  await page.evaluate(() => window.router.setQuery({ mode: 'full', page: 2 }));
+  await page.waitForTimeout(50);
+  const state = await page.evaluate(() => ({
+    hash: location.hash,
+    query: window.router.route.value.query,
+    shown: document.querySelector('.q').textContent,
+    // 没有回到顶部（上方内容变高时，浏览器的滚动锚定会让位置略大于 800）
+    stayed: window.scrollY >= 800,
+    focus: document.activeElement.id,
+    length: history.length,
+  }));
+  assert.deepEqual(state, { hash: '#/poems/7?mode=full&page=2', query: { mode: 'full', page: '2' }, shown: 'full', stayed: true, focus: 'search', length: before });
+  await page.evaluate(() => window.router.setQuery({ page: null, mode: '' }));
+  assert.equal(await page.evaluate(() => location.hash), '#/poems/7');
 });

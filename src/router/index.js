@@ -12,6 +12,25 @@ import { compile, findRoute, parseLocation } from './match.js';
 export { compile, matchPath, findRoute, parseLocation } from './match.js';
 
 /**
+ * 按文档顺序找第一个 h1 或 role="heading"，也会进入组件的开放 Shadow DOM
+ * （例如 <vn-heading> 把标题画在自己的 Shadow DOM 里）。
+ * @param {Element | ShadowRoot} root
+ * @returns {HTMLElement | null}
+ */
+function findHeading(root) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const el = /** @type {HTMLElement} */ (node);
+    if (el.matches('h1, [role="heading"]')) return el;
+    if (el.shadowRoot) {
+      const inner = findHeading(el.shadowRoot);
+      if (inner) return inner;
+    }
+  }
+  return null;
+}
+
+/**
  * @typedef {{ params: Record<string, string>, query: Record<string, string>, path: string }} RouteContext
  * @typedef {{
  *   path: string,
@@ -88,16 +107,34 @@ export function createRouter(options) {
     return mode === 'hash' ? `#${to}` : `${base}${to}`;
   }
 
-  /** 跳转。replace 为 true 时替换当前历史记录 */
-  function navigate(to, { replace = false } = {}) {
+  /**
+   * 跳转。
+   * replace：替换当前历史记录；scroll：滚动到顶部（默认是）；focus：把焦点移到新页面的主标题（默认是）
+   */
+  function navigate(to, { replace = false, scroll = true, focus = true } = {}) {
     const url = href(to);
     // 记下离开前的滚动位置，后退时恢复
     history.replaceState({ ...history.state, vnScroll: [window.scrollX, window.scrollY] }, '');
     if (replace) history.replaceState({ vnScroll: null }, '', url);
     else history.pushState({ vnScroll: null }, '', url);
-    pendingScroll = 'top';
-    pendingFocus = true;
+    pendingScroll = scroll ? 'top' : null;
+    pendingFocus = focus;
     location.value = readLocation();
+  }
+
+  /**
+   * 只改当前地址的查询参数（搜索、筛选、翻页）。值为 null / '' / false 时删除该参数。
+   * 默认替换历史记录、不滚动、不移动焦点，边输入边更新也不会打断用户。
+   */
+  function setQuery(patch, { replace = true, scroll = false, focus = false } = {}) {
+    const current = location.peek();
+    const query = { ...current.query };
+    for (const [key, value] of Object.entries(patch)) {
+      if (value == null || value === '' || value === false) delete query[key];
+      else query[key] = String(value);
+    }
+    const search = new URLSearchParams(query).toString();
+    navigate(`${current.path}${search ? `?${search}` : ''}`, { replace, scroll, focus });
   }
 
   /** 滚动到页内锚点，并把地址栏还原为当前路由 */
@@ -206,8 +243,8 @@ export function createRouter(options) {
       }
       if (!pendingFocus) return;
       // 懒加载的页面还没出来时先不动，加载完成后会再次调用
-      /** @type {HTMLElement | null} */
-      const heading = document.querySelector('[data-vn-outlet]')?.querySelector('h1, [role="heading"]');
+      const outletEl = document.querySelector('[data-vn-outlet]');
+      const heading = outletEl ? findHeading(outletEl) : null;
       if (!heading) return;
       pendingFocus = false;
       if (!heading.hasAttribute('tabindex')) heading.setAttribute('tabindex', '-1');
@@ -244,6 +281,6 @@ export function createRouter(options) {
     document.removeEventListener('click', handleClick);
   }
 
-  const router = { route, navigate, href, isActive, outlet, start, stop, mode, base };
+  const router = { route, navigate, setQuery, href, isActive, outlet, start, stop, mode, base };
   return router;
 }

@@ -690,11 +690,14 @@ class ChildPart {
     if (this.kind !== KEYED) {
       this.clear();
       this.kind = KEYED;
-      this.content = { rows: new Map(), order: [], warned: false };
+      this.content = { rows: new Map(), order: [], warned: false, template: null };
       this.contentScope = createScope(this.scope);
     }
     const state = this.content;
     const { rows } = state;
+    // 行模板函数换了（外层重新求值产生了新闭包）：已有的行也要用新模板重新渲染，否则会留着旧闭包
+    const templateChanged = state.template !== directive.template;
+    state.template = directive.template;
 
     // 快速路径：清空整个列表
     if (items.length === 0) {
@@ -751,7 +754,7 @@ class ChildPart {
         renderRow(directive, row);
       } else {
         if (!stable.has(i)) moveRange(row.part.start, row.part.end, anchor);
-        if (row.item !== item || row.index !== i) {
+        if (templateChanged || row.item !== item || row.index !== i) {
           row.item = item;
           row.index = i;
           renderRow(directive, row);

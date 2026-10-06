@@ -372,6 +372,33 @@ test('repeat：行模板里创建的 effect 归这一行所有，行还在就继
   assert.equal(result.aObservers, 0);
 });
 
+test('repeat：行模板函数换了（例如外层函数重新求值产生了新闭包）时，已有的行用新模板重新渲染', async (t) => {
+  const { page } = await open(t);
+  const result = await page.evaluate(() => {
+    const { html, render, signal, repeat } = window.vunio;
+    const host = document.createElement('div');
+    const selected = signal('b');
+    const items = ['a', 'b', 'c'];
+    const clicked = [];
+    render(
+      html`${() => {
+        const current = selected.value; // 外层读出的普通值，被行模板闭包捕获
+        return repeat(items, (x) => x, (x) => html`<button aria-pressed=${String(x === current)} @click=${() => clicked.push(`${x}@${current}`)}>${x}</button>`);
+      }}`,
+      host,
+    );
+    const first = host.querySelector('button');
+    selected.value = 'c';
+    host.querySelectorAll('button')[0].click();
+    return {
+      pressed: [...host.querySelectorAll('button')].map((b) => b.getAttribute('aria-pressed')),
+      clicked,
+      same: host.querySelector('button') === first,
+    };
+  });
+  assert.deepEqual(result, { pressed: ['false', 'false', 'true'], clicked: ['a@c'], same: true });
+});
+
 test('when：切换分支时，旧分支里的绑定不会先看到新值', async (t) => {
   const { page } = await open(t);
   const result = await page.evaluate(() => {

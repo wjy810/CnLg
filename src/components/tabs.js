@@ -142,22 +142,24 @@ export class VnTabs extends VunioElement {
   mounted() {
     this.collect();
     this.observeMutation(this, () => this.collect(), { childList: true });
-    // 把每个面板分配给对应的插槽
+    // 分配插槽、测量下划线都放在微任务里：组件可能是在别的 effect 里渲染的（例如路由页面），
+    // 那时插槽和标签要等这一轮更新结束才出现；而插槽必须已经在 Shadow 树里，assign() 才生效
     this.effect(() => {
       const panels = this.panels.value;
-      for (const slot of this.root.querySelectorAll('slot[data-index]')) {
-        const panel = panels[Number(slot.dataset.index)];
-        if (panel) slot.assign(panel);
-      }
+      queueMicrotask(() => {
+        for (const slot of this.root.querySelectorAll('slot[data-index]')) {
+          const panel = panels[Number(/** @type {HTMLElement} */ (slot).dataset.index)];
+          if (panel && !slot.assignedNodes().includes(panel)) /** @type {HTMLSlotElement} */ (slot).assign(panel);
+        }
+      });
     });
-    // 线跟着当前标签走；标签尺寸变化（字体加载、窗口变化）时重新测量
     this.effect(() => {
       this.current.value;
       this.panels.value;
-      this.#moveIndicator();
+      queueMicrotask(() => this.#moveIndicator());
     });
+    // 标签尺寸变化（字体加载、窗口变化）时重新测量
     this.observeResize(this.refs.tablist, () => this.#moveIndicator());
-    this.timeout(() => this.setState('settled', true), 0);
   }
 
   collect() {
@@ -199,6 +201,11 @@ export class VnTabs extends VunioElement {
     if (!indicator) return;
     indicator.style.setProperty('--_x', tab ? `${tab.offsetLeft}px` : '0');
     indicator.style.setProperty('--_w', tab ? `${tab.offsetWidth}px` : '0');
+    if (tab && !this.hasState('settled')) {
+      // 第一次定位：先让位置生效，再打开过渡，之后的切换才滑过去
+      void getComputedStyle(indicator).inlineSize;
+      this.setState('settled', true);
+    }
   }
 }
 

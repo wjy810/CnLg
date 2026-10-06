@@ -243,3 +243,30 @@ test('vn-drawer：从边缘滑出的模态 dialog；Esc、遮罩、关闭按钮�
   await page.waitForTimeout(50);
   assert.deepEqual(await page.evaluate(() => window.events.at(-1)), ['vn-close', 'backdrop']);
 });
+
+test('confirm()：确认为 true，Esc / 取消为 false；焦点先在“取消”上；关闭后移除弹窗', async (t) => {
+  const { page } = await mount(t, '<button id="opener">删</button>');
+  await page.locator('#opener').focus();
+  await page.evaluate(async () => {
+    const { confirm } = await import('/src/components/index.js');
+    window.answer = confirm({ heading: '删除这首诗？', message: '删除后不能恢复。', confirmText: '删除', danger: true });
+  });
+  await page.waitForTimeout(50);
+  const shown = await page.evaluate(() => {
+    const modal = document.querySelector('vn-modal');
+    return { heading: modal.heading, focus: document.activeElement.textContent, danger: modal.querySelectorAll('vn-button')[1].variant };
+  });
+  assert.deepEqual(shown, { heading: '删除这首诗？', focus: '取消', danger: 'cinnabar' });
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(50);
+  assert.deepEqual(await page.evaluate(async () => [await window.answer, document.querySelectorAll('vn-modal').length, document.activeElement.id]), [false, 0, 'opener']);
+
+  await page.evaluate(async () => {
+    const { confirm } = await import('/src/components/index.js');
+    window.answer = confirm({ message: '确定？' });
+  });
+  await page.waitForTimeout(50);
+  await page.locator('vn-modal vn-button').nth(1).click();
+  await page.waitForTimeout(50);
+  assert.equal(await page.evaluate(() => window.answer), true);
+});

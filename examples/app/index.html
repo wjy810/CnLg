@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN" data-mode="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>诗笺 · Vunio 示例应用</title>
+    <meta name="description" content="用 Vunio 写成的小应用：收藏、检索、整理古诗词。" />
+    <link rel="stylesheet" id="vn-theme" href="../../themes/guofeng.css" />
+    <link rel="stylesheet" id="vn-theme-fonts" href="../../themes/guofeng-fonts.css" />
+    <!-- 首次渲染前应用保存的主题与昼夜，避免闪烁；?theme=cyber、?mode=night 可以临时指定 -->
+    <script>
+      try {
+        const query = new URLSearchParams(location.search);
+        const theme = query.get('theme') || localStorage.getItem('vunio-theme');
+        if (/^(guofeng|cyber)$/.test(theme)) {
+          for (const link of document.querySelectorAll('#vn-theme, #vn-theme-fonts')) link.href = link.getAttribute('href').replace('guofeng', theme);
+        }
+        document.documentElement.dataset.mode = query.get('mode') || localStorage.getItem('vunio-mode') || 'auto';
+      } catch {}
+    </script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      a {
+        color: var(--vn-accent-fg);
+        text-underline-offset: 3px;
+      }
+      .skip {
+        position: absolute;
+        inset-inline-start: var(--vn-space-3);
+        inset-block-start: var(--vn-space-2);
+        z-index: var(--vn-z-overlay);
+        padding: var(--vn-space-2) var(--vn-space-3);
+        background: var(--vn-primary);
+        color: var(--vn-on-primary);
+        transform: translateY(-200%);
+      }
+      .skip:focus {
+        transform: none;
+      }
+      .topbar {
+        position: sticky;
+        inset-block-start: 0;
+        z-index: var(--vn-z-sticky);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--vn-space-3) var(--vn-space-5);
+        padding: var(--vn-space-3) max(16px, calc((100vw - 960px) / 2));
+        border-block-end: var(--vn-border-thin) solid var(--vn-line);
+        background: color-mix(in srgb, var(--vn-bg) 90%, transparent);
+        backdrop-filter: blur(8px);
+      }
+      .brand {
+        color: var(--vn-fg);
+        font: 400 26px / 1 var(--vn-font-display);
+        letter-spacing: var(--vn-tracking-wide);
+        text-decoration: none;
+      }
+      .nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--vn-space-1) var(--vn-space-4);
+        margin-inline-end: auto;
+      }
+      .nav a {
+        padding-block: var(--vn-space-1);
+        color: var(--vn-fg-muted);
+        letter-spacing: var(--vn-tracking-wide);
+        text-decoration: none;
+      }
+      .nav a:hover,
+      .nav a[aria-current='page'] {
+        color: var(--vn-fg);
+      }
+      .nav a[aria-current='page'] {
+        box-shadow: inset 0 -2px 0 var(--vn-accent);
+      }
+      main {
+        max-inline-size: 960px;
+        margin-inline: auto;
+        padding: var(--vn-space-6) 16px var(--vn-space-9);
+        outline: none;
+      }
+      main h1 {
+        outline: none;
+      }
+      .footer {
+        padding: var(--vn-space-6) 16px;
+        border-block-start: var(--vn-border-thin) solid var(--vn-line);
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-sm);
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
