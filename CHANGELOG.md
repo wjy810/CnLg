@@ -44,7 +44,7 @@
 - 体积预算：`npm run size`，core 约 10 KB（gzip），超出预算时 CI 失败。
 - 性能基准：`npm run bench`，参照 js-framework-benchmark。
 - 修复（核心审查）：
-  - 同一轮里 effect 按创建顺序运行，外层先于它创建的内层：`when(user, () => html\`${() => user.value.name}\`)` 在 `user` 变为 `null` 时不再报错。
+  - 同一轮里 effect 按创建顺序运行，外层先于它创建的内层：``when(user, () => html`${() => user.value.name}`)`` 在 `user` 变为 `null` 时不再报错。
   - 清理函数出错时只报告错误，effect、作用域和组件的其余资源照常运行 / 释放；effect 在自己运行途中被释放或暂停时，这次的清理函数立即执行。
   - effect 互相触发超过上限后，图中其他 effect 不再永久失效。
   - 函数或 `when` 返回的 `repeat(list, …)` 现在跟踪 `list` 的变化；行模板里创建的 effect 归这一行所有；某一行模板出错不再打乱整个列表。
