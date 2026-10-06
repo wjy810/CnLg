@@ -34,12 +34,20 @@ for (const theme of ['day', 'night']) {
   }
 }
 
-test('下拉面板展开、弹窗打开时没有无障碍问题', async (t) => {
+test('下拉面板展开、提示显示、弹窗与抽屉打开时没有无障碍问题', async (t) => {
   const page = await visit(t, 'examples/components.html', 'day');
   await page.locator('vn-select [role=combobox]').click();
   assert.deepEqual(await audit(page), [], '下拉展开');
   await page.keyboard.press('Escape');
+  await page.locator('#open-drawer').focus();
+  await page.waitForTimeout(50);
+  assert.deepEqual(await audit(page), [], '提示显示');
   await page.locator('#open-modal').click();
   await page.waitForTimeout(900);
   assert.deepEqual(await audit(page), [], '弹窗打开');
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(600);
+  await page.locator('#open-drawer').click();
+  await page.waitForTimeout(900);
+  assert.deepEqual(await audit(page), [], '抽屉打开');
 });

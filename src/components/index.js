@@ -23,3 +23,5 @@ export { VnSlider } from './slider.js';
 export { VnTabs, VnTabPanel } from './tabs.js';
 export { VnPagination } from './pagination.js';
 export { VnCollapse, VnCollapseItem } from './collapse.js';
+export { VnTooltip } from './tooltip.js';
+export { VnDrawer } from './drawer.js';

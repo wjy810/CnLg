@@ -5,7 +5,7 @@ export const groups = [
   { title: '基础', items: ['button', 'heading', 'card', 'stack', 'divider', 'tag'] },
   { title: '导航', items: ['tabs', 'breadcrumb', 'pagination'] },
   { title: '表单', items: ['input', 'textarea', 'select', 'radio', 'slider', 'checkbox', 'switch'] },
-  { title: '反馈', items: ['loading', 'progress', 'modal', 'toast'] },
+  { title: '反馈', items: ['loading', 'progress', 'tooltip', 'modal', 'drawer', 'toast'] },
   { title: '叙事', items: ['collapse', 'timeline'] },
   { title: '效果', items: ['sky'] },
 ];
@@ -364,6 +364,54 @@ poem.addEventListener('vn-close', (e) => console.log(e.detail.returnValue));`,
           const poem = stage.querySelector('#poem');
           stage.querySelector('#open').addEventListener('click', () => poem.show());
           stage.querySelector('#close').addEventListener('click', () => poem.close('done'));
+        },
+      },
+    ],
+  },
+  tooltip: {
+    tag: 'vn-tooltip',
+    name: '提示',
+    intro: '悬停或聚焦时在旁边显示一句补充说明，空间不够时翻到对侧。文字同时写在被包裹元素的 aria-description 上，读屏用户聚焦时就能听到。触屏没有悬停，所以必要的信息不能只写在提示里。',
+    demos: [
+      {
+        html: `<vn-stack direction="row" gap="4" wrap>
+  <vn-tooltip content="收入诗笺"><vn-button variant="moon">藏</vn-button></vn-tooltip>
+  <vn-tooltip content="在下方显示" placement="bottom"><vn-button variant="moon">下</vn-button></vn-tooltip>
+  <vn-tooltip content="在右侧显示" placement="right"><vn-button variant="moon">右</vn-button></vn-tooltip>
+</vn-stack>`,
+      },
+    ],
+  },
+  drawer: {
+    tag: 'vn-drawer',
+    name: '抽屉',
+    intro: '从页面边缘滑出的面板，像拉开一扇纸门。与弹窗共用基于 <dialog> 的行为：背景不可操作、焦点留在抽屉内、Esc 或点遮罩关闭、关闭后焦点回到原处。',
+    demos: [
+      {
+        html: `<vn-stack direction="row" gap="3" wrap>
+  <vn-button variant="moon" data-open="right">右侧</vn-button>
+  <vn-button variant="moon" data-open="left">左侧</vn-button>
+  <vn-button variant="moon" data-open="bottom">底部</vn-button>
+</vn-stack>
+<vn-drawer id="drawer" heading="目录">
+  <ol><li>静夜思</li><li>将进酒</li><li>蜀道难</li></ol>
+  <vn-button slot="footer" variant="cinnabar" id="drawer-close">合上</vn-button>
+</vn-drawer>`,
+        js: `for (const button of document.querySelectorAll('[data-open]')) {
+  button.addEventListener('click', () => {
+    drawer.placement = button.dataset.open;
+    drawer.show();
+  });
+}`,
+        setup(stage) {
+          const drawer = stage.querySelector('#drawer');
+          for (const button of stage.querySelectorAll('[data-open]')) {
+            button.addEventListener('click', () => {
+              drawer.placement = button.dataset.open;
+              drawer.show();
+            });
+          }
+          stage.querySelector('#drawer-close').addEventListener('click', () => drawer.close());
         },
       },
     ],

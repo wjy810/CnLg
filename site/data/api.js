@@ -332,6 +332,81 @@ export const api = {
     ],
     "cssprops": []
   },
+  "vn-drawer": {
+    "file": "src/components/drawer.js",
+    "tag": "vn-drawer",
+    "summary": "抽屉：从页面边缘滑出的面板，像拉开一扇纸门。与 <vn-modal> 共用基于 <dialog> 的行为：背景不可操作、焦点留在抽屉内、Esc / 点遮罩关闭、关闭后焦点回到原处。",
+    "attrs": [
+      {
+        "name": "heading",
+        "type": "string",
+        "description": "标题"
+      },
+      {
+        "name": "placement",
+        "type": "'right'|'left'|'top'|'bottom'",
+        "description": "从哪一边滑出，默认 right"
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "description": "是否打开"
+      },
+      {
+        "name": "persistent",
+        "type": "boolean",
+        "description": "点遮罩、按 Esc 不关闭"
+      }
+    ],
+    "slots": [
+      {
+        "name": "",
+        "description": "正文"
+      },
+      {
+        "name": "footer",
+        "description": "底部操作"
+      }
+    ],
+    "events": [
+      {
+        "name": "vn-open",
+        "description": "打开后"
+      },
+      {
+        "name": "vn-close",
+        "description": "关闭后，detail.returnValue 为关闭原因：'esc' | 'backdrop' | 'close-button' | 传给 close() 的值"
+      }
+    ],
+    "parts": [
+      {
+        "name": "dialog",
+        "description": "原生 dialog"
+      },
+      {
+        "name": "panel",
+        "description": "面板"
+      },
+      {
+        "name": "heading",
+        "description": "标题"
+      },
+      {
+        "name": "body",
+        "description": "正文"
+      },
+      {
+        "name": "footer",
+        "description": "底部"
+      }
+    ],
+    "cssprops": [
+      {
+        "name": "--vn-drawer-size",
+        "description": "左右抽屉的宽度、上下抽屉的高度，默认 min(420px, 90vw) / min(360px, 80vh)"
+      }
+    ]
+  },
   "vn-heading": {
     "file": "src/components/heading.js",
     "tag": "vn-heading",
@@ -1399,6 +1474,47 @@ export const api = {
     "slots": [],
     "events": [],
     "parts": [],
+    "cssprops": []
+  },
+  "vn-tooltip": {
+    "file": "src/components/tooltip.js",
+    "tag": "vn-tooltip",
+    "summary": "提示：悬停或聚焦时在旁边显示一句补充说明。浮层放在顶层（Popover API），不会被裁切；文字同时写在被包裹元素的 aria-description 上，读屏用户聚焦时就能听到。提示只放补充信息：触屏设备没有悬停，必要的信息不能只写在提示里。",
+    "attrs": [
+      {
+        "name": "content",
+        "type": "string",
+        "description": "提示文字"
+      },
+      {
+        "name": "placement",
+        "type": "'top'|'bottom'|'left'|'right'",
+        "description": "位置，默认 top；空间不够时翻到对侧"
+      },
+      {
+        "name": "delay",
+        "type": "number",
+        "description": "悬停多久后显示（毫秒），默认 300"
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "description": "不显示"
+      }
+    ],
+    "slots": [
+      {
+        "name": "",
+        "description": "被提示的元素（一个）"
+      }
+    ],
+    "events": [],
+    "parts": [
+      {
+        "name": "bubble",
+        "description": "提示浮层"
+      }
+    ],
     "cssprops": []
   }
 };

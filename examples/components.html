@@ -254,9 +254,10 @@
       </section>
 
       <section>
-        <h2><code>vn-modal</code> 弹窗 · <code>toast()</code> 消息</h2>
+        <h2><code>vn-modal</code> 弹窗 · <code>vn-drawer</code> 抽屉 · <code>vn-tooltip</code> 提示 · <code>toast()</code> 消息</h2>
         <vn-stack direction="row" gap="3" wrap>
           <vn-button id="open-modal" variant="moon">展开立轴</vn-button>
+          <vn-tooltip content="从右侧拉开一扇纸门"><vn-button id="open-drawer" variant="moon">拉开抽屉</vn-button></vn-tooltip>
           <vn-button id="toast-info" variant="moon" size="sm">讯</vn-button>
           <vn-button id="toast-success" variant="moon" size="sm">成</vn-button>
           <vn-button id="toast-warning" variant="moon" size="sm">慎</vn-button>
@@ -267,6 +268,14 @@
           <vn-button slot="footer" variant="moon" id="modal-cancel">合上</vn-button>
           <vn-button slot="footer" variant="cinnabar" effect="blossom" id="modal-ok">收藏</vn-button>
         </vn-modal>
+        <vn-drawer id="drawer" heading="目录">
+          <ol>
+            <li>静夜思</li>
+            <li>将进酒</li>
+            <li>蜀道难</li>
+          </ol>
+          <vn-button slot="footer" variant="moon" id="drawer-close">合上</vn-button>
+        </vn-drawer>
       </section>
     </main>
 
@@ -295,6 +304,10 @@
         modal.close('ok');
       });
       modal.addEventListener('vn-close', (e) => console.log('vn-close', e.detail.returnValue));
+
+      const drawer = document.getElementById('drawer');
+      document.getElementById('open-drawer').addEventListener('click', () => drawer.show());
+      document.getElementById('drawer-close').addEventListener('click', () => drawer.close());
 
       const messages = { info: '新诗一首待读', success: '已存入诗笺', warning: '墨将尽，请研墨', error: '纸破了，未能保存' };
       for (const type of Object.keys(messages)) {

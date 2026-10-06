@@ -159,3 +159,87 @@ test('toast()：弹窗打开时仍显示在最上层（顶层 popover，排在�
   // 注：模态弹窗会让弹窗以外的内容不可交互（浏览器规定），此时消息可见但点不到，到时自动关闭
   assert.deepEqual(state, { popover: true, dialog: true });
 });
+
+test('vn-tooltip：悬停一段时间后显示在上方，移开隐藏；聚焦立即显示，Esc 隐藏', async (t) => {
+  const { page } = await mount(t, '<div style="padding: 120px"><vn-tooltip id="tip" content="收入诗笺" delay="150"><button id="b">藏</button></vn-tooltip></div>');
+  const state = () =>
+    page.evaluate(() => {
+      const tip = document.getElementById('tip');
+      const bubble = tip.refs.bubble;
+      const b = document.getElementById('b').getBoundingClientRect();
+      const r = bubble.getBoundingClientRect();
+      return { open: tip.hasState('open'), above: r.bottom <= b.top, centered: Math.abs(r.left + r.width / 2 - (b.left + b.width / 2)) < 1 };
+    });
+  await page.locator('#b').hover();
+  await page.waitForTimeout(60);
+  assert.equal((await state()).open, false, '延迟之前不显示');
+  await page.waitForTimeout(200);
+  assert.deepEqual(await state(), { open: true, above: true, centered: true });
+  await page.mouse.move(0, 0);
+  await page.waitForTimeout(200);
+  assert.equal((await state()).open, false);
+  await page.locator('#b').focus();
+  await page.waitForTimeout(30);
+  assert.equal((await state()).open, true, '聚焦时立即显示');
+  await page.keyboard.press('Escape');
+  assert.equal((await state()).open, false);
+});
+
+test('vn-tooltip：文字写在真正获得焦点的元素的 aria-description 上（包括 vn-button 内部的按钮），移除后清理', async (t) => {
+  const { page } = await mount(t, '<vn-tooltip id="a" content="一"><button id="plain">甲</button></vn-tooltip><vn-tooltip id="c" content="二"><vn-button id="vb">乙</vn-button></vn-tooltip>');
+  await page.waitForTimeout(30);
+  const read = () =>
+    page.evaluate(() => ({
+      plain: document.getElementById('plain').getAttribute('aria-description'),
+      inner: document.getElementById('vb').root.querySelector('button').getAttribute('aria-description'),
+      host: document.getElementById('vb').getAttribute('aria-description'),
+    }));
+  assert.deepEqual(await read(), { plain: '一', inner: '二', host: null });
+  await page.evaluate(() => {
+    document.getElementById('a').content = '一一';
+    document.getElementById('c').disabled = true;
+  });
+  assert.deepEqual(await read(), { plain: '一一', inner: null, host: null });
+  await page.evaluate(() => {
+    const plain = document.getElementById('plain');
+    document.getElementById('a').replaceWith(plain);
+  });
+  assert.equal((await read()).plain, null);
+});
+
+const DRAWER = `<button id="opener">打开</button>
+  <vn-drawer id="d" heading="目录" placement="left"><p>一、静夜思</p><button slot="footer" id="ok">好</button></vn-drawer>`;
+
+test('vn-drawer：从边缘滑出的模态 dialog；Esc、遮罩、关闭按钮都能关闭；焦点回到原处', async (t) => {
+  const { page } = await mount(t, DRAWER);
+  await page.locator('#opener').focus();
+  await page.evaluate(() => document.getElementById('d').show());
+  await page.waitForTimeout(50);
+  const info = await page.evaluate(() => {
+    const d = document.getElementById('d');
+    const dialog = d.root.querySelector('dialog');
+    const r = dialog.getBoundingClientRect();
+    return {
+      modal: dialog.matches(':modal'),
+      label: d.root.getElementById(dialog.getAttribute('aria-labelledby')).textContent,
+      left: Math.round(r.left),
+      fullHeight: Math.round(r.height) === innerHeight,
+      footer: getComputedStyle(d.root.querySelector('.footer')).display,
+      events: window.events,
+    };
+  });
+  assert.deepEqual(info, { modal: true, label: '目录', left: 0, fullHeight: true, footer: 'flex', events: [['vn-open', null]] });
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(50);
+  const closed = await page.evaluate(() => ({
+    open: document.getElementById('d').root.querySelector('dialog').open,
+    focus: document.activeElement.id,
+    last: window.events.at(-1),
+  }));
+  assert.deepEqual(closed, { open: false, focus: 'opener', last: ['vn-close', 'esc'] });
+  await page.evaluate(() => document.getElementById('d').show());
+  await page.waitForTimeout(50);
+  await page.mouse.click(700, 300);
+  await page.waitForTimeout(50);
+  assert.deepEqual(await page.evaluate(() => window.events.at(-1)), ['vn-close', 'backdrop']);
+});

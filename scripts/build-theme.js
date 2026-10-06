@@ -221,7 +221,7 @@ async function listFiles(dir) {
 }
 
 /**
- * 代码只能使用契约变量，或者自己声明的私有变量（如组件内的 --vn-burst-ink）。
+ * 代码只能使用契约变量、自己声明的私有变量（如组件内的 --vn-burst-ink），或组件用 @cssprop 公开的定制点。
  * 原色 --vn-color-* 只允许出现在 src 以外（例如展示色板的页面）。
  * @returns {Promise<string[]>} 问题列表
  */
@@ -231,6 +231,10 @@ export async function checkUsage(dirs = ['src', 'site', 'examples']) {
   const sources = await Promise.all(files.map(async (file) => [relative(ROOT, file), await readFile(file, 'utf8')]));
   const declared = new Set();
   for (const [, text] of sources) for (const m of text.matchAll(/(--vn-[a-z0-9-]+)\s*:/g)) declared.add(m[1]);
+  // 组件用 @cssprop 公开的定制点（如 --vn-drawer-size）
+  for (const [file, text] of sources) {
+    if (file.startsWith('src')) for (const m of text.matchAll(/@cssprop\s+(--vn-[a-z0-9-]+)/g)) declared.add(m[1]);
+  }
   const problems = [];
   for (const [file, text] of sources) {
     for (const m of text.matchAll(/--vn-[a-z0-9-]*[a-z0-9]/g)) {
