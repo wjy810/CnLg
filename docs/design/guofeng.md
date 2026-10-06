@@ -96,6 +96,9 @@
 | `--vn-blossom-deep` | 海棠 `#C25565` | `#D46F7E` |
 | `--vn-snow` | `#AFC0CB` | 霜 `#EEF2F4` |
 | `--vn-moon` | 月白 `#D6E3E8` | `#F3EBD3` |
+| `--vn-night-sky` | `#2C3A4B` | `#0B0E13` |
+| `--vn-wood` | `#5A3E2B` | `#6E4D36` |
+| `--vn-gilt` | `#A88443` | `#C9A15A` |
 <!-- semantic:end -->
 
 使用约定：
@@ -104,6 +107,8 @@
 - `line` 是装饰性分隔线（不要求对比度）；控件边框必须用 `line-strong`。
 - `accent` 是朱砂色块（配 `on-accent` 文字）；朱砂色的**文字**用 `accent-fg`。夜间两者不同：深底上的文字需要更亮的“丹”。
 - `wind` / `blossom` / `snow` / `moon` 是风花雪月的意象色，只给效果和插画用。
+- `wood` / `gilt` 是器物的材质色（立轴的木轴与鎏金轴头），只用于弹窗等器物造型。
+- `night-sky` 是夜空色，用于“日月”开关等需要表现夜晚的点缀。
 
 ### 2.3 对比度
 

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>组件 · Vunio</title>
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem('vunio-theme') || 'auto';
+      } catch {}
+    </script>
+    <link rel="stylesheet" href="../themes/guofeng.css" />
+    <link rel="stylesheet" href="../themes/guofeng-fonts.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      main {
+        max-inline-size: 880px;
+        margin-inline: auto;
+        padding: var(--vn-space-8) 16px var(--vn-space-9);
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: var(--vn-space-4);
+        margin-block-end: var(--vn-space-7);
+      }
+      header nav {
+        display: flex;
+        align-items: center;
+        gap: var(--vn-space-4);
+        font-size: var(--vn-font-size-sm);
+      }
+      a {
+        color: var(--vn-accent-fg);
+      }
+      section {
+        margin-block-start: var(--vn-space-7);
+      }
+      h2 {
+        margin: 0 0 var(--vn-space-4);
+        padding-block-end: var(--vn-space-2);
+        border-block-end: var(--vn-border-thin) solid var(--vn-line);
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-sm);
+        font-weight: var(--vn-weight-regular);
+        letter-spacing: var(--vn-tracking-wider);
+      }
+      h2 code {
+        color: var(--vn-fg);
+        font-family: var(--vn-font-mono);
+        letter-spacing: 0;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: var(--vn-space-5);
+      }
+      .form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: var(--vn-space-2) var(--vn-space-6);
+      }
+      p {
+        margin: 0;
+      }
+      .muted {
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-sm);
+      }
+      #form-log {
+        margin-block-start: var(--vn-space-3);
+        color: var(--vn-fg-muted);
+        font-size: var(--vn-font-size-sm);
+        word-break: break-all;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <vn-heading level="1" seal="雅" sub="第一批组件 · 十二件">器物</vn-heading>
+        <nav>
+          <a href="./">示例</a>
+          <a href="./theme.html">设计系统</a>
+          <demo-theme-switch></demo-theme-switch>
+        </nav>
+      </header>
+
+      <section>
+        <h2><code>vn-button</code> 按钮</h2>
+        <vn-stack direction="row" gap="3" wrap align="center">
+          <vn-button>落笔</vn-button>
+          <vn-button variant="cinnabar" effect="blossom">赏花</vn-button>
+          <vn-button variant="moon" effect="snow">听雪</vn-button>
+          <vn-button variant="text" effect="wind">随风</vn-button>
+          <vn-button loading>研墨</vn-button>
+          <vn-button disabled>封笔</vn-button>
+        </vn-stack>
+        <vn-stack direction="row" gap="3" wrap align="center" style="margin-block-start: var(--vn-space-4)">
+          <vn-button size="sm" variant="moon">小</vn-button>
+          <vn-button size="md" variant="moon">中</vn-button>
+          <vn-button size="lg" variant="moon">大</vn-button>
+        </vn-stack>
+      </section>
+
+      <section>
+        <h2><code>vn-heading</code> 标题</h2>
+        <vn-stack direction="row" gap="8" wrap align="start">
+          <vn-stack gap="3">
+            <vn-heading level="2" sub="苏轼 · 宋">水调歌头</vn-heading>
+            <vn-heading level="3" seal="清风">赤壁赋</vn-heading>
+            <vn-heading level="4">四级标题用宋体</vn-heading>
+          </vn-stack>
+          <vn-heading level="2" vertical seal="月" sub="张九龄">海上生明月</vn-heading>
+        </vn-stack>
+      </section>
+
+      <section>
+        <h2><code>vn-card</code> 卡片 · <code>vn-divider</code> 分隔线</h2>
+        <div class="grid">
+          <vn-card interactive>
+            <span slot="title">纸片</span>
+            <vn-button slot="extra" size="sm" variant="text">更多</vn-button>
+            <p>人面不知何处去，桃花依旧笑春风。</p>
+            <vn-button slot="footer" size="sm" variant="moon">收藏</vn-button>
+          </vn-card>
+          <vn-card variant="frame">
+            <span slot="title">古籍双线框</span>
+            <p>忽如一夜春风来，千树万树梨花开。</p>
+          </vn-card>
+          <vn-card variant="plain">
+            <span slot="title">留白</span>
+            <p>解落三秋叶，能开二月花。</p>
+          </vn-card>
+        </div>
+        <vn-divider>春</vn-divider>
+        <vn-divider></vn-divider>
+        <vn-divider variant="dashed">夏</vn-divider>
+        <p class="muted">
+          竖向分隔<vn-divider vertical></vn-divider>用在行内<vn-divider vertical></vn-divider>文字之间
+        </p>
+      </section>
+
+      <section>
+        <h2><code>vn-loading</code> 加载</h2>
+        <vn-stack direction="row" gap="7" wrap align="center">
+          <vn-loading size="sm"></vn-loading>
+          <vn-loading label="研墨中"></vn-loading>
+          <vn-loading size="lg" quiet></vn-loading>
+        </vn-stack>
+      </section>
+
+      <section>
+        <h2>表单：<code>vn-input</code> · <code>vn-select</code> · <code>vn-checkbox</code> · <code>vn-switch</code></h2>
+        <form id="form">
+          <fieldset id="fieldset" style="margin: 0; padding: 0; border: 0">
+            <div class="form">
+              <vn-input name="title" label="题目" value="水调歌头" required clearable></vn-input>
+              <vn-input name="line" label="名句" placeholder="明月几时有" hint="五到二十字" minlength="5" maxlength="20" required></vn-input>
+              <vn-input name="mail" type="email" label="邮箱" placeholder="libai@tang.cn"></vn-input>
+              <vn-select name="season" label="时节" required>
+                <option value="spring">春</option>
+                <option value="summer">夏</option>
+                <option value="autumn" selected>秋</option>
+                <option value="winter">冬</option>
+                <option value="none" disabled>无</option>
+              </vn-select>
+            </div>
+            <vn-stack direction="row" gap="6" wrap style="margin-block: var(--vn-space-4)">
+              <vn-checkbox name="agree" required>愿以诗会友</vn-checkbox>
+              <vn-checkbox name="public" checked>公开</vn-checkbox>
+              <vn-switch name="notify" checked>提醒</vn-switch>
+              <vn-switch name="night" variant="moon">日月</vn-switch>
+            </vn-stack>
+          </fieldset>
+          <vn-stack direction="row" gap="3" wrap align="center">
+            <vn-button type="submit" variant="cinnabar" effect="wind">提交</vn-button>
+            <vn-button type="reset" variant="moon">重置</vn-button>
+            <vn-switch id="disable-all">禁用整个表单</vn-switch>
+          </vn-stack>
+          <div id="form-log">提交后这里显示 FormData</div>
+        </form>
+      </section>
+
+      <section>
+        <h2><code>vn-modal</code> 弹窗 · <code>toast()</code> 消息</h2>
+        <vn-stack direction="row" gap="3" wrap>
+          <vn-button id="open-modal" variant="moon">展开立轴</vn-button>
+          <vn-button id="toast-info" variant="moon" size="sm">讯</vn-button>
+          <vn-button id="toast-success" variant="moon" size="sm">成</vn-button>
+          <vn-button id="toast-warning" variant="moon" size="sm">慎</vn-button>
+          <vn-button id="toast-error" variant="moon" size="sm">误</vn-button>
+        </vn-stack>
+        <vn-modal id="modal" heading="水调歌头 · 明月几时有">
+          <p>明月几时有？把酒问青天。不知天上宫阙，今夕是何年。我欲乘风归去，又恐琼楼玉宇，高处不胜寒。起舞弄清影，何似在人间。</p>
+          <vn-button slot="footer" variant="moon" id="modal-cancel">合上</vn-button>
+          <vn-button slot="footer" variant="cinnabar" effect="blossom" id="modal-ok">收藏</vn-button>
+        </vn-modal>
+      </section>
+    </main>
+
+    <script type="module">
+      import { toast } from '../src/components/index.js';
+      import './theme-switch.js';
+      import './stores/theme.js';
+
+      const form = document.getElementById('form');
+      const log = document.getElementById('form-log');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        log.textContent = `FormData：${JSON.stringify(Object.fromEntries(new FormData(form)))}`;
+        toast('已提交', { type: 'success' });
+      });
+      form.addEventListener('reset', () => (log.textContent = '已重置'));
+      document.getElementById('disable-all').addEventListener('change', (e) => {
+        document.getElementById('fieldset').disabled = e.target.checked;
+      });
+
+      const modal = document.getElementById('modal');
+      document.getElementById('open-modal').addEventListener('click', () => modal.show());
+      document.getElementById('modal-cancel').addEventListener('click', () => modal.close('cancel'));
+      document.getElementById('modal-ok').addEventListener('click', () => {
+        toast('已收藏《水调歌头》', { type: 'success' });
+        modal.close('ok');
+      });
+      modal.addEventListener('vn-close', (e) => console.log('vn-close', e.detail.returnValue));
+
+      const messages = { info: '新诗一首待读', success: '已存入诗笺', warning: '墨将尽，请研墨', error: '纸破了，未能保存' };
+      for (const type of Object.keys(messages)) {
+        document.getElementById(`toast-${type}`).addEventListener('click', () => toast(messages[type], { type }));
+      }
+    </script>
+  </body>
+</html>

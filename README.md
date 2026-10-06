@@ -10,7 +10,7 @@
 - **资源有主**：事件、计时器、动画、订阅都归组件所有，组件移除时自动释放。
 - **零依赖、零构建**：直接用浏览器的 ES 模块运行。
 
-> 当前进度：核心基类、响应式内核、响应式模板、古风设计系统、风花雪月效果已完成。下一步：第一批组件。详见 [路线图](docs/ROADMAP.md)。
+> 当前进度：核心基类、响应式内核、响应式模板、古风设计系统、风花雪月效果、第一批 12 个组件已完成。下一步：路由与文档站。详见 [路线图](docs/ROADMAP.md)。
 
 ## 快速开始
 
@@ -19,6 +19,7 @@ ES 模块不能用 `file://` 直接打开，需要一个本地服务器：
 ```bash
 npm install          # 只安装测试用的 Playwright
 npm run dev          # 组件示例 http://localhost:5173/examples/
+                     # 组件     http://localhost:5173/examples/components.html
                      # 设计系统 http://localhost:5173/examples/theme.html
 npm test             # 测试（signals、主题检查在 Node 中运行，其余在浏览器中运行）
 npm run build:theme  # 修改主题令牌后重新生成 CSS 和文档表格
@@ -143,6 +144,41 @@ html`
 - 宣纸纹理、印泥斑驳、笔触线条都是内联 SVG，不发网络请求。
 
 设计说明见 [docs/design/guofeng.md](docs/design/guofeng.md)，可视化展示见 `examples/theme.html`。
+
+## 组件
+
+```html
+<script type="module">import 'vunio/components';</script>
+
+<vn-heading level="1" seal="雅" sub="苏轼">水调歌头</vn-heading>
+<vn-card variant="frame">
+  <span slot="title">题诗</span>
+  <form>
+    <vn-input name="line" label="名句" required maxlength="20"></vn-input>
+    <vn-select name="season" label="时节"><option value="autumn">秋</option></vn-select>
+    <vn-checkbox name="public" checked>公开</vn-checkbox>
+    <vn-button type="submit" variant="cinnabar" effect="blossom">落笔</vn-button>
+  </form>
+</vn-card>
+```
+
+| 组件 | 说明 |
+|---|---|
+| `vn-button` | 墨 / 朱砂 / 月白 / 素四种；点击墨晕，可选落花、飞雪、风叶；可提交、重置表单 |
+| `vn-heading` | 1–3 级毛笔字；可盖朱印、加副标题、竖排 |
+| `vn-card` | 纸片 / 古籍双线框 / 留白；标题、操作、底部插槽 |
+| `vn-stack` | 纵横排列，间距取自主题 |
+| `vn-divider` | 两头尖的笔触线，可在中间写字；也可竖向 |
+| `vn-loading` | 墨滴入水的涟漪 |
+| `vn-input` | 信笺式下划线，聚焦时笔触展开；中文校验信息；字数统计、清除 |
+| `vn-select` | 原生 `<option>` 写选项；面板在顶层不被裁切；完整键盘与读屏支持 |
+| `vn-checkbox` | 朱批勾一笔画出 |
+| `vn-switch` | 玉璧滑块；`variant="moon"` 时为日月 |
+| `vn-modal` | 基于原生 `<dialog>` 的立轴，打开时向上下展开 |
+| `toast()` | 带小印的消息：讯 · 成 · 慎 · 误 |
+| `vn-sky` | 风、花、雪天气背景，可加一轮月亮 |
+
+所有表单组件直接放进原生 `<form>`，支持 `FormData`、`reset`、`<fieldset disabled>` 和校验。完整 API 见 [RFC 0004](docs/rfc/0004-components.md)，效果见 `examples/components.html`。
 
 ## 风花雪月效果
 

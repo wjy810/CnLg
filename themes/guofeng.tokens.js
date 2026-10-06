@@ -84,6 +84,9 @@ export const themes = {
       'blossom-deep': c('haitang'),
       snow: '#AFC0CB',
       moon: c('yuebai'),
+      'night-sky': '#2C3A4B',
+      wood: '#5A3E2B',
+      gilt: '#A88443',
     },
     shadows: {
       1: '0 1px 2px rgba(70, 48, 26, 0.08)',
@@ -123,6 +126,9 @@ export const themes = {
       'blossom-deep': '#D46F7E',
       snow: c('shuang'),
       moon: '#F3EBD3',
+      'night-sky': '#0B0E13',
+      wood: '#6E4D36',
+      gilt: '#C9A15A',
     },
     shadows: {
       1: '0 1px 2px rgba(0, 0, 0, 0.4)',
