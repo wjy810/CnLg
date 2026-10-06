@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    # 同仓库分支的 PR 已经由 push 触发过，不再重复跑
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: 类型检查
+        run: npm run typecheck
+      - name: 体积预算
+        run: node scripts/size.js --check >> "$GITHUB_STEP_SUMMARY"
+      - name: 测试（单元 + 浏览器 + 无障碍）
+        run: npm test

@@ -14,17 +14,20 @@
 
 ## 快速开始
 
-ES 模块不能用 `file://` 直接打开，需要一个本地服务器：
+ES 模块不能用 `file://` 直接打开，需要一个本地服务器（开发脚本需要 Node 22+）：
 
 ```bash
-npm install          # 只安装测试用的 Playwright
+npm install          # 只安装开发工具（Playwright、TypeScript、esbuild），框架本身零依赖
 npm run dev          # 文档站   http://localhost:5173/site/
                      # 组件示例 http://localhost:5173/examples/
                      # 组件     http://localhost:5173/examples/components.html
                      # 设计系统 http://localhost:5173/examples/theme.html
 npm test             # 测试（signals、主题检查在 Node 中运行，其余在浏览器中运行）
+npm run check        # 提交前：类型检查 + 体积预算 + 全部测试（CI 跑的就是这些）
 npm run build:theme  # 修改主题令牌后重新生成 CSS 和文档表格
 npm run build:docs   # 修改组件 JSDoc 后重新生成文档站的 API 数据
+npm run size         # 各入口打包压缩后的体积
+npm run bench        # 性能基准
 ```
 
 页面里引入主题：
@@ -320,6 +323,9 @@ scripts/
   serve.js               本地服务器
   build-theme.js         生成主题 CSS、刷新文档表格、检查对比度
   build-docs.js          从组件 JSDoc 生成文档站 API 数据
+  size.js                体积报告与预算
+bench/                   性能基准（npm run bench）
+.github/workflows/ci.yml CI：类型检查、体积预算、测试
 examples/                示例组件、store、组件示例页、设计系统展示页
 tests/                   测试（signals、主题检查在 Node 中，其余在浏览器中）
 docs/
@@ -328,6 +334,37 @@ docs/
   rfc/                   框架设计文档
   design/guofeng.md      古风设计系统
 ```
+
+## 性能与体积
+
+`npm run bench` 参照 [js-framework-benchmark](https://github.com/krausest/js-framework-benchmark) 的操作集，
+每项计入脚本、样式计算和布局的时间，7 次取中位数（无头 Chromium 141，云端容器；绝对值随机器变化，适合用来比较改动前后）：
+
+| 操作 | 耗时 (ms) |
+|---|---:|
+| 创建 1,000 行 | 67.2 |
+| 替换全部 1,000 行 | 53.2 |
+| 每 10 行更新一行 | 9.2 |
+| 选中一行（高亮） | 0.5 |
+| 交换两行 | 3.0 |
+| 删除一行 | 3.3 |
+| 创建 10,000 行 | 580.9 |
+| 向 1,000 行追加 1,000 行 | 50.2 |
+| 清空 1,000 行 | 5.6 |
+| 1000 层 computed 链 × 100 次更新 | 12.8 |
+| 1 个 signal → 1000 个 effect × 100 次 | 9.4 |
+
+“选中一行”只改一个 signal：每行的 `class` 绑定重新求值，但只有新旧两行真正写入 DOM；“交换两行”按最长递增子序列计算，只移动这两行的节点。
+
+`npm run size` 用 esbuild 打包压缩每个入口；CI 中超出预算会失败：
+
+| 入口 | 压缩后 | gzip | brotli |
+|---|---:|---:|---:|
+| `vunio/core`（Signals · 模板 · 组件基类） | 28.7 KB | 10.3 KB | 9.2 KB |
+| `vunio/router`（不含 core） | 5.4 KB | 2.5 KB | 2.2 KB |
+| `vunio/effects`（不含 core） | 8.0 KB | 3.2 KB | 2.8 KB |
+| `vunio`（以上全部） | 42.1 KB | 15.3 KB | 13.8 KB |
+| `vunio/components`（13 个组件，含 core） | 86.2 KB | 24.8 KB | 21.6 KB |
 
 ## 浏览器支持
 
