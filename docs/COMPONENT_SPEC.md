@@ -143,6 +143,8 @@ VnExample.define();
 
 **动效**
 - 动画用 `this.animate()`，它会自动尊重“减少动态效果”设置。
+- 点击效果用 `burst(kind, layer, { x, y, animate: this.animate.bind(this) })`（`ink` 墨晕 / `blossom` 落花 / `snow` 飞雪 / `wind` 风叶）。
+  墨晕放在裁切的层里，其余三种放在不裁切的层里；不要自己再写粒子。
 - 粒子、画布等持续动画：`this.prefersReducedMotion` 为 true 时不启动；
   离开视口时用 `observeIntersection` 暂停（`loop()` 返回的 `pause()` / `resume()`）。
 - 每帧变化的东西（指针角度、粒子位置）直接在 `loop()` 里改 DOM / 画布，不要每帧写 signal。

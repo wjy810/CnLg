@@ -82,7 +82,7 @@ export const themes = {
       wind: c('zhuqing'),
       blossom: c('taoyao'),
       'blossom-deep': c('haitang'),
-      snow: '#C9D4DC',
+      snow: '#AFC0CB',
       moon: c('yuebai'),
     },
     shadows: {

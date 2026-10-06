@@ -7,6 +7,9 @@
   "exports": {
     ".": "./src/index.js",
     "./core/*": "./src/core/*",
+    "./effects": "./src/effects/index.js",
+    "./components": "./src/components/index.js",
+    "./components/*": "./src/components/*",
     "./themes/*": "./themes/*"
   },
   "files": [

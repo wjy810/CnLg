@@ -150,7 +150,7 @@
       <header>
         <div>
           <h1>Vunio</h1>
-          <p>响应式组件示例 · 四个小组件</p>
+          <p>响应式组件示例 · 风花雪月</p>
         </div>
         <nav>
           <a href="./theme.html">设计系统</a>
@@ -230,6 +230,20 @@ export const visible = computed(() =&gt;
 // 组件模板
 ${repeat(visible, (p) =&gt; p.id, (p) =&gt; html`&lt;li&gt;${p.text}&lt;/li&gt;`)}</pre>
       </section>
+
+      <section>
+        <h2><small>伍</small>风花雪月：天气与点击效果</h2>
+        <p class="note">
+          &lt;vn-sky&gt; 是画布粒子背景，离开视口自动暂停；burst() 在点击处播放墨晕、落花、飞雪或风叶。
+          颜色全部来自主题，切到“夜”试试。开启系统的“减少动态效果”后，粒子不再播放。
+        </p>
+        <demo-seasons></demo-seasons>
+        <pre>&lt;section style="position: relative"&gt;
+  &lt;vn-sky weather="blossom" moon&gt;&lt;/vn-sky&gt;
+&lt;/section&gt;
+
+burst('blossom', layer, { x, y, animate: this.animate.bind(this) });</pre>
+      </section>
     </main>
 
     <script type="module">
@@ -237,6 +251,7 @@ ${repeat(visible, (p) =&gt; p.id, (p) =&gt; html`&lt;li&gt;${p.text}&lt;/li&gt;`
       import './field.js';
       import './anthology.js';
       import './theme-switch.js';
+      import './seasons.js';
       import './stores/theme.js';
       import { stats } from './ticker.js';
 

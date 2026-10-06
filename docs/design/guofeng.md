@@ -94,7 +94,7 @@
 | `--vn-wind` | 竹青 `#5E8A6E` | `#8DB49A` |
 | `--vn-blossom` | 桃夭 `#E8A3AB` | `#E39AA4` |
 | `--vn-blossom-deep` | 海棠 `#C25565` | `#D46F7E` |
-| `--vn-snow` | `#C9D4DC` | 霜 `#EEF2F4` |
+| `--vn-snow` | `#AFC0CB` | 霜 `#EEF2F4` |
 | `--vn-moon` | 月白 `#D6E3E8` | `#F3EBD3` |
 <!-- semantic:end -->
 

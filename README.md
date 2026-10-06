@@ -10,7 +10,7 @@
 - **资源有主**：事件、计时器、动画、订阅都归组件所有，组件移除时自动释放。
 - **零依赖、零构建**：直接用浏览器的 ES 模块运行。
 
-> 当前进度：核心基类、响应式内核、响应式模板、古风设计系统已完成。下一步：风花雪月效果。详见 [路线图](docs/ROADMAP.md)。
+> 当前进度：核心基类、响应式内核、响应式模板、古风设计系统、风花雪月效果已完成。下一步：第一批组件。详见 [路线图](docs/ROADMAP.md)。
 
 ## 快速开始
 
@@ -78,7 +78,7 @@ DemoCounter.define();
 <demo-counter label="点击" step="2"></demo-counter>
 ```
 
-完整示例见 [`examples/`](examples/)：印章（属性 / 模板 / 动画）、题字输入框（表单）、水墨钟（自动清理）、诗笺（共享状态 / 列表 / 条件）。
+完整示例见 [`examples/`](examples/)：印章（属性 / 模板 / 动画）、题字输入框（表单）、水墨钟（自动清理）、诗笺（共享状态 / 列表 / 条件）、风花雪月（天气与点击效果）。
 
 ## 响应式
 
@@ -143,6 +143,21 @@ html`
 - 宣纸纹理、印泥斑驳、笔触线条都是内联 SVG，不发网络请求。
 
 设计说明见 [docs/design/guofeng.md](docs/design/guofeng.md)，可视化展示见 `examples/theme.html`。
+
+## 风花雪月效果
+
+```js
+import { burst } from 'vunio';
+burst('blossom', layer, { x, y, animate: this.animate.bind(this) }); // 墨晕 ink · 落花 blossom · 飞雪 snow · 风叶 wind
+```
+
+```html
+<section style="position: relative">
+  <vn-sky weather="blossom" moon></vn-sky>   <!-- snow | blossom | wind | none -->
+</section>
+```
+
+颜色来自主题；开启“减少动态效果”时粒子不播放；`<vn-sky>` 离开视口自动暂停、按 DPR 绘制。设计见 [RFC 0003](docs/rfc/0003-effects.md)。
 
 ## 生命周期
 
@@ -233,6 +248,8 @@ src/
   core/template.js       响应式模板：html / svg / when / repeat / render
   core/props.js          属性 ↔ attribute ↔ signal
   core/styles.js         共享样式表
+  effects/               点击效果 burst、天气粒子
+  components/            组件（import 'vunio/components' 注册全部）
 themes/
   guofeng.tokens.js      古风主题令牌（唯一来源）
   guofeng.css            生成的主题 CSS
