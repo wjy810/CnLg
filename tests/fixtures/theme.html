@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="../../themes/guofeng.css" />
   </head>
   <body>
-    <section id="island" data-theme="night"><p id="island-text">夜</p></section>
+    <section id="island" data-mode="night"><p id="island-text">夜</p></section>
     <script type="module">
       import * as vunio from '../../src/index.js';
       const { VunioElement, html, css } = vunio;
@@ -15,7 +15,7 @@
         static styles = css`
           p {
             color: var(--vn-accent-fg);
-            transition: color var(--vn-duration-normal) var(--vn-ease-brush);
+            transition: color var(--vn-duration-normal) var(--vn-ease-standard);
           }
         `;
         render() {

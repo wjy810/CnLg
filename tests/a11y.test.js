@@ -17,7 +17,7 @@ async function audit(page) {
 
 async function visit(t, path, theme) {
   const { page } = await open(t, { path });
-  await page.evaluate((theme) => localStorage.setItem('vunio-theme', theme), theme);
+  await page.evaluate((theme) => localStorage.setItem('vunio-mode', theme), theme);
   await page.reload();
   await page.waitForTimeout(800);
   return page;

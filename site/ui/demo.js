@@ -31,7 +31,7 @@ export class SiteDemo extends VunioElement {
       background: var(--vn-surface);
       box-shadow: inset 0 0 0 1px var(--vn-line);
       color: var(--vn-fg);
-      font-family: var(--vn-font-serif);
+      font-family: var(--vn-font-body);
       line-height: var(--vn-leading-normal);
     }
     site-code {

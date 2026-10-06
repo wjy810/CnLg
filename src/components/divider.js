@@ -30,8 +30,8 @@ export class VnDivider extends VunioElement {
       flex: 1;
       block-size: 6px;
       background: var(--vn-fg-subtle);
-      -webkit-mask: var(--vn-mask-brush) center / 100% 100% no-repeat;
-      mask: var(--vn-mask-brush) center / 100% 100% no-repeat;
+      -webkit-mask: var(--vn-mask-stroke) center / 100% 100% no-repeat;
+      mask: var(--vn-mask-stroke) center / 100% 100% no-repeat;
     }
     :host([variant='line']) .line {
       block-size: 1px;

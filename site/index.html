@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN" data-theme="auto">
+<html lang="zh-CN" data-mode="auto">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,7 +7,7 @@
     <meta name="description" content="Vunio：一个古风的 Web Components 框架。原生组件、精确更新、纸墨朱印的设计系统与风花雪月的动效。" />
     <script>
       try {
-        document.documentElement.dataset.theme = localStorage.getItem('vunio-theme') || 'auto';
+        document.documentElement.dataset.mode = localStorage.getItem('vunio-mode') || 'auto';
       } catch {}
     </script>
     <link rel="stylesheet" href="../themes/guofeng.css" />
@@ -53,7 +53,7 @@
       }
       .brand {
         color: var(--vn-fg);
-        font: 400 28px / 1 var(--vn-font-brush);
+        font: 400 28px / 1 var(--vn-font-display);
         letter-spacing: var(--vn-tracking-wide);
         text-decoration: none;
       }
@@ -131,7 +131,7 @@
         font-size: var(--vn-font-size-sm);
         letter-spacing: var(--vn-tracking-wide);
         text-decoration: none;
-        transition: color var(--vn-duration-fast) var(--vn-ease-brush);
+        transition: color var(--vn-duration-fast) var(--vn-ease-standard);
       }
       .sidebar a:hover {
         color: var(--vn-fg);
@@ -160,7 +160,7 @@
       }
       .doc h1 {
         margin: 0 0 var(--vn-space-4);
-        font: 400 var(--vn-font-size-3xl) / var(--vn-leading-tight) var(--vn-font-brush);
+        font: 400 var(--vn-font-size-3xl) / var(--vn-leading-tight) var(--vn-font-display);
         letter-spacing: var(--vn-tracking-wide);
         outline: none;
       }
@@ -221,7 +221,7 @@
         padding: var(--vn-space-1) var(--vn-space-4);
         border-inline-start: 2px solid var(--vn-accent);
         color: var(--vn-fg-muted);
-        font-family: var(--vn-font-kai);
+        font-family: var(--vn-font-quote);
       }
       .live {
         display: flex;
@@ -296,7 +296,7 @@
           background: var(--vn-surface);
           box-shadow: var(--vn-shadow-3);
           transform: translateX(-105%);
-          transition: transform var(--vn-duration-normal) var(--vn-ease-wind);
+          transition: transform var(--vn-duration-normal) var(--vn-ease-move);
         }
         .sidebar[data-open] {
           transform: none;

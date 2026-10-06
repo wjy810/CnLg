@@ -33,7 +33,7 @@ export class DemoField extends VunioFormElement {
       font-size: var(--vn-font-size-lg);
       color: inherit;
       outline: none;
-      transition: border-color var(--vn-duration-normal) var(--vn-ease-brush);
+      transition: border-color var(--vn-duration-normal) var(--vn-ease-standard);
     }
     input:focus {
       border-block-end-color: var(--vn-fg);

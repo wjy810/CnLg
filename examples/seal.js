@@ -39,11 +39,11 @@ export class DemoSeal extends VunioElement {
       box-shadow:
         inset 0 0 0 calc(var(--_size) * 0.05) var(--_color),
         inset 0 0 0 calc(var(--_size) * 0.075) var(--_paper);
-      font: 700 var(--_font) / 1.02 var(--vn-font-serif);
+      font: 700 var(--_font) / 1.02 var(--vn-font-body);
       cursor: pointer;
       transform: rotate(-2deg);
-      -webkit-mask: var(--vn-mask-seal);
-      mask: var(--vn-mask-seal);
+      -webkit-mask: var(--vn-mask-stamp);
+      mask: var(--vn-mask-stamp);
     }
     .chars {
       writing-mode: vertical-rl;

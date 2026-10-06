@@ -3,6 +3,7 @@
 - 状态：已实现（`themes/guofeng.css`）
 - 令牌来源：`themes/guofeng.tokens.js`。本文中的表格由 `npm run build:theme` 生成，请勿手改。
 - 展示页：`examples/theme.html`
+- 契约：本主题按 [RFC 0006](../rfc/0006-theme-contract.md) 提供全部契约变量。变量名描述用途（`--vn-ease-enter`），本文描述古风如何取值（“墨晕”）。
 
 ## 1. 理念：纸、墨、印、四时
 
@@ -91,14 +92,14 @@
 | `--vn-focus` | 朱砂 `#B0382B` | 丹 `#E87A66` |
 | `--vn-selection` | `rgba(176, 56, 43, 0.18)` | `rgba(232, 122, 102, 0.28)` |
 | `--vn-overlay` | `rgba(26, 24, 22, 0.42)` | `rgba(5, 6, 8, 0.6)` |
-| `--vn-wind` | 竹青 `#5E8A6E` | `#8DB49A` |
+| `--vn-frame` | `#5A3E2B` | `#6E4D36` |
+| `--vn-trim` | `#A88443` | `#C9A15A` |
 | `--vn-blossom` | 桃夭 `#E8A3AB` | `#E39AA4` |
 | `--vn-blossom-deep` | 海棠 `#C25565` | `#D46F7E` |
 | `--vn-snow` | `#AFC0CB` | 霜 `#EEF2F4` |
+| `--vn-wind` | 竹青 `#5E8A6E` | `#8DB49A` |
 | `--vn-moon` | 月白 `#D6E3E8` | `#F3EBD3` |
 | `--vn-night-sky` | `#2C3A4B` | `#0B0E13` |
-| `--vn-wood` | `#5A3E2B` | `#6E4D36` |
-| `--vn-gilt` | `#A88443` | `#C9A15A` |
 <!-- semantic:end -->
 
 使用约定：
@@ -107,7 +108,7 @@
 - `line` 是装饰性分隔线（不要求对比度）；控件边框必须用 `line-strong`。
 - `accent` 是朱砂色块（配 `on-accent` 文字）；朱砂色的**文字**用 `accent-fg`。夜间两者不同：深底上的文字需要更亮的“丹”。
 - `wind` / `blossom` / `snow` / `moon` 是风花雪月的意象色，只给效果和插画用。
-- `wood` / `gilt` 是器物的材质色（立轴的木轴与鎏金轴头），只用于弹窗等器物造型。
+- `frame` / `trim` 是器物色，古风里取木轴与鎏金轴头的颜色，只用于弹窗等器物造型。
 - `night-sky` 是夜空色，用于“日月”开关等需要表现夜晚的点缀。
 
 ### 2.3 对比度
@@ -128,8 +129,8 @@
 | 弱化图形、禁用态 | `fg-subtle` / `bg` | 3.20 | ≥ 3 | ✅ |
 | 控件边框 | `line-strong` / `bg` | 3.28 | ≥ 3 | ✅ |
 | 卡片上的控件边框 | `line-strong` / `surface` | 3.58 | ≥ 3 | ✅ |
-| 墨色按钮文字 | `on-primary` / `primary` | 13.21 | ≥ 4.5 | ✅ |
-| 朱砂按钮文字 | `on-accent` / `accent` | 5.62 | ≥ 4.5 | ✅ |
+| 主按钮文字 | `on-primary` / `primary` | 13.21 | ≥ 4.5 | ✅ |
+| 强调按钮文字 | `on-accent` / `accent` | 5.62 | ≥ 4.5 | ✅ |
 | 强调文字、链接 | `accent-fg` / `bg` | 5.27 | ≥ 4.5 | ✅ |
 | 卡片上的强调文字 | `accent-fg` / `surface` | 5.75 | ≥ 4.5 | ✅ |
 | 成功提示 | `success` / `bg` | 5.31 | ≥ 4.5 | ✅ |
@@ -157,8 +158,8 @@
 | 弱化图形、禁用态 | `fg-subtle` / `bg` | 3.43 | ≥ 3 | ✅ |
 | 控件边框 | `line-strong` / `bg` | 3.97 | ≥ 3 | ✅ |
 | 卡片上的控件边框 | `line-strong` / `surface` | 3.61 | ≥ 3 | ✅ |
-| 墨色按钮文字 | `on-primary` / `primary` | 14.43 | ≥ 4.5 | ✅ |
-| 朱砂按钮文字 | `on-accent` / `accent` | 4.85 | ≥ 4.5 | ✅ |
+| 主按钮文字 | `on-primary` / `primary` | 14.43 | ≥ 4.5 | ✅ |
+| 强调按钮文字 | `on-accent` / `accent` | 4.85 | ≥ 4.5 | ✅ |
 | 强调文字、链接 | `accent-fg` / `bg` | 6.33 | ≥ 4.5 | ✅ |
 | 卡片上的强调文字 | `accent-fg` / `surface` | 5.76 | ≥ 4.5 | ✅ |
 | 成功提示 | `success` / `bg` | 8.46 | ≥ 4.5 | ✅ |
@@ -178,9 +179,9 @@
 
 | 变量 | 字体 | 用途 |
 |---|---|---|
-| `--vn-font-brush` | 马善政毛笔楷书 → 系统行楷 / 楷体 | 大标题、印章外的书法点缀 |
-| `--vn-font-kai` | 系统楷体 | 引文、诗句、副标题 |
-| `--vn-font-serif` | 思源宋体 → 系统宋体 | 正文、按钮、表单：全站默认 |
+| `--vn-font-display` | 马善政毛笔楷书 → 系统行楷 / 楷体 | 大标题、印章外的书法点缀 |
+| `--vn-font-quote` | 系统楷体 | 引文、诗句、副标题 |
+| `--vn-font-body` | 思源宋体 → 系统宋体 | 正文、按钮、表单：全站默认 |
 | `--vn-font-mono` | 等宽 | 代码 |
 
 `themes/guofeng-fonts.css` 从 Google Fonts 加载马善政楷书和思源宋体，是可选的。正式项目建议自托管字体文件，并按需子集化。
@@ -220,17 +221,17 @@
 <!-- ease:start -->
 | 变量 | 曲线 | 含义与用途 |
 |---|---|---|
-| `--vn-ease-ink` | `cubic-bezier(0.16, 1, 0.3, 1)` | 墨晕：落墨即散，越散越慢。用于点击反馈、展开、出现 |
-| `--vn-ease-brush` | `cubic-bezier(0.22, 0.61, 0.36, 1)` | 运笔：起笔利落，收笔稳。用于大多数状态过渡 |
-| `--vn-ease-wind` | `cubic-bezier(0.45, 0, 0.2, 1)` | 风过：缓起缓落。用于位移、滑动、切换 |
-| `--vn-ease-petal` | `cubic-bezier(0.34, 1.36, 0.64, 1)` | 落花：轻轻越过再回落。用于完成、庆祝，少用 |
+| `--vn-ease-standard` | `cubic-bezier(0.22, 0.61, 0.36, 1)` | 运笔：起笔利落，收笔稳。用于大多数状态过渡 |
+| `--vn-ease-enter` | `cubic-bezier(0.16, 1, 0.3, 1)` | 墨晕：落墨即散，越散越慢。用于点击反馈、展开、出现 |
+| `--vn-ease-move` | `cubic-bezier(0.45, 0, 0.2, 1)` | 风过：缓起缓落。用于位移、滑动、切换 |
+| `--vn-ease-spring` | `cubic-bezier(0.34, 1.36, 0.64, 1)` | 落花：轻轻越过再回落。用于完成、庆祝，少用 |
 <!-- ease:end -->
 
-**时长**：`instant 100ms`（悬停）、`fast 180ms`（小状态）、`normal 320ms`（展开收起）、`slow 600ms`（大面积过渡）、`ink 900ms`（墨晕、落花等效果）。
+**时长**：`instant 100ms`（悬停）、`fast 180ms`（小状态）、`normal 320ms`（展开收起）、`slow 600ms`（大面积过渡）、`slower 900ms`（墨晕、落花等效果）。
 
 **原则**：
 
-- 反馈要快，效果可以慢：点击后的状态变化不超过 `fast`，墨晕可以 `ink`。
+- 反馈要快，效果可以慢：点击后的状态变化不超过 `fast`，墨晕可以 `slower`。
 - 一次只动一处，不要让整页一起动。
 - 用户开启“减少动态效果”时，主题把所有 `--vn-duration-*` 变为 1ms。组件的 CSS 过渡自动生效；JS 动画由 `this.animate()` 处理；粒子类效果不启动。
 
@@ -238,21 +239,21 @@
 
 | 变量 | 是什么 | 怎么用 |
 |---|---|---|
-| `--vn-texture-paper` | 宣纸纤维噪声（随主题变化） | `background-image`，页面已默认带上 |
-| `--vn-mask-seal` | 印泥斑驳 | `mask: var(--vn-mask-seal)`，用于印章 |
-| `--vn-mask-brush` | 两头尖的笔触 | `mask: var(--vn-mask-brush) center / 100% 100% no-repeat`，用于分隔线、输入框下划线 |
+| `--vn-texture` | 宣纸纤维噪声（随主题变化） | `background-image`，页面已默认带上 |
+| `--vn-mask-stamp` | 印泥斑驳 | `mask: var(--vn-mask-stamp)`，用于印章 |
+| `--vn-mask-stroke` | 两头尖的笔触 | `mask: var(--vn-mask-stroke) center / 100% 100% no-repeat`，用于分隔线、输入框下划线 |
 
 纹理都是内联 SVG，不发网络请求。
 
-## 8. 主题切换
+## 8. 昼夜切换
 
 ```html
-<html data-theme="night">   <!-- 夜 -->
-<html data-theme="auto">    <!-- 跟随系统 -->
-<section data-theme="night">…</section>   <!-- 局部：页面是昼，这一块是夜 -->
+<html data-mode="night">   <!-- 夜 -->
+<html data-mode="auto">    <!-- 跟随系统 -->
+<section data-mode="night">…</section>   <!-- 局部：页面是昼，这一块是夜 -->
 ```
 
-语义令牌是 CSS 变量，会自动穿过 Shadow DOM，所以组件不需要任何代码就能跟随主题。
+语义令牌是 CSS 变量，会自动穿过 Shadow DOM，所以组件不需要任何代码就能跟随昼夜。换成另一套主题（如赛博）只需引入另一个 CSS 文件。
 
 **定制**：覆盖语义令牌即可。
 

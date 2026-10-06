@@ -54,7 +54,7 @@ export class VnSky extends VunioElement {
         radial-gradient(circle at 30% 62%, color-mix(in srgb, var(--vn-fg-muted) 7%, transparent) 0 9%, transparent 10%),
         radial-gradient(circle at 62% 34%, color-mix(in srgb, var(--vn-fg-muted) 6%, transparent) 0 12%, transparent 13%),
         radial-gradient(circle at 40% 36%, var(--vn-moon), color-mix(in srgb, var(--vn-moon) 85%, var(--vn-fg-muted)));
-      animation: rise var(--vn-duration-slow) var(--vn-ease-ink) both;
+      animation: rise var(--vn-duration-slow) var(--vn-ease-enter) both;
     }
     /* 光晕用渐变画：大范围 box-shadow 在合成层上会被裁出方形边缘 */
     .moon::before {

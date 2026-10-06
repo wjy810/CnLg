@@ -26,7 +26,7 @@ export const fieldStyles = css`
     gap: var(--vn-space-2);
     min-block-size: 40px;
     border-block-end: var(--vn-border-thin) solid var(--vn-line-strong);
-    transition: border-color var(--vn-duration-normal) var(--vn-ease-brush);
+    transition: border-color var(--vn-duration-normal) var(--vn-ease-standard);
   }
   .control:hover {
     border-block-end-color: var(--vn-fg-muted);
@@ -38,10 +38,10 @@ export const fieldStyles = css`
     inset-block-end: -3px;
     block-size: 5px;
     background: var(--vn-fg);
-    -webkit-mask: var(--vn-mask-brush) center / 100% 100% no-repeat;
-    mask: var(--vn-mask-brush) center / 100% 100% no-repeat;
+    -webkit-mask: var(--vn-mask-stroke) center / 100% 100% no-repeat;
+    mask: var(--vn-mask-stroke) center / 100% 100% no-repeat;
     transform: scaleX(0);
-    transition: transform var(--vn-duration-normal) var(--vn-ease-ink);
+    transition: transform var(--vn-duration-normal) var(--vn-ease-enter);
     pointer-events: none;
   }
   .control:focus-within .underline,

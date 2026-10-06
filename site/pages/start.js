@@ -37,8 +37,8 @@ export default () => html`
   })}
 
   <h2>主题</h2>
-  <p>在 <code>&lt;html&gt;</code> 上写 <code>data-theme</code>：<code>day</code>（昼）、<code>night</code>（夜）或 <code>auto</code>（跟随系统）。任何元素加上 <code>data-theme</code> 都可以局部换主题。</p>
-  ${code(`<html data-theme="auto">`, 'html')}
+  <p>在 <code>&lt;html&gt;</code> 上写 <code>data-mode</code>：<code>day</code>（昼）、<code>night</code>（夜）或 <code>auto</code>（跟随系统）。任何元素加上 <code>data-mode</code> 都可以局部换主题。</p>
+  ${code(`<html data-mode="auto">`, 'html')}
 
   <h2>写第一个组件</h2>
   <p>一个组件就是一个文件：声明属性、写出结构，会变的地方用 signal 或函数绑定。</p>

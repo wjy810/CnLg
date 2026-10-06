@@ -64,9 +64,9 @@ export class VnModal extends VunioElement {
       block-size: 12px;
       border-radius: 6px;
       background: linear-gradient(
-        color-mix(in srgb, var(--vn-wood) 70%, white),
-        var(--vn-wood) 45%,
-        color-mix(in srgb, var(--vn-wood) 75%, black)
+        color-mix(in srgb, var(--vn-frame) 70%, white),
+        var(--vn-frame) 45%,
+        color-mix(in srgb, var(--vn-frame) 75%, black)
       );
       box-shadow: var(--vn-shadow-1);
     }
@@ -80,9 +80,9 @@ export class VnModal extends VunioElement {
       border-radius: 4px;
       background: linear-gradient(
         90deg,
-        color-mix(in srgb, var(--vn-gilt) 75%, black),
-        color-mix(in srgb, var(--vn-gilt) 70%, white) 45%,
-        var(--vn-gilt)
+        color-mix(in srgb, var(--vn-trim) 75%, black),
+        color-mix(in srgb, var(--vn-trim) 70%, white) 45%,
+        var(--vn-trim)
       );
     }
     .rod::before {
@@ -99,7 +99,7 @@ export class VnModal extends VunioElement {
       padding: var(--vn-space-6) var(--vn-space-6) var(--vn-space-5);
       overflow: auto;
       background-color: var(--vn-surface);
-      background-image: var(--vn-texture-paper);
+      background-image: var(--vn-texture);
       box-shadow: var(--vn-shadow-3);
     }
     .header {

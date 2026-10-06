@@ -44,11 +44,11 @@ export class SiteCode extends VunioElement {
       background: var(--vn-surface);
       color: var(--vn-fg-muted);
       font: inherit;
-      font-family: var(--vn-font-serif);
+      font-family: var(--vn-font-body);
       font-size: var(--vn-font-size-xs);
       cursor: pointer;
       opacity: 0;
-      transition: opacity var(--vn-duration-fast) var(--vn-ease-brush);
+      transition: opacity var(--vn-duration-fast) var(--vn-ease-standard);
     }
     .wrap:hover .copy,
     .copy:focus-visible,

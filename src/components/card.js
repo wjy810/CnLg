@@ -43,8 +43,8 @@ export class VnCard extends VunioElement {
         inset 0 0 0 1px var(--vn-line),
         var(--vn-shadow-1);
       transition:
-        box-shadow var(--vn-duration-normal) var(--vn-ease-brush),
-        transform var(--vn-duration-normal) var(--vn-ease-brush);
+        box-shadow var(--vn-duration-normal) var(--vn-ease-standard),
+        transform var(--vn-duration-normal) var(--vn-ease-standard);
     }
     :host([interactive]) .card:hover {
       box-shadow:

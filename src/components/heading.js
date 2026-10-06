@@ -53,7 +53,7 @@ export class VnHeading extends VunioElement {
       display: block;
       margin-block-start: var(--vn-space-2);
       color: var(--vn-fg-muted);
-      font-family: var(--vn-font-serif);
+      font-family: var(--vn-font-body);
       font-size: var(--vn-font-size-sm);
       letter-spacing: var(--vn-tracking-wider);
     }
@@ -74,10 +74,10 @@ export class VnHeading extends VunioElement {
       box-shadow:
         inset 0 0 0 2px var(--vn-accent),
         inset 0 0 0 3px var(--vn-on-accent);
-      font: 700 max(11px, calc(var(--_size) * 0.24)) / 1.05 var(--vn-font-serif);
+      font: 700 max(11px, calc(var(--_size) * 0.24)) / 1.05 var(--vn-font-body);
       transform: rotate(-3deg);
-      -webkit-mask: var(--vn-mask-seal);
-      mask: var(--vn-mask-seal);
+      -webkit-mask: var(--vn-mask-stamp);
+      mask: var(--vn-mask-stamp);
     }
     .seal span {
       writing-mode: vertical-rl;
@@ -94,7 +94,7 @@ export class VnHeading extends VunioElement {
         class="wrap"
         style=${() => ({
           '--_size': `var(--vn-font-size-${SIZES[level()]})`,
-          '--_font': brush() ? 'var(--vn-font-brush)' : 'var(--vn-font-serif)',
+          '--_font': brush() ? 'var(--vn-font-display)' : 'var(--vn-font-body)',
           '--_weight': brush() ? 'var(--vn-weight-regular)' : 'var(--vn-weight-medium)',
         })}
       >

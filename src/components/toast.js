@@ -45,11 +45,11 @@ export class VnToaster extends VunioElement {
       box-shadow:
         inset 0 0 0 1px var(--vn-line),
         var(--vn-shadow-2);
-      font-family: var(--vn-font-serif);
+      font-family: var(--vn-font-body);
       font-size: var(--vn-font-size-md);
       letter-spacing: var(--vn-tracking-wide);
       pointer-events: auto;
-      animation: drop-in var(--vn-duration-slow) var(--vn-ease-ink);
+      animation: drop-in var(--vn-duration-slow) var(--vn-ease-enter);
     }
     @keyframes drop-in {
       from {
@@ -69,8 +69,8 @@ export class VnToaster extends VunioElement {
       font-size: 14px;
       font-weight: var(--vn-weight-bold);
       transform: rotate(-3deg);
-      -webkit-mask: var(--vn-mask-seal);
-      mask: var(--vn-mask-seal);
+      -webkit-mask: var(--vn-mask-stamp);
+      mask: var(--vn-mask-stamp);
     }
     .message {
       flex: 1;

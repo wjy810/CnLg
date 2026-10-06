@@ -40,7 +40,7 @@ export class VnCheckbox extends ToggleElement {
       border: 1.5px solid var(--vn-line-strong);
       border-radius: var(--vn-radius-sm);
       background: var(--vn-surface);
-      transition: border-color var(--vn-duration-fast) var(--vn-ease-brush);
+      transition: border-color var(--vn-duration-fast) var(--vn-ease-standard);
     }
     .control:hover .box {
       border-color: var(--vn-fg-muted);
@@ -64,7 +64,7 @@ export class VnCheckbox extends ToggleElement {
       stroke-linejoin: round;
       stroke-dasharray: 24;
       stroke-dashoffset: 24;
-      transition: stroke-dashoffset var(--vn-duration-normal) var(--vn-ease-brush);
+      transition: stroke-dashoffset var(--vn-duration-normal) var(--vn-ease-standard);
     }
     :host([checked]) .tick {
       stroke-dashoffset: 0;

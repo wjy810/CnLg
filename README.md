@@ -33,7 +33,7 @@ npm run bench        # 性能基准
 页面里引入主题：
 
 ```html
-<html data-theme="auto">   <!-- day | night | auto（跟随系统） -->
+<html data-mode="auto">   <!-- day | night | auto（跟随系统） -->
 <link rel="stylesheet" href="themes/guofeng.css" />
 <link rel="stylesheet" href="themes/guofeng-fonts.css" />  <!-- 可选：网络字体 -->
 ```
@@ -141,7 +141,7 @@ html`
 ## 古风设计系统
 
 纸、墨、印、四时。组件只使用语义令牌（`--vn-fg`、`--vn-accent`、`--vn-space-4`……），
-切换 `data-theme` 时整页连同 Shadow DOM 里的组件一起换主题，组件不需要写任何代码。
+切换 `data-mode` 时整页连同 Shadow DOM 里的组件一起换主题，组件不需要写任何代码。
 
 - **昼 / 夜两套主题**，38 组颜色搭配全部满足 WCAG AA 对比度，由测试保证。
 - **令牌是数据**：`themes/guofeng.tokens.js` 是唯一来源，CSS 和文档表格都由它生成，不会互相对不上。

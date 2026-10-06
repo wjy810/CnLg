@@ -46,8 +46,8 @@ export class VnSwitch extends ToggleElement {
       border-radius: var(--vn-radius-full);
       background: var(--vn-surface-sunken);
       transition:
-        background-color var(--vn-duration-normal) var(--vn-ease-brush),
-        border-color var(--vn-duration-normal) var(--vn-ease-brush);
+        background-color var(--vn-duration-normal) var(--vn-ease-standard),
+        border-color var(--vn-duration-normal) var(--vn-ease-standard);
     }
     .thumb {
       position: absolute;
@@ -62,9 +62,9 @@ export class VnSwitch extends ToggleElement {
         0 0 0 1px var(--vn-line-strong),
         var(--vn-shadow-1);
       transition:
-        transform var(--vn-duration-normal) var(--vn-ease-wind),
-        background var(--vn-duration-normal) var(--vn-ease-brush),
-        box-shadow var(--vn-duration-normal) var(--vn-ease-brush);
+        transform var(--vn-duration-normal) var(--vn-ease-move),
+        background var(--vn-duration-normal) var(--vn-ease-standard),
+        box-shadow var(--vn-duration-normal) var(--vn-ease-standard);
     }
     :host([checked]) .track {
       border-color: var(--vn-accent);

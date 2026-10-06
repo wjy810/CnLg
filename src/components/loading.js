@@ -54,7 +54,7 @@ export class VnLoading extends VunioElement {
       border: 2px solid var(--vn-fg);
       border-radius: 50%;
       opacity: 0;
-      animation: ripple 1.8s var(--vn-ease-ink) infinite;
+      animation: ripple 1.8s var(--vn-ease-enter) infinite;
     }
     .drop i:nth-child(2) {
       animation-delay: 0.6s;

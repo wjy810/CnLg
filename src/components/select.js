@@ -64,7 +64,7 @@ export class VnSelect extends VunioFormElement {
         stroke-width: 1.6;
         stroke-linecap: round;
         stroke-linejoin: round;
-        transition: transform var(--vn-duration-normal) var(--vn-ease-brush);
+        transition: transform var(--vn-duration-normal) var(--vn-ease-standard);
       }
       :host(:state(open)) .chevron {
         transform: rotate(180deg);
@@ -85,7 +85,7 @@ export class VnSelect extends VunioFormElement {
         background: var(--vn-surface);
         color: var(--vn-fg);
         box-shadow: var(--vn-shadow-2);
-        font-family: var(--vn-font-serif);
+        font-family: var(--vn-font-body);
         z-index: var(--vn-z-dropdown);
       }
       /* 不支持 Popover API 时的退路：相对字段绝对定位 */
@@ -98,7 +98,7 @@ export class VnSelect extends VunioFormElement {
         display: none;
       }
       :host(:state(open)) .panel {
-        animation: unroll var(--vn-duration-normal) var(--vn-ease-ink);
+        animation: unroll var(--vn-duration-normal) var(--vn-ease-enter);
       }
       @keyframes unroll {
         from {

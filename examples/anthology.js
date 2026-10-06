@@ -14,16 +14,16 @@ import {
 
 // 风花雪月四个主题色，全部来自主题变量（昼夜自动切换）
 const palette = css`
-  [data-theme='风'] {
+  [data-topic='风'] {
     --_c: var(--vn-wind);
   }
-  [data-theme='花'] {
+  [data-topic='花'] {
     --_c: var(--vn-blossom-deep);
   }
-  [data-theme='雪'] {
+  [data-topic='雪'] {
     --_c: var(--vn-info);
   }
-  [data-theme='月'] {
+  [data-topic='月'] {
     --_c: var(--vn-warning);
   }
 `;
@@ -59,7 +59,7 @@ export class DemoAnthology extends VunioElement {
         font-size: var(--vn-font-size-md);
         color: inherit;
         outline: none;
-        transition: border-color var(--vn-duration-normal) var(--vn-ease-brush);
+        transition: border-color var(--vn-duration-normal) var(--vn-ease-standard);
       }
       .draft:focus {
         border-block-end-color: var(--vn-fg);
@@ -80,9 +80,9 @@ export class DemoAnthology extends VunioElement {
         background: transparent;
         color: var(--vn-fg-muted);
         transition:
-          background-color var(--vn-duration-fast) var(--vn-ease-brush),
-          color var(--vn-duration-fast) var(--vn-ease-brush),
-          border-color var(--vn-duration-fast) var(--vn-ease-brush);
+          background-color var(--vn-duration-fast) var(--vn-ease-standard),
+          color var(--vn-duration-fast) var(--vn-ease-standard),
+          border-color var(--vn-duration-fast) var(--vn-ease-standard);
       }
       .chip:hover {
         border-color: var(--_c);
@@ -158,7 +158,7 @@ export class DemoAnthology extends VunioElement {
         padding: 12px 2px;
         border-block-end: var(--vn-border-thin) dashed var(--vn-line);
         /* 新插入或被移动的行会重新播放：直观看到 repeat 只动了哪些节点 */
-        animation: ink-in var(--vn-duration-ink) var(--vn-ease-ink);
+        animation: ink-in var(--vn-duration-slower) var(--vn-ease-enter);
       }
       @keyframes ink-in {
         from {
@@ -192,8 +192,8 @@ export class DemoAnthology extends VunioElement {
         color: var(--vn-accent-fg);
         font-size: 13px;
         transition:
-          background-color var(--vn-duration-fast) var(--vn-ease-brush),
-          color var(--vn-duration-fast) var(--vn-ease-brush);
+          background-color var(--vn-duration-fast) var(--vn-ease-standard),
+          color var(--vn-duration-fast) var(--vn-ease-standard);
       }
       .fav[aria-pressed='true'] {
         border-color: var(--vn-accent);
@@ -245,7 +245,7 @@ export class DemoAnthology extends VunioElement {
             (t) => html`<button
               type="button"
               class="chip"
-              data-theme=${t}
+              data-topic=${t}
               aria-pressed=${() => String(this.theme.value === t)}
               @click=${() => (this.theme.value = t)}
             >
@@ -274,7 +274,7 @@ export class DemoAnthology extends VunioElement {
           (p) => p.id,
           (p) => html`
             <li class="row">
-              <span class="theme" data-theme=${p.theme} aria-hidden="true">${p.theme}</span>
+              <span class="theme" data-topic=${p.theme} aria-hidden="true">${p.theme}</span>
               <span class="text">${p.text}</span>
               <button
                 type="button"

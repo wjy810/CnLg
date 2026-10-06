@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN" data-theme="auto">
+<html lang="zh-CN" data-mode="auto">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,7 +7,7 @@
     <!-- 尽早应用保存的主题，避免闪烁 -->
     <script>
       try {
-        document.documentElement.dataset.theme = localStorage.getItem('vunio-theme') || 'auto';
+        document.documentElement.dataset.mode = localStorage.getItem('vunio-mode') || 'auto';
       } catch {}
     </script>
     <link rel="stylesheet" href="../themes/guofeng.css" />
@@ -33,7 +33,7 @@
       }
       h1 {
         margin: 0;
-        font: 400 clamp(40px, 9vw, var(--vn-font-size-5xl)) / 1.1 var(--vn-font-brush);
+        font: 400 clamp(40px, 9vw, var(--vn-font-size-5xl)) / 1.1 var(--vn-font-display);
         letter-spacing: var(--vn-tracking-wide);
       }
       header p {
@@ -141,7 +141,7 @@
       }
       .brush {
         margin: 0;
-        font: 400 var(--vn-font-size-5xl) / var(--vn-leading-tight) var(--vn-font-brush);
+        font: 400 var(--vn-font-size-5xl) / var(--vn-leading-tight) var(--vn-font-display);
       }
       .prose {
         max-inline-size: var(--vn-measure-normal);
@@ -154,7 +154,7 @@
         padding-inline-start: var(--vn-space-4);
         border-inline-start: 2px solid var(--vn-accent);
         color: var(--vn-fg-muted);
-        font-family: var(--vn-font-kai);
+        font-family: var(--vn-font-quote);
         font-size: var(--vn-font-size-lg);
       }
       .ladder {
@@ -270,7 +270,7 @@
         block-size: 20px;
         border-radius: var(--vn-radius-full);
         background: var(--vn-accent);
-        transition: inset-inline-start var(--vn-duration-ink) var(--_ease);
+        transition: inset-inline-start var(--vn-duration-slower) var(--_ease);
       }
       .moved .track i {
         inset-inline-start: calc(100% - 24px);
@@ -299,10 +299,10 @@
         box-shadow:
           inset 0 0 0 5px var(--vn-accent),
           inset 0 0 0 8px var(--vn-on-accent);
-        font: 700 32px / 1.05 var(--vn-font-serif);
+        font: 700 32px / 1.05 var(--vn-font-body);
         transform: rotate(-2deg);
-        -webkit-mask: var(--vn-mask-seal);
-        mask: var(--vn-mask-seal);
+        -webkit-mask: var(--vn-mask-stamp);
+        mask: var(--vn-mask-stamp);
       }
       .seal span {
         /* 两字一列，从右往左读：风花 / 雪月 */
@@ -313,14 +313,14 @@
       .brush-line {
         block-size: 10px;
         background: var(--vn-fg);
-        -webkit-mask: var(--vn-mask-brush) center / 100% 100% no-repeat;
-        mask: var(--vn-mask-brush) center / 100% 100% no-repeat;
+        -webkit-mask: var(--vn-mask-stroke) center / 100% 100% no-repeat;
+        mask: var(--vn-mask-stroke) center / 100% 100% no-repeat;
       }
       .paper-sample {
         block-size: 104px;
         border-radius: var(--vn-radius-md);
         background-color: var(--vn-bg);
-        background-image: var(--vn-texture-paper);
+        background-image: var(--vn-texture);
         box-shadow: inset 0 0 0 1px var(--vn-line);
       }
       .caption {
@@ -386,8 +386,9 @@
 
     <script type="module">
       import { html, render, signal, computed } from '../src/index.js';
-      import { palette, themes, scales, easeNotes, contrastRules } from '../themes/guofeng.tokens.js';
-      import { resolvedTheme } from './stores/theme.js';
+      import guofeng from '../themes/guofeng.tokens.js';
+      import { MODES, contrastRules } from '../themes/base.js';
+      import { resolvedMode } from './stores/theme.js';
       import './theme-switch.js';
 
       const groups = [
@@ -397,7 +398,8 @@
         ['夜', ['xuanqing', 'yese', 'daihei', 'yinhui', 'yueguang', 'dan', 'feise', 'bise', 'jin', 'bilan']],
       ];
 
-      const theme = computed(() => themes[resolvedTheme.value]);
+      const { palette, modes, scales, easeNotes } = guofeng;
+      const theme = computed(() => ({ ...modes[resolvedMode.value], label: MODES[resolvedMode.value].label }));
       const hexOf = (value) => (typeof value === 'object' ? palette[value.ref].hex : value);
       const describe = (value) => (typeof value === 'object' ? `${palette[value.ref].name} ${palette[value.ref].hex}` : value);
 
@@ -457,7 +459,7 @@
         <section>
           <h2><small>贰</small>语义令牌 <span class="lead" style="margin: 0">当前：${() => theme.value.label}</span></h2>
           <div class="tokens">
-            ${Object.keys(themes.day.colors).map(
+            ${Object.keys(modes.day.colors).map(
               (name) => html`
                 <div class="token">
                   <span class="dot" style=${{ background: `var(--vn-${name})` }}></span>
@@ -474,8 +476,8 @@
           <div class="specimen">
             <div>
               <p class="brush">风花雪月</p>
-              <p class="caption">--vn-font-brush · 仅用于 ≥ 28px 的标题</p>
-              <h3>正文 · --vn-font-serif</h3>
+              <p class="caption">--vn-font-display · 仅用于 ≥ 28px 的标题</p>
+              <h3>正文 · --vn-font-body</h3>
               <p class="prose">
                 清风徐来，水波不兴。举酒属客，诵明月之诗，歌窈窕之章。少焉，月出于东山之上，徘徊于斗牛之间。白露横江，水光接天。
               </p>
@@ -549,15 +551,15 @@
           <div class="three">
             <div>
               <div class="paper-sample"></div>
-              <p class="caption">--vn-texture-paper · 宣纸纤维</p>
+              <p class="caption">--vn-texture · 宣纸纤维</p>
             </div>
             <div>
               <div class="seal" role="img" aria-label="印章：风花雪月"><span>风花雪月</span></div>
-              <p class="caption">--vn-mask-seal · 印泥斑驳</p>
+              <p class="caption">--vn-mask-stamp · 印泥斑驳</p>
             </div>
             <div>
               <div class="brush-line" style="margin-block-start: 48px"></div>
-              <p class="caption" style="margin-block-start: 46px">--vn-mask-brush · 两头尖的笔触</p>
+              <p class="caption" style="margin-block-start: 46px">--vn-mask-stroke · 两头尖的笔触</p>
             </div>
           </div>
         </section>

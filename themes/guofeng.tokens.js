@@ -1,16 +1,15 @@
 /**
- * 古风主题的设计令牌（唯一来源）。
+ * 古风主题：纸、墨、印、四时（docs/design/guofeng.md）。
  *
- * 修改后运行 `npm run build:theme`，会重新生成：
- *   themes/guofeng.css                CSS 变量
- *   docs/design/guofeng.md 中的对比度表
- * 测试会检查生成结果是否最新，以及所有对比度要求是否满足。
+ * 修改后运行 `npm run build:theme`，会重新生成 themes/guofeng.css、guofeng-fonts.css
+ * 和设计文档中的表格。测试会检查生成结果是否最新、契约是否完整、对比度是否达标。
  *
  * 色值参考中国传统色，并为屏幕显示和 WCAG 对比度做了校准。
  */
+import { defineTheme, ref as c, svgUrl } from './base.js';
 
 /** 原色：有名字的传统色。组件不直接使用，只通过下面的语义令牌引用。 */
-export const palette = {
+const palette = {
   // 纸
   juanbai: { name: '绢白', hex: '#FBF8F2', note: '最亮的纸面：卡片、浮层' },
   xuanzhi: { name: '宣纸', hex: '#F4EEE2', note: '页面底色' },
@@ -46,170 +45,140 @@ export const palette = {
   bilan: { name: '碧蓝', hex: '#8FB2D1', note: '夜：信息' },
 };
 
-const c = (key) => ({ ref: key });
-
-/**
- * 语义令牌。组件只用这些。
- * 值可以是 { ref: 原色名 } 或直接的 CSS 颜色（半透明色）。
- */
-export const themes = {
-  day: {
-    label: '昼',
-    colorScheme: 'light',
-    colors: {
-      bg: c('xuanzhi'),
-      surface: c('juanbai'),
-      'surface-sunken': c('chabai'),
-      fg: c('nongmo'),
-      'fg-strong': c('jiaomo'),
-      'fg-muted': c('danmo'),
-      'fg-subtle': '#8C8478',
-      line: 'rgba(42, 39, 36, 0.14)',
-      'line-strong': c('qingmo'),
-      primary: c('nongmo'),
-      'on-primary': '#F7F1E6',
-      accent: c('zhusha'),
-      'on-accent': '#FBF5EC',
-      'accent-fg': c('zhusha'),
-      'accent-wash': 'rgba(176, 56, 43, 0.1)',
-      success: c('qingci'),
-      warning: c('nijin'),
-      danger: c('yanzhi'),
-      info: c('dailan'),
-      focus: c('zhusha'),
-      selection: 'rgba(176, 56, 43, 0.18)',
-      overlay: 'rgba(26, 24, 22, 0.42)',
-      wind: c('zhuqing'),
-      blossom: c('taoyao'),
-      'blossom-deep': c('haitang'),
-      snow: '#AFC0CB',
-      moon: c('yuebai'),
-      'night-sky': '#2C3A4B',
-      wood: '#5A3E2B',
-      gilt: '#A88443',
-    },
-    shadows: {
-      1: '0 1px 2px rgba(70, 48, 26, 0.08)',
-      2: '0 8px 20px -10px rgba(70, 48, 26, 0.28)',
-      3: '0 22px 48px -18px rgba(70, 48, 26, 0.38)',
-    },
-    texture: { tint: '0.36 0.27 0.18', alpha: 0.055 },
-  },
-  night: {
-    label: '夜',
-    colorScheme: 'dark',
-    colors: {
-      bg: c('xuanqing'),
-      surface: c('yese'),
-      'surface-sunken': c('daihei'),
-      fg: c('yueguang'),
-      'fg-strong': '#F7F2E8',
-      'fg-muted': c('yinhui'),
-      'fg-subtle': '#6F6C66',
-      line: 'rgba(236, 230, 217, 0.13)',
-      'line-strong': '#7A766F',
-      primary: c('yueguang'),
-      'on-primary': c('xuanqing'),
-      accent: '#B8473A',
-      'on-accent': '#FFF4EC',
-      'accent-fg': c('dan'),
-      'accent-wash': 'rgba(232, 122, 102, 0.14)',
-      success: c('bise'),
-      warning: c('jin'),
-      danger: c('feise'),
-      info: c('bilan'),
-      focus: c('dan'),
-      selection: 'rgba(232, 122, 102, 0.28)',
-      overlay: 'rgba(5, 6, 8, 0.6)',
-      wind: '#8DB49A',
-      blossom: '#E39AA4',
-      'blossom-deep': '#D46F7E',
-      snow: c('shuang'),
-      moon: '#F3EBD3',
-      'night-sky': '#0B0E13',
-      wood: '#6E4D36',
-      gilt: '#C9A15A',
-    },
-    shadows: {
-      1: '0 1px 2px rgba(0, 0, 0, 0.4)',
-      2: '0 10px 24px -10px rgba(0, 0, 0, 0.6)',
-      3: '0 24px 56px -16px rgba(0, 0, 0, 0.7)',
-    },
-    texture: { tint: '0.93 0.9 0.85', alpha: 0.03 },
-  },
+/** 纸纹：低透明度的分形噪声 */
+const paper = (tint, alpha) => {
+  const [r, g, b] = tint.split(' ');
+  return svgUrl(
+    `<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 ${r} 0 0 0 0 ${g} 0 0 0 0 ${b} 0 0 0 ${(alpha * 2).toFixed(3)} 0'/></filter><rect width='100%' height='100%' filter='url(#n)'/></svg>`,
+  );
 };
 
-/**
- * 对比度要求（WCAG 2.1 AA）：每个主题都要满足。
- * 4.5：正文与可读文字；3：大字、图形与控件边界、焦点框。
- */
-export const contrastRules = [
-  ['fg', 'bg', 4.5, '正文'],
-  ['fg', 'surface', 4.5, '卡片上的正文'],
-  ['fg', 'surface-sunken', 4.5, '输入框中的文字'],
-  ['fg-muted', 'bg', 4.5, '次要文字'],
-  ['fg-muted', 'surface', 4.5, '卡片上的次要文字'],
-  ['fg-muted', 'surface-sunken', 4.5, '占位文字'],
-  ['fg-subtle', 'bg', 3, '弱化图形、禁用态'],
-  ['line-strong', 'bg', 3, '控件边框'],
-  ['line-strong', 'surface', 3, '卡片上的控件边框'],
-  ['on-primary', 'primary', 4.5, '墨色按钮文字'],
-  ['on-accent', 'accent', 4.5, '朱砂按钮文字'],
-  ['accent-fg', 'bg', 4.5, '强调文字、链接'],
-  ['accent-fg', 'surface', 4.5, '卡片上的强调文字'],
-  ['success', 'bg', 4.5, '成功提示'],
-  ['warning', 'bg', 4.5, '提醒'],
-  ['danger', 'bg', 4.5, '错误提示'],
-  ['danger', 'surface', 4.5, '卡片上的错误提示'],
-  ['info', 'bg', 4.5, '信息'],
-  ['success', 'surface-sunken', 4.5, '凹陷面上的成功色（如代码高亮）'],
-  ['warning', 'surface-sunken', 4.5, '凹陷面上的提醒色'],
-  ['danger', 'surface-sunken', 4.5, '凹陷面上的错误提示'],
-  ['info', 'surface-sunken', 4.5, '凹陷面上的信息色'],
-  ['accent-fg', 'surface-sunken', 4.5, '凹陷面上的强调文字'],
-  ['focus', 'bg', 3, '焦点框'],
-];
+export default defineTheme({
+  name: 'guofeng',
+  label: '古风',
+  description: '纸、墨、印、四时。宣纸底色，墨分五色，一点朱砂。',
+  defaultMode: 'day',
+  fontImport: 'https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600;700&display=swap',
+  fontNote: '马善政毛笔楷书：标题；思源宋体：正文。',
+  palette,
 
-/** 与主题无关的尺度 */
-export const scales = {
-  font: {
-    brush: "'Ma Shan Zheng', 'STXingkai', 'Xingkai SC', 'STKaiti', 'KaiTi', serif",
-    kai: "'Kaiti SC', 'STKaiti', 'KaiTi', 'BiauKai', serif",
-    serif: "'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'STSong', 'SimSun', serif",
-    mono: "ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace",
+  modes: {
+    day: {
+      colors: {
+        bg: c('xuanzhi'),
+        surface: c('juanbai'),
+        'surface-sunken': c('chabai'),
+        fg: c('nongmo'),
+        'fg-strong': c('jiaomo'),
+        'fg-muted': c('danmo'),
+        'fg-subtle': '#8C8478',
+        line: 'rgba(42, 39, 36, 0.14)',
+        'line-strong': c('qingmo'),
+        primary: c('nongmo'),
+        'on-primary': '#F7F1E6',
+        accent: c('zhusha'),
+        'on-accent': '#FBF5EC',
+        'accent-fg': c('zhusha'),
+        'accent-wash': 'rgba(176, 56, 43, 0.1)',
+        success: c('qingci'),
+        warning: c('nijin'),
+        danger: c('yanzhi'),
+        info: c('dailan'),
+        focus: c('zhusha'),
+        selection: 'rgba(176, 56, 43, 0.18)',
+        overlay: 'rgba(26, 24, 22, 0.42)',
+        frame: '#5A3E2B',
+        trim: '#A88443',
+        blossom: c('taoyao'),
+        'blossom-deep': c('haitang'),
+        snow: '#AFC0CB',
+        wind: c('zhuqing'),
+        moon: c('yuebai'),
+        'night-sky': '#2C3A4B',
+      },
+      shadows: {
+        1: '0 1px 2px rgba(70, 48, 26, 0.08)',
+        2: '0 8px 20px -10px rgba(70, 48, 26, 0.28)',
+        3: '0 22px 48px -18px rgba(70, 48, 26, 0.38)',
+      },
+      texture: paper('0.36 0.27 0.18', 0.055),
+    },
+    night: {
+      colors: {
+        bg: c('xuanqing'),
+        surface: c('yese'),
+        'surface-sunken': c('daihei'),
+        fg: c('yueguang'),
+        'fg-strong': '#F7F2E8',
+        'fg-muted': c('yinhui'),
+        'fg-subtle': '#6F6C66',
+        line: 'rgba(236, 230, 217, 0.13)',
+        'line-strong': '#7A766F',
+        primary: c('yueguang'),
+        'on-primary': c('xuanqing'),
+        accent: '#B8473A',
+        'on-accent': '#FFF4EC',
+        'accent-fg': c('dan'),
+        'accent-wash': 'rgba(232, 122, 102, 0.14)',
+        success: c('bise'),
+        warning: c('jin'),
+        danger: c('feise'),
+        info: c('bilan'),
+        focus: c('dan'),
+        selection: 'rgba(232, 122, 102, 0.28)',
+        overlay: 'rgba(5, 6, 8, 0.6)',
+        frame: '#6E4D36',
+        trim: '#C9A15A',
+        blossom: '#E39AA4',
+        'blossom-deep': '#D46F7E',
+        snow: c('shuang'),
+        wind: '#8DB49A',
+        moon: '#F3EBD3',
+        'night-sky': '#0B0E13',
+      },
+      shadows: {
+        1: '0 1px 2px rgba(0, 0, 0, 0.4)',
+        2: '0 10px 24px -10px rgba(0, 0, 0, 0.6)',
+        3: '0 24px 56px -16px rgba(0, 0, 0, 0.7)',
+      },
+      texture: paper('0.93 0.9 0.85', 0.03),
+    },
   },
-  'font-size': {
-    xs: '12px',
-    sm: '14px',
-    md: '16px',
-    lg: '18px',
-    xl: '22px',
-    '2xl': '28px',
-    '3xl': '36px',
-    '4xl': '48px',
-    '5xl': '64px',
-  },
-  leading: { tight: '1.3', normal: '1.75', loose: '2' },
-  tracking: { normal: '0', wide: '0.08em', wider: '0.2em', widest: '0.35em' },
-  weight: { regular: '400', medium: '600', bold: '700' },
-  space: { 0: '0', 1: '4px', 2: '8px', 3: '12px', 4: '16px', 5: '24px', 6: '32px', 7: '48px', 8: '64px', 9: '96px' },
-  radius: { none: '0', sm: '2px', md: '4px', lg: '8px', full: '999px' },
-  border: { thin: '1px', thick: '2px' },
-  ease: {
-    ink: 'cubic-bezier(0.16, 1, 0.3, 1)',
-    brush: 'cubic-bezier(0.22, 0.61, 0.36, 1)',
-    wind: 'cubic-bezier(0.45, 0, 0.2, 1)',
-    petal: 'cubic-bezier(0.34, 1.36, 0.64, 1)',
-  },
-  duration: { instant: '100ms', fast: '180ms', normal: '320ms', slow: '600ms', ink: '900ms' },
-  z: { dropdown: '1000', sticky: '1050', overlay: '1100', modal: '1110', toast: '1200' },
-  measure: { narrow: '22em', normal: '34em', wide: '48em' },
-};
 
-/** 动效名称的含义（写进文档） */
-export const easeNotes = {
-  ink: '墨晕：落墨即散，越散越慢。用于点击反馈、展开、出现',
-  brush: '运笔：起笔利落，收笔稳。用于大多数状态过渡',
-  wind: '风过：缓起缓落。用于位移、滑动、切换',
-  petal: '落花：轻轻越过再回落。用于完成、庆祝，少用',
-};
+  scales: {
+    font: {
+      display: "'Ma Shan Zheng', 'STXingkai', 'Xingkai SC', 'STKaiti', 'KaiTi', serif",
+      body: "'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'STSong', 'SimSun', serif",
+      quote: "'Kaiti SC', 'STKaiti', 'KaiTi', 'BiauKai', serif",
+      mono: "ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace",
+    },
+    radius: { none: '0', sm: '2px', md: '4px', lg: '8px', full: '999px' },
+    ease: {
+      standard: 'cubic-bezier(0.22, 0.61, 0.36, 1)',
+      enter: 'cubic-bezier(0.16, 1, 0.3, 1)',
+      move: 'cubic-bezier(0.45, 0, 0.2, 1)',
+      spring: 'cubic-bezier(0.34, 1.36, 0.64, 1)',
+    },
+    duration: { instant: '100ms', fast: '180ms', normal: '320ms', slow: '600ms', slower: '900ms' },
+  },
+
+  easeNotes: {
+    standard: '运笔：起笔利落，收笔稳。用于大多数状态过渡',
+    enter: '墨晕：落墨即散，越散越慢。用于点击反馈、展开、出现',
+    move: '风过：缓起缓落。用于位移、滑动、切换',
+    spring: '落花：轻轻越过再回落。用于完成、庆祝，少用',
+  },
+
+  masks: {
+    /** 笔触：中间粗、两端尖，横向拉伸使用 */
+    stroke: svgUrl(
+      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8' preserveAspectRatio='none'><path d='M0 4.6C18 3.1 58 2.4 100 2.9S172 3.3 200 4.3C176 5.7 122 6.1 88 5.8S24 5.5 0 4.6Z'/></svg>`,
+    ),
+    /** 印泥斑驳：大部分不透明，少量缺口 */
+    stamp: svgUrl(
+      `<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -6 4.7'/></filter><rect width='100%' height='100%' filter='url(#n)'/></svg>`,
+    ),
+  },
+
+  effect: 'ink',
+});

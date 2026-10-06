@@ -39,7 +39,7 @@ export class DemoSeasons extends VunioElement {
       position: absolute;
       inset-block-end: var(--vn-space-4);
       inset-inline-start: var(--vn-space-5);
-      font: 400 96px / 1 var(--vn-font-brush);
+      font: 400 96px / 1 var(--vn-font-display);
       color: var(--vn-fg);
       opacity: 0.08;
       pointer-events: none;
@@ -76,8 +76,8 @@ export class DemoSeasons extends VunioElement {
       font: inherit;
       cursor: pointer;
       transition:
-        background-color var(--vn-duration-fast) var(--vn-ease-brush),
-        color var(--vn-duration-fast) var(--vn-ease-brush);
+        background-color var(--vn-duration-fast) var(--vn-ease-standard),
+        color var(--vn-duration-fast) var(--vn-ease-standard);
     }
     button:hover {
       color: var(--vn-fg);

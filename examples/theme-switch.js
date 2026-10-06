@@ -26,8 +26,8 @@ export class DemoThemeSwitch extends VunioElement {
       font-size: var(--vn-font-size-sm);
       cursor: pointer;
       transition:
-        background-color var(--vn-duration-fast) var(--vn-ease-brush),
-        color var(--vn-duration-fast) var(--vn-ease-brush);
+        background-color var(--vn-duration-fast) var(--vn-ease-standard),
+        color var(--vn-duration-fast) var(--vn-ease-standard);
     }
     button:hover {
       color: var(--vn-fg);

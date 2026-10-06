@@ -48,7 +48,7 @@ export default () => html`
     }
     .doc .home-title {
       margin: 0;
-      font: 400 clamp(72px, 16vw, 132px) / 1 var(--vn-font-brush);
+      font: 400 clamp(72px, 16vw, 132px) / 1 var(--vn-font-display);
       letter-spacing: var(--vn-tracking-wide);
     }
     .home-tagline {
@@ -90,7 +90,7 @@ export default () => html`
     }
     .home-code h2 {
       margin: 0 0 var(--vn-space-3);
-      font: 400 var(--vn-font-size-2xl) / 1.3 var(--vn-font-brush);
+      font: 400 var(--vn-font-size-2xl) / 1.3 var(--vn-font-display);
       letter-spacing: var(--vn-tracking-wide);
     }
     .home-code p {

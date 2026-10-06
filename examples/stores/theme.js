@@ -1,4 +1,4 @@
-// 主题 store：昼 / 夜 / 跟随系统。选择会记在 localStorage 里。
+// 昼夜模式 store：昼 / 夜 / 跟随系统。选择会记在 localStorage 里。
 import { signal, computed, effect } from '../../src/index.js';
 
 export const MODES = [
@@ -7,7 +7,7 @@ export const MODES = [
   ['auto', '随'],
 ];
 
-const KEY = 'vunio-theme';
+const KEY = 'vunio-mode';
 const read = () => {
   try {
     const saved = localStorage.getItem(KEY);
@@ -24,8 +24,8 @@ const media = matchMedia('(prefers-color-scheme: dark)');
 const prefersDark = signal(media.matches);
 media.addEventListener('change', (event) => (prefersDark.value = event.matches));
 
-/** 实际生效的主题 */
-export const resolvedTheme = computed(() => (mode.value === 'auto' ? (prefersDark.value ? 'night' : 'day') : mode.value));
+/** 实际生效的模式 */
+export const resolvedMode = computed(() => (mode.value === 'auto' ? (prefersDark.value ? 'night' : 'day') : mode.value));
 
 export function setMode(value) {
   mode.value = value;
@@ -33,7 +33,7 @@ export function setMode(value) {
 
 // 应用到页面并记住选择（全局 effect，随页面存在）
 effect(() => {
-  document.documentElement.dataset.theme = mode.value;
+  document.documentElement.dataset.mode = mode.value;
   try {
     localStorage.setItem(KEY, mode.value);
   } catch {

@@ -39,7 +39,7 @@ burst('ink', layer, { x, y, animate: this.animate.bind(this) });  // 组件里�
 
 | 效果 | 形态 | 颜色令牌 | 时长 | 适合 |
 |---|---|---|---|---|
-| 墨晕 | 一团从点击处晕开的墨，边缘柔和 | `--vn-burst-ink`（默认 `currentColor`） | `--vn-duration-ink` | 按钮按下的通用反馈 |
+| 墨晕 | 一团从点击处晕开的墨，边缘柔和 | `--vn-burst-ink`（默认 `currentColor`） | `--vn-duration-slower` | 按钮按下的通用反馈 |
 | 落花 | 十余片花瓣迸出后翻飞飘落 | `--vn-blossom` / `--vn-blossom-deep` | 1.4–2.2s | 完成、收藏、点赞 |
 | 飞雪 | 细小雪粒轻轻散开后缓缓下坠 | `--vn-snow` | 1.6–2.6s | 安静的确认 |
 | 风叶 | 几片竹叶被风横着吹走，带几道风痕 | `--vn-wind` | 0.9–1.4s | 发送、提交、前进 |

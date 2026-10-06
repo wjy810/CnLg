@@ -97,7 +97,7 @@ export class VnButton extends VunioElement {
       background: var(--_bg);
       color: var(--_fg);
       font: inherit;
-      font-family: var(--vn-font-serif);
+      font-family: var(--vn-font-body);
       font-size: var(--_fs);
       line-height: 1;
       letter-spacing: var(--vn-tracking-wider);
@@ -105,10 +105,10 @@ export class VnButton extends VunioElement {
       user-select: none;
       -webkit-user-select: none;
       transition:
-        background-color var(--vn-duration-fast) var(--vn-ease-brush),
-        border-color var(--vn-duration-fast) var(--vn-ease-brush),
-        color var(--vn-duration-fast) var(--vn-ease-brush),
-        transform var(--vn-duration-instant) var(--vn-ease-brush);
+        background-color var(--vn-duration-fast) var(--vn-ease-standard),
+        border-color var(--vn-duration-fast) var(--vn-ease-standard),
+        color var(--vn-duration-fast) var(--vn-ease-standard),
+        transform var(--vn-duration-instant) var(--vn-ease-standard);
     }
     /* 古籍边栏：距边 3px 的一道细线 */
     button::before {
@@ -144,10 +144,10 @@ export class VnButton extends VunioElement {
       inset-block-end: 6px;
       block-size: 4px;
       background: currentColor;
-      -webkit-mask: var(--vn-mask-brush) center / 100% 100% no-repeat;
-      mask: var(--vn-mask-brush) center / 100% 100% no-repeat;
+      -webkit-mask: var(--vn-mask-stroke) center / 100% 100% no-repeat;
+      mask: var(--vn-mask-stroke) center / 100% 100% no-repeat;
       transform: scaleX(0);
-      transition: transform var(--vn-duration-normal) var(--vn-ease-ink);
+      transition: transform var(--vn-duration-normal) var(--vn-ease-enter);
     }
     :host([variant='text']) button:hover:not(:disabled)::after {
       transform: scaleX(1);
