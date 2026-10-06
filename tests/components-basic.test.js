@@ -25,13 +25,26 @@ test('vn-button：墨晕在按钮内，其他效果在按钮外层，none 不产
     t,
     '<vn-button id="a">落笔</vn-button><vn-button id="b" effect="blossom">赏花</vn-button><vn-button id="c" effect="none">无</vn-button>',
   );
+  // 统计“加入过”的粒子，而不是还在的：点击较慢的浏览器里，墨晕可能在统计前就已经播完并移除
+  await page.evaluate(() => {
+    window.added = {};
+    for (const [id, ref] of [['a', 'wash'], ['b', 'fx'], ['c', 'wash'], ['c', 'fx']]) {
+      const key = `${id}.${ref}`;
+      window.added[key] = 0;
+      new MutationObserver((records) => {
+        for (const r of records) for (const n of r.addedNodes) if (n.dataset?.vnBurst !== undefined) window.added[key]++;
+      }).observe(document.getElementById(id).refs[ref], { childList: true });
+    }
+  });
   await page.locator('#a').click();
   await page.locator('#b').click();
   await page.locator('#c').click();
-  const counts = await page.evaluate(() => {
-    const count = (id, ref) => document.getElementById(id).refs[ref].querySelectorAll('[data-vn-burst]').length;
-    return { inkWash: count('a', 'wash'), blossomFx: count('b', 'fx'), noneWash: count('c', 'wash'), noneFx: count('c', 'fx') };
-  });
+  const counts = await page.evaluate(() => ({
+    inkWash: window.added['a.wash'],
+    blossomFx: window.added['b.fx'],
+    noneWash: window.added['c.wash'],
+    noneFx: window.added['c.fx'],
+  }));
   assert.deepEqual(counts, { inkWash: 1, blossomFx: 12, noneWash: 0, noneFx: 0 });
 });
 

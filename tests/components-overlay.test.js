@@ -96,6 +96,25 @@ test('vn-modal：用 open 属性声明式控制', async (t) => {
   assert.equal((await modalState(page)).dialogOpen, false);
 });
 
+test('vn-modal：浏览器不支持 ::backdrop 动画时（Firefox）照常打开、关闭', async (t) => {
+  const { page } = await mount(t, MODAL);
+  await page.evaluate(() => {
+    const animate = Element.prototype.animate;
+    Element.prototype.animate = function (keyframes, options) {
+      if (options?.pseudoElement === '::backdrop') throw new DOMException("'::backdrop' 不是有效的伪元素", 'SyntaxError');
+      return animate.call(this, keyframes, options);
+    };
+  });
+  await page.evaluate(() => document.getElementById('m').show());
+  await page.waitForTimeout(50);
+  assert.equal((await modalState(page)).dialogOpen, true);
+  await page.evaluate(() => document.getElementById('m').close('done'));
+  await page.waitForTimeout(80);
+  const state = await modalState(page);
+  assert.equal(state.dialogOpen, false);
+  assert.deepEqual(state.events, [['vn-open', null], ['vn-close', 'done']]);
+});
+
 test('toast()：显示消息与对应印章，error 用 role=alert，到时自动关闭，可手动关闭', async (t) => {
   const { page } = await mount(t, '');
   const shown = await page.evaluate(async () => {

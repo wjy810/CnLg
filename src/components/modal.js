@@ -233,9 +233,18 @@ export class VnModal extends VunioElement {
       this.animate(rodTop, [{ transform: `translateY(${half}px)` }, { transform: 'none' }], timing),
       this.animate(rodBottom, [{ transform: `translateY(${-half}px)` }, { transform: 'none' }], timing),
       this.animate(dialog, [{ opacity: 0 }, { opacity: 1 }], { duration: timing.duration / 2 }),
-      this.animate(dialog, [{ opacity: 0 }, { opacity: 1 }], { duration: timing.duration / 2, pseudoElement: '::backdrop' }),
-    ];
+      this.#animateBackdrop([{ opacity: 0 }, { opacity: 1 }], { duration: timing.duration / 2 }),
+    ].filter(Boolean);
     this.emit('vn-open');
+  }
+
+  /** 遮罩淡入淡出。Firefox 的 Element.animate 不支持 ::backdrop（会抛错），此时遮罩直接出现 / 消失 */
+  #animateBackdrop(keyframes, timing) {
+    try {
+      return this.animate(this.refs.dialog, keyframes, { ...timing, pseudoElement: '::backdrop' });
+    } catch {
+      return null;
+    }
   }
 
   #closeDialog() {
@@ -249,8 +258,8 @@ export class VnModal extends VunioElement {
       this.animate(rodTop, [{ transform: 'none' }, { transform: `translateY(${half}px)` }], timing),
       this.animate(rodBottom, [{ transform: 'none' }, { transform: `translateY(${-half}px)` }], timing),
       this.animate(dialog, [{ opacity: 1 }, { opacity: 0 }], timing),
-      this.animate(dialog, [{ opacity: 1 }, { opacity: 0 }], { ...timing, pseudoElement: '::backdrop' }),
-    ];
+      this.#animateBackdrop([{ opacity: 1 }, { opacity: 0 }], timing),
+    ].filter(Boolean);
     this.#transition = animations;
     const returnValue = this.#returnValue;
     Promise.all(animations.map((a) => a.finished)).then(
