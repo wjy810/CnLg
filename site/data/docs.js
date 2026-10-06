@@ -3,10 +3,10 @@
 
 export const groups = [
   { title: '基础', items: ['button', 'heading', 'card', 'stack', 'divider', 'tag'] },
-  { title: '导航', items: ['breadcrumb'] },
+  { title: '导航', items: ['tabs', 'breadcrumb', 'pagination'] },
   { title: '表单', items: ['input', 'textarea', 'select', 'radio', 'slider', 'checkbox', 'switch'] },
   { title: '反馈', items: ['loading', 'progress', 'modal', 'toast'] },
-  { title: '叙事', items: ['timeline'] },
+  { title: '叙事', items: ['collapse', 'timeline'] },
   { title: '效果', items: ['sky'] },
 ];
 
@@ -151,6 +151,34 @@ export const docs = {
       },
     ],
   },
+  tabs: {
+    tag: 'vn-tabs',
+    name: '标签页',
+    intro: '一组 <vn-tab-panel>，一次显示一页。← → 切换，Home / End 到两端，Tab 进入面板；当前标签下的线随切换滑过去。',
+    demos: [
+      {
+        html: `<vn-tabs label="四时" value="autumn">
+  <vn-tab-panel name="spring" label="春">春眠不觉晓，处处闻啼鸟。</vn-tab-panel>
+  <vn-tab-panel name="summer" label="夏">接天莲叶无穷碧，映日荷花别样红。</vn-tab-panel>
+  <vn-tab-panel name="autumn" label="秋">停车坐爱枫林晚，霜叶红于二月花。</vn-tab-panel>
+  <vn-tab-panel name="winter" label="冬" disabled>（未完）</vn-tab-panel>
+</vn-tabs>`,
+      },
+    ],
+  },
+  pagination: {
+    tag: 'vn-pagination',
+    name: '分页',
+    intro: '上一页、页码、下一页。页数多时只显示首尾和当前页两侧，其余折叠为省略号。页码是按钮；需要链接跳转时监听 vn-change。',
+    demos: [
+      {
+        html: `<vn-stack gap="4">
+  <vn-pagination total="56" page="2"></vn-pagination>
+  <vn-pagination total="520" page="17" siblings="2"></vn-pagination>
+</vn-stack>`,
+      },
+    ],
+  },
   breadcrumb: {
     tag: 'vn-breadcrumb',
     name: '面包屑',
@@ -181,6 +209,20 @@ export const docs = {
   <vn-progress value="72" max="100" label="誊抄"></vn-progress>
   <vn-progress label="装裱中"></vn-progress>
 </vn-stack>`,
+      },
+    ],
+  },
+  collapse: {
+    tag: 'vn-collapse',
+    name: '折叠面板',
+    intro: '每一项都是原生 <details>：键盘、读屏、页内查找都由浏览器负责。accordion 时同一时间只展开一项；展开收起有高度动画。',
+    demos: [
+      {
+        html: `<vn-collapse accordion>
+  <vn-collapse-item heading="作者" open>李白，字太白，号青莲居士，唐代浪漫主义诗人。</vn-collapse-item>
+  <vn-collapse-item heading="出处">《李太白集》卷六。</vn-collapse-item>
+  <vn-collapse-item heading="注释">床：一说井栏，一说坐具。</vn-collapse-item>
+</vn-collapse>`,
       },
     ],
   },

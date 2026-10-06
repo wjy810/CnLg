@@ -236,6 +236,71 @@ export const api = {
     ],
     "cssprops": []
   },
+  "vn-collapse": {
+    "file": "src/components/collapse.js",
+    "tag": "vn-collapse",
+    "summary": "折叠面板：一组 <vn-collapse-item>。accordion 时同一时间只展开一项。",
+    "attrs": [
+      {
+        "name": "accordion",
+        "type": "boolean",
+        "description": "手风琴：展开一项时收起其他项"
+      }
+    ],
+    "slots": [
+      {
+        "name": "",
+        "description": "<vn-collapse-item>"
+      }
+    ],
+    "events": [],
+    "parts": [],
+    "cssprops": []
+  },
+  "vn-collapse-item": {
+    "file": "src/components/collapse.js",
+    "tag": "vn-collapse-item",
+    "summary": "折叠面板中的一项：原生 <details> / <summary>，键盘、读屏、页内查找都由浏览器负责。",
+    "attrs": [
+      {
+        "name": "heading",
+        "type": "string",
+        "description": "标题"
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "description": "是否展开"
+      }
+    ],
+    "slots": [
+      {
+        "name": "",
+        "description": "内容"
+      },
+      {
+        "name": "heading",
+        "description": "标题（代替 heading 属性，可以放图标等）"
+      }
+    ],
+    "events": [
+      {
+        "name": "vn-toggle",
+        "description": "展开或收起后，detail.open"
+      }
+    ],
+    "parts": [
+      {
+        "name": "summary",
+        "description": "标题行"
+      },
+      {
+        "name": "content",
+        "description": "内容"
+      }
+    ],
+    "cssprops": []
+  },
   "vn-divider": {
     "file": "src/components/divider.js",
     "tag": "vn-divider",
@@ -530,6 +595,64 @@ export const api = {
       {
         "name": "footer",
         "description": "底部"
+      }
+    ],
+    "cssprops": []
+  },
+  "vn-pagination": {
+    "file": "src/components/pagination.js",
+    "tag": "vn-pagination",
+    "summary": "分页：上一页、页码、下一页。页数多时折叠为省略号。",
+    "attrs": [
+      {
+        "name": "total",
+        "type": "number",
+        "description": "总条数"
+      },
+      {
+        "name": "page-size",
+        "type": "number",
+        "description": "每页条数，默认 10"
+      },
+      {
+        "name": "page",
+        "type": "number",
+        "description": "当前页（从 1 开始），默认 1"
+      },
+      {
+        "name": "siblings",
+        "type": "number",
+        "description": "当前页两侧显示的页码数，默认 1"
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "description": "读屏名称，默认“分页”"
+      }
+    ],
+    "slots": [],
+    "events": [
+      {
+        "name": "vn-change",
+        "description": "换页后，detail.page 为新页码"
+      }
+    ],
+    "parts": [
+      {
+        "name": "list",
+        "description": "列表"
+      },
+      {
+        "name": "page",
+        "description": "页码按钮"
+      },
+      {
+        "name": "prev",
+        "description": "上一页"
+      },
+      {
+        "name": "next",
+        "description": "下一页"
       }
     ],
     "cssprops": []
@@ -990,6 +1113,85 @@ export const api = {
         "description": "滑块"
       }
     ],
+    "cssprops": []
+  },
+  "vn-tabs": {
+    "file": "src/components/tabs.js",
+    "tag": "vn-tabs",
+    "summary": "标签页：一组 <vn-tab-panel>，一次显示一页。键盘遵循 WAI-ARIA APG「Tabs（自动激活）」：← → 切换并显示，Home / End 到两端，Tab 进入面板。标签、面板都在自己的 Shadow 根里（面板内容通过手动分配的插槽投进来），读屏关联完整。",
+    "attrs": [
+      {
+        "name": "value",
+        "type": "string",
+        "description": "当前页的 name；默认第一个可用的页"
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "description": "标签列表的读屏名称"
+      }
+    ],
+    "slots": [
+      {
+        "name": "",
+        "description": "<vn-tab-panel>"
+      }
+    ],
+    "events": [
+      {
+        "name": "vn-change",
+        "description": "切换后，detail.value 为新页的 name"
+      }
+    ],
+    "parts": [
+      {
+        "name": "tablist",
+        "description": "标签列表"
+      },
+      {
+        "name": "tab",
+        "description": "每个标签"
+      },
+      {
+        "name": "indicator",
+        "description": "当前标签下的线"
+      },
+      {
+        "name": "panel",
+        "description": "面板"
+      }
+    ],
+    "cssprops": []
+  },
+  "vn-tab-panel": {
+    "file": "src/components/tabs.js",
+    "tag": "vn-tab-panel",
+    "summary": "标签页中的一页，放在 <vn-tabs> 里。",
+    "attrs": [
+      {
+        "name": "name",
+        "type": "string",
+        "description": "页的名字（<vn-tabs value> 用它选择）"
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "description": "标签上的文字"
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "description": "禁用"
+      }
+    ],
+    "slots": [
+      {
+        "name": "",
+        "description": "内容"
+      }
+    ],
+    "events": [],
+    "parts": [],
     "cssprops": []
   },
   "vn-tag": {

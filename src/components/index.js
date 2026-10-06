@@ -20,3 +20,6 @@ export { VnTimeline, VnTimelineItem } from './timeline.js';
 export { VnTextarea } from './textarea.js';
 export { VnRadioGroup, VnRadio } from './radio.js';
 export { VnSlider } from './slider.js';
+export { VnTabs, VnTabPanel } from './tabs.js';
+export { VnPagination } from './pagination.js';
+export { VnCollapse, VnCollapseItem } from './collapse.js';

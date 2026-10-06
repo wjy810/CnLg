@@ -188,6 +188,23 @@
       </section>
 
       <section>
+        <h2><code>vn-tabs</code> 标签页 · <code>vn-pagination</code> 分页 · <code>vn-collapse</code> 折叠面板</h2>
+        <vn-stack gap="5">
+          <vn-tabs label="四时" value="autumn">
+            <vn-tab-panel name="spring" label="春">春眠不觉晓，处处闻啼鸟。</vn-tab-panel>
+            <vn-tab-panel name="summer" label="夏">接天莲叶无穷碧，映日荷花别样红。</vn-tab-panel>
+            <vn-tab-panel name="autumn" label="秋">停车坐爱枫林晚，霜叶红于二月花。</vn-tab-panel>
+            <vn-tab-panel name="winter" label="冬" disabled>（未完）</vn-tab-panel>
+          </vn-tabs>
+          <vn-pagination total="520" page="17"></vn-pagination>
+          <vn-collapse accordion>
+            <vn-collapse-item heading="作者" open>李白，字太白，号青莲居士。</vn-collapse-item>
+            <vn-collapse-item heading="出处">《李太白集》卷六。</vn-collapse-item>
+          </vn-collapse>
+        </vn-stack>
+      </section>
+
+      <section>
         <h2><code>vn-timeline</code> 时间线</h2>
         <vn-timeline>
           <vn-timeline-item time="开元十三年" seal="出">仗剑去国，辞亲远游</vn-timeline-item>
