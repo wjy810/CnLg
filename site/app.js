@@ -51,7 +51,7 @@ const navLink = ([to, text]) => html`
 `;
 
 const layout = html`
-  <a class="skip" href="#main" @click=${(e) => (e.preventDefault(), document.getElementById('main').focus())}>跳到正文</a>
+  <a class="skip" href="#main">跳到正文</a>
   <header class="topbar">
     <button
       class="menu"

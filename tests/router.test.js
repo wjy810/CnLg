@@ -176,3 +176,24 @@ test('stop() 之后不再响应地址变化', async (t) => {
   await page.waitForTimeout(100);
   assert.equal(await view(page), '首页');
 });
+
+test('hash 模式：#section 这样的页内锚点不改变路由，只滚动过去', async (t) => {
+  const { page } = await open(t, { path: PAGE });
+  await setup(page, { extra: '<div style="height: 3000px"></div><h2 id="section">锚点</h2><div style="height: 2000px"></div><a id="jump" href="#section">去锚点</a>' });
+  await page.evaluate(() => window.router.navigate('/poems/3'));
+  await tick(page);
+  await page.evaluate(() => document.getElementById('jump').click());
+  await tick(page);
+  const state = await page.evaluate(() => ({
+    view: document.querySelector('[data-vn-outlet]').textContent.replace(/\s+/g, ' ').trim(),
+    hash: location.hash,
+    nearAnchor: Math.abs(document.getElementById('section').getBoundingClientRect().top) < 5,
+    focused: document.activeElement.id,
+  }));
+  assert.deepEqual(state, { view: '诗 3', hash: '#/poems/3', nearAnchor: true, focused: 'section' });
+  // 手动改成锚点 hash 也一样
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.evaluate(() => (location.hash = '#section'));
+  await page.waitForFunction(() => location.hash === '#/poems/3');
+  assert.equal(await view(page), '诗 3');
+});

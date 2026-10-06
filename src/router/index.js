@@ -49,7 +49,9 @@ export function createRouter(options) {
   if (mode !== 'hash' && mode !== 'history') throw new Error(`[Vunio] 未知的路由模式 "${mode}"`);
 
   const table = routes.map((def, index) => ({ compiled: compile(def.path), def, index }));
-  const location = signal(readLocation());
+  /** @type {import('../core/signals.js').Signal<ReturnType<typeof parseLocation>> | undefined} */
+  let location;
+  location = signal(readLocation());
   const loads = new Map();
   const loadTick = signal(0);
   let scope = null;
@@ -65,8 +67,17 @@ export function createRouter(options) {
     return { ...loc, params: found?.params ?? {}, def: found?.def ?? null };
   });
 
+  /** hash 模式下不以 #/ 开头的 hash（如 #section）是页内锚点，不是路由 */
+  function isAnchorHash(hash) {
+    return mode === 'hash' && hash.length > 1 && !hash.startsWith('#/');
+  }
+
   function readLocation() {
-    if (mode === 'hash') return parseLocation(window.location.hash.slice(1) || '/');
+    if (mode === 'hash') {
+      const raw = window.location.hash;
+      if (isAnchorHash(raw)) return location?.peek() ?? parseLocation('/');
+      return parseLocation(raw.slice(1) || '/');
+    }
     let path = window.location.pathname;
     if (base && path.startsWith(base)) path = path.slice(base.length);
     return parseLocation(`${path}${window.location.search}${window.location.hash}`);
@@ -89,7 +100,21 @@ export function createRouter(options) {
     location.value = readLocation();
   }
 
+  /** 滚动到页内锚点，并把地址栏还原为当前路由 */
+  function jumpToAnchor(hash) {
+    const target = document.getElementById(decodeURIComponent(hash.slice(1)));
+    const current = location.peek();
+    history.replaceState(history.state, '', href(`${current.path}${current.search}`));
+    if (!target) return;
+    target.scrollIntoView();
+    if (!target.hasAttribute('tabindex') && !target.matches('a[href], button, input, select, textarea')) {
+      target.setAttribute('tabindex', '-1');
+    }
+    target.focus({ preventScroll: true });
+  }
+
   function sync(event) {
+    if (isAnchorHash(window.location.hash)) return jumpToAnchor(window.location.hash);
     const next = readLocation();
     const current = location.peek();
     if (next.path === current.path && next.search === current.search && next.hash === current.hash) return;
@@ -109,9 +134,10 @@ export function createRouter(options) {
     const url = new URL(anchor.href, window.location.href);
     if (url.origin !== window.location.origin) return;
     if (mode === 'hash') {
-      if (!url.hash.startsWith('#/') || url.pathname !== window.location.pathname) return;
+      if (url.pathname !== window.location.pathname || !url.hash) return;
       event.preventDefault();
-      navigate(decodeURI(url.hash.slice(1)));
+      if (isAnchorHash(url.hash)) jumpToAnchor(url.hash);
+      else navigate(decodeURI(url.hash.slice(1)));
     } else {
       if (base && !url.pathname.startsWith(base)) return;
       event.preventDefault();
