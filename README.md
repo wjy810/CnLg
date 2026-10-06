@@ -369,7 +369,8 @@ docs/
 ## 浏览器支持
 
 依赖 Custom Elements、Shadow DOM、`adoptedStyleSheets`、`ElementInternals`、`:state()`：
-Chrome / Edge 125+、Safari 17.4+、Firefox 126+。目前测试只在 Chromium 中运行。
+Chrome / Edge 125+、Safari 17.4+、Firefox 126+。CI 在 Chromium、Firefox、WebKit 三种引擎中运行全部测试。
+Firefox 不支持对 `::backdrop` 做 Web Animations，弹窗的遮罩在 Firefox 中没有淡入淡出。
 
 ## 用 AI 生成组件
 
