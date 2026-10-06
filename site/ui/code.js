@@ -5,13 +5,13 @@ import { dedent, highlight } from './highlight.js';
  * <site-code> 代码块：高亮 + 复制按钮。
  * 代码通过 .code 属性传入，没有时取元素自身的文字。
  *
- * @attr {'html'|'js'} lang - 语言，默认 html
+ * @attr {'html'|'js'} syntax - 代码语言，默认 html（不用 lang：它是 HTML 的全局属性，表示人类语言）
  */
 export class SiteCode extends VunioElement {
   static tag = 'site-code';
 
   static props = {
-    lang: { type: String, default: 'html', values: ['html', 'js'] },
+    syntax: { type: String, default: 'html', values: ['html', 'js'] },
     code: { type: String, attribute: false },
   };
 
@@ -85,7 +85,7 @@ export class SiteCode extends VunioElement {
   render() {
     return html`
       <div class="wrap">
-        <pre part="pre"><code>${() => unsafeHTML(highlight(this.source, this.lang))}</code></pre>
+        <pre part="pre" tabindex="0" aria-label="代码"><code>${() => unsafeHTML(highlight(this.source, this.syntax))}</code></pre>
         <button class="copy" type="button" data-copied=${() => (this.copied.value ? '' : null)} @click=${this.copy}>
           ${() => (this.copied.value ? '已复制' : '复制')}
         </button>

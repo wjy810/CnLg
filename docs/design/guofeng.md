@@ -46,7 +46,7 @@
 | <span style="color:#C25565">■</span> 海棠 | `#C25565` | `--vn-color-haitang` | 花：深 |
 | <span style="color:#5E8A6E">■</span> 竹青 | `#5E8A6E` | `--vn-color-zhuqing` | 风：装饰 |
 | <span style="color:#3A6B57">■</span> 青瓷 | `#3A6B57` | `--vn-color-qingci` | 成功 |
-| <span style="color:#8A6420">■</span> 泥金 | `#8A6420` | `--vn-color-nijin` | 提醒 |
+| <span style="color:#7D5B1D">■</span> 泥金 | `#7D5B1D` | `--vn-color-nijin` | 提醒 |
 | <span style="color:#3B5166">■</span> 黛蓝 | `#3B5166` | `--vn-color-dailan` | 信息 |
 | <span style="color:#D6E3E8">■</span> 月白 | `#D6E3E8` | `--vn-color-yuebai` | 月：装饰 |
 | <span style="color:#EEF2F4">■</span> 霜 | `#EEF2F4` | `--vn-color-shuang` | 雪：装饰 |
@@ -85,7 +85,7 @@
 | `--vn-accent-fg` | 朱砂 `#B0382B` | 丹 `#E87A66` |
 | `--vn-accent-wash` | `rgba(176, 56, 43, 0.1)` | `rgba(232, 122, 102, 0.14)` |
 | `--vn-success` | 青瓷 `#3A6B57` | 碧 `#7FBFA5` |
-| `--vn-warning` | 泥金 `#8A6420` | 金 `#D9B36A` |
+| `--vn-warning` | 泥金 `#7D5B1D` | 金 `#D9B36A` |
 | `--vn-danger` | 胭脂 `#9A2A30` | 绯 `#F08A8E` |
 | `--vn-info` | 黛蓝 `#3B5166` | 碧蓝 `#8FB2D1` |
 | `--vn-focus` | 朱砂 `#B0382B` | 丹 `#E87A66` |
@@ -133,10 +133,15 @@
 | 强调文字、链接 | `accent-fg` / `bg` | 5.27 | ≥ 4.5 | ✅ |
 | 卡片上的强调文字 | `accent-fg` / `surface` | 5.75 | ≥ 4.5 | ✅ |
 | 成功提示 | `success` / `bg` | 5.31 | ≥ 4.5 | ✅ |
-| 提醒 | `warning` / `bg` | 4.63 | ≥ 4.5 | ✅ |
+| 提醒 | `warning` / `bg` | 5.37 | ≥ 4.5 | ✅ |
 | 错误提示 | `danger` / `bg` | 6.61 | ≥ 4.5 | ✅ |
 | 卡片上的错误提示 | `danger` / `surface` | 7.21 | ≥ 4.5 | ✅ |
 | 信息 | `info` / `bg` | 7.11 | ≥ 4.5 | ✅ |
+| 凹陷面上的成功色（如代码高亮） | `success` / `surface-sunken` | 4.77 | ≥ 4.5 | ✅ |
+| 凹陷面上的提醒色 | `warning` / `surface-sunken` | 4.82 | ≥ 4.5 | ✅ |
+| 凹陷面上的错误提示 | `danger` / `surface-sunken` | 5.93 | ≥ 4.5 | ✅ |
+| 凹陷面上的信息色 | `info` / `surface-sunken` | 6.38 | ≥ 4.5 | ✅ |
+| 凹陷面上的强调文字 | `accent-fg` / `surface-sunken` | 4.73 | ≥ 4.5 | ✅ |
 | 焦点框 | `focus` / `bg` | 5.27 | ≥ 3 | ✅ |
 
 **夜**
@@ -161,6 +166,11 @@
 | 错误提示 | `danger` / `bg` | 7.46 | ≥ 4.5 | ✅ |
 | 卡片上的错误提示 | `danger` / `surface` | 6.79 | ≥ 4.5 | ✅ |
 | 信息 | `info` / `bg` | 8.08 | ≥ 4.5 | ✅ |
+| 凹陷面上的成功色（如代码高亮） | `success` / `surface-sunken` | 6.78 | ≥ 4.5 | ✅ |
+| 凹陷面上的提醒色 | `warning` / `surface-sunken` | 7.27 | ≥ 4.5 | ✅ |
+| 凹陷面上的错误提示 | `danger` / `surface-sunken` | 5.98 | ≥ 4.5 | ✅ |
+| 凹陷面上的信息色 | `info` / `surface-sunken` | 6.48 | ≥ 4.5 | ✅ |
+| 凹陷面上的强调文字 | `accent-fg` / `surface-sunken` | 5.08 | ≥ 4.5 | ✅ |
 | 焦点框 | `focus` / `bg` | 6.33 | ≥ 3 | ✅ |
 <!-- contrast:end -->
 

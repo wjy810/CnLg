@@ -356,6 +356,18 @@
       .pass {
         color: var(--vn-success);
       }
+      .sample .mark {
+        display: inline-block;
+        inline-size: 14px;
+        block-size: 14px;
+        margin-inline-end: var(--vn-space-2);
+        border: 2px solid;
+        border-radius: var(--vn-radius-sm);
+        vertical-align: -2px;
+      }
+      .sample-label {
+        color: var(--vn-fg);
+      }
       .table-wrap {
         overflow-x: auto;
       }
@@ -555,7 +567,7 @@
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>用途</th><th>示例</th><th>对比度</th><th>要求</th><th></th></tr>
+                <tr><th>用途</th><th>示例</th><th>对比度</th><th>要求</th><th>结果</th></tr>
               </thead>
               <tbody>
                 ${() =>
@@ -564,9 +576,14 @@
                       <tr>
                         <td>${row.usage}</td>
                         <td>
-                          <span class="sample" style=${{ color: `var(--vn-${row.fg})`, background: `var(--vn-${row.bg})` }}>
-                            ${row.fg} / ${row.bg}
-                          </span>
+                          ${row.min >= 4.5
+                            ? html`<span class="sample" style=${{ color: `var(--vn-${row.fg})`, background: `var(--vn-${row.bg})` }}>
+                                ${row.fg} / ${row.bg}
+                              </span>`
+                            : html`<span class="sample" style=${{ background: `var(--vn-${row.bg})` }}>
+                                <i class="mark" style=${{ borderColor: `var(--vn-${row.fg})` }} aria-hidden="true"></i>
+                                <span class="sample-label">${row.fg} / ${row.bg}（图形）</span>
+                              </span>`}
                         </td>
                         <td class="num">${row.ratio.toFixed(2)}</td>
                         <td class="num">≥ ${row.min}</td>

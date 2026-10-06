@@ -5,7 +5,7 @@ import './code.js';
 import './demo.js';
 
 /** 代码块 */
-export const code = (source, lang = 'js') => html`<site-code lang=${lang} .code=${source}></site-code>`;
+export const code = (source, syntax = 'js') => html`<site-code syntax=${syntax} .code=${source}></site-code>`;
 
 /** 现场演示 */
 export const demo = (value) => html`<site-demo .demo=${value}></site-demo>`;

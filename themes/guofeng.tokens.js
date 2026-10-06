@@ -29,7 +29,7 @@ export const palette = {
   haitang: { name: '海棠', hex: '#C25565', note: '花：深' },
   zhuqing: { name: '竹青', hex: '#5E8A6E', note: '风：装饰' },
   qingci: { name: '青瓷', hex: '#3A6B57', note: '成功' },
-  nijin: { name: '泥金', hex: '#8A6420', note: '提醒' },
+  nijin: { name: '泥金', hex: '#7D5B1D', note: '提醒' },
   dailan: { name: '黛蓝', hex: '#3B5166', note: '信息' },
   yuebai: { name: '月白', hex: '#D6E3E8', note: '月：装饰' },
   shuang: { name: '霜', hex: '#EEF2F4', note: '雪：装饰' },
@@ -162,6 +162,11 @@ export const contrastRules = [
   ['danger', 'bg', 4.5, '错误提示'],
   ['danger', 'surface', 4.5, '卡片上的错误提示'],
   ['info', 'bg', 4.5, '信息'],
+  ['success', 'surface-sunken', 4.5, '凹陷面上的成功色（如代码高亮）'],
+  ['warning', 'surface-sunken', 4.5, '凹陷面上的提醒色'],
+  ['danger', 'surface-sunken', 4.5, '凹陷面上的错误提示'],
+  ['info', 'surface-sunken', 4.5, '凹陷面上的信息色'],
+  ['accent-fg', 'surface-sunken', 4.5, '凹陷面上的强调文字'],
   ['focus', 'bg', 3, '焦点框'],
 ];
 
