@@ -1,8 +1,12 @@
-// 浏览器测试的公共部分：启动静态服务器和 Chromium，打开测试页并收集错误
+// 浏览器测试的公共部分：启动静态服务器和浏览器，打开测试页并收集错误
+// 默认用 Chromium；BROWSER=firefox 或 BROWSER=webkit 换浏览器（CI 三种都跑）
 import { after, before } from 'node:test';
 import assert from 'node:assert/strict';
-import { chromium } from 'playwright';
+import * as playwright from 'playwright';
 import { serve } from '../../scripts/serve.js';
+
+export const BROWSER = process.env.BROWSER || 'chromium';
+if (!['chromium', 'firefox', 'webkit'].includes(BROWSER)) throw new Error(`未知的 BROWSER：${BROWSER}`);
 
 /**
  * 注册 before / after 钩子，返回 open(t, options) 用于在每个测试中打开新页面。
@@ -15,7 +19,7 @@ export function useBrowser() {
 
   before(async () => {
     ({ server, url: baseURL } = await serve(0));
-    browser = await chromium.launch();
+    browser = await playwright[BROWSER].launch();
   });
 
   after(async () => {

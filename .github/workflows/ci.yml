@@ -23,10 +23,28 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
       - name: 类型检查
         run: npm run typecheck
       - name: 体积预算
         run: node scripts/size.js --check >> "$GITHUB_STEP_SUMMARY"
+
+  test:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    name: test (${{ matrix.browser }})
+    env:
+      BROWSER: ${{ matrix.browser }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
       - name: 测试（单元 + 浏览器 + 无障碍）
         run: npm test
