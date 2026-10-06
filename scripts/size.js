@@ -15,7 +15,7 @@ export const ENTRIES = [
   { name: 'vunio/router（不含 core）', entry: 'src/router/index.js', own: true, budget: 3 },
   { name: 'vunio/effects（不含 core）', entry: 'src/effects/index.js', own: true, budget: 4.5 },
   { name: 'vunio（以上全部）', entry: 'src/index.js', budget: 17.5 },
-  { name: 'vunio/components（13 个组件，含 core）', entry: 'src/components/index.js', budget: 27 },
+  { name: 'vunio/components（全部组件，含 core）', entry: 'src/components/index.js', budget: 38 },
 ];
 
 const coreDir = resolve(root, 'src/core') + sep;

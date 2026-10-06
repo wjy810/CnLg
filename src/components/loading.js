@@ -87,6 +87,17 @@ export class VnLoading extends VunioElement {
     .text {
       margin-inline-end: calc(-1 * var(--vn-tracking-wider));
     }
+    /* 减少动态效果：只留一滴静止的墨和一圈淡淡的水纹 */
+    @media (prefers-reduced-motion: reduce) {
+      .drop::before,
+      .drop i {
+        animation: none;
+      }
+      .drop i:first-child {
+        opacity: 0.3;
+        transform: scale(0.75);
+      }
+    }
     :host([quiet]) .text {
       display: none;
     }

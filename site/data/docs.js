@@ -2,9 +2,11 @@
 // 本文件是纯数据（可在 Node 中导入），演示需要的模块在 setup 里按需加载。
 
 export const groups = [
-  { title: '基础', items: ['button', 'heading', 'card', 'stack', 'divider', 'loading'] },
+  { title: '基础', items: ['button', 'heading', 'card', 'stack', 'divider', 'tag'] },
+  { title: '导航', items: ['breadcrumb'] },
   { title: '表单', items: ['input', 'select', 'checkbox', 'switch'] },
-  { title: '反馈', items: ['modal', 'toast'] },
+  { title: '反馈', items: ['loading', 'progress', 'modal', 'toast'] },
+  { title: '叙事', items: ['timeline'] },
   { title: '效果', items: ['sky'] },
 ];
 
@@ -127,6 +129,73 @@ export const docs = {
   <vn-loading label="研墨中"></vn-loading>
   <vn-loading size="lg" quiet></vn-loading>
 </vn-stack>`,
+      },
+    ],
+  },
+  tag: {
+    tag: 'vn-tag',
+    name: '标签',
+    intro: '一小块带边框的文字，标注类别、状态或关键词。颜色有六种；closable 时可以移除，移除前派发可以取消的 vn-close。',
+    demos: [
+      {
+        html: `<vn-stack direction="row" gap="2" wrap align="center">
+  <vn-tag>五言</vn-tag>
+  <vn-tag type="accent">名篇</vn-tag>
+  <vn-tag type="success">已读</vn-tag>
+  <vn-tag type="warning">待考</vn-tag>
+  <vn-tag type="danger">残缺</vn-tag>
+  <vn-tag type="info">注释</vn-tag>
+  <vn-tag closable>李白</vn-tag>
+  <vn-tag size="sm">小</vn-tag>
+</vn-stack>`,
+      },
+    ],
+  },
+  breadcrumb: {
+    tag: 'vn-breadcrumb',
+    name: '面包屑',
+    intro: '当前页在网站中的位置。最后一项是当前页：不是链接，读屏会读出“当前页”。分隔符可以换。',
+    demos: [
+      {
+        html: `<vn-breadcrumb>
+  <vn-breadcrumb-item href="#/">首页</vn-breadcrumb-item>
+  <vn-breadcrumb-item href="#/components">组件</vn-breadcrumb-item>
+  <vn-breadcrumb-item>面包屑</vn-breadcrumb-item>
+</vn-breadcrumb>
+<vn-breadcrumb separator="›">
+  <vn-breadcrumb-item href="#/">唐诗</vn-breadcrumb-item>
+  <vn-breadcrumb-item href="#/">李白</vn-breadcrumb-item>
+  <vn-breadcrumb-item>静夜思</vn-breadcrumb-item>
+</vn-breadcrumb>`,
+      },
+    ],
+  },
+  progress: {
+    tag: 'vn-progress',
+    name: '进度',
+    intro: '一道逐渐写满的线：古风是笔触，赛博是分段的灯条，形状都来自主题。不写 value 时是不确定进度；开启“减少动态效果”时静止为半满。',
+    demos: [
+      {
+        html: `<vn-stack gap="5" style="max-width: 420px">
+  <vn-progress value="0.35" label="研墨"></vn-progress>
+  <vn-progress value="72" max="100" label="誊抄"></vn-progress>
+  <vn-progress label="装裱中"></vn-progress>
+</vn-stack>`,
+      },
+    ],
+  },
+  timeline: {
+    tag: 'vn-timeline',
+    name: '时间线',
+    intro: '按时间排列的事件。每一项左侧是一个圆点，或者一方小印；颜色与标签相同。',
+    demos: [
+      {
+        html: `<vn-timeline>
+  <vn-timeline-item time="开元十三年" seal="出">仗剑去国，辞亲远游</vn-timeline-item>
+  <vn-timeline-item time="开元十八年">初入长安，未得任用</vn-timeline-item>
+  <vn-timeline-item time="天宝元年" seal="仕" type="accent">奉诏入京，供奉翰林</vn-timeline-item>
+  <vn-timeline-item time="天宝三载" type="info">赐金放还，与杜甫相识</vn-timeline-item>
+</vn-timeline>`,
       },
     ],
   },

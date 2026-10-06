@@ -12,7 +12,7 @@ import 'vunio/components';   // 注册全部组件
 - **安静为本**：默认外观克制；朱砂色只给主操作（`variant="cinnabar"`）和错误；毛笔字只在 `vn-heading` 的 1–3 级出现。
 - **原生优先**：能用原生元素就用（`<button>`、`<input>`、`<dialog>`），键盘和读屏行为跟原生一致。
 - **表单即表单**：输入类组件继承 `VunioFormElement`，直接放进 `<form>`，值进 `FormData`，支持 `reset` 和 `<fieldset disabled>`。
-- **效果是点缀**：按钮默认只有墨晕；落花、飞雪、风叶要显式打开。
+- **效果是点缀**：按钮默认只有主题的按下反馈（古风墨晕、赛博故障）；落花、飞雪、风叶、电火花要显式打开。
 
 ## 2. 组件一览
 
@@ -22,7 +22,7 @@ import 'vunio/components';   // 注册全部组件
 |---|---|---|---|
 | `variant` | `ink` · `cinnabar` · `moon` · `text` | `ink` | 墨（主要）· 朱砂（最重要的那一个）· 月白（描边）· 素（文字） |
 | `size` | `sm` · `md` · `lg` | `md` | 高 32 / 40 / 48 |
-| `effect` | `ink` · `blossom` · `snow` · `wind` · `none` | `ink` | 点击效果 |
+| `effect` | `auto` · `ink` · `blossom` · `snow` · `wind` · `glitch` · `spark` · `none` · 注册的名字 | `auto` | 点击效果；`auto` 由主题的 `--vn-effect` 决定（[RFC 0006](0006-theme-contract.md)） |
 | `type` | `button` · `submit` · `reset` | `button` | 在表单中的作用。默认 `button`，避免误提交 |
 | `disabled` · `loading` · `block` | 布尔 | | 禁用 · 加载中（禁止点击并显示墨圈）· 占满一行 |
 

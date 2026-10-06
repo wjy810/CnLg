@@ -91,7 +91,7 @@
   <body>
     <main>
       <header>
-        <vn-heading level="1" seal="雅" sub="第一批组件 · 十二件">器物</vn-heading>
+        <vn-heading level="1" seal="雅" sub="Vunio 组件">器物</vn-heading>
         <nav>
           <a href="./">示例</a>
           <a href="./theme.html">设计系统</a>
@@ -161,6 +161,39 @@
           <vn-loading label="研墨中"></vn-loading>
           <vn-loading size="lg" quiet></vn-loading>
         </vn-stack>
+      </section>
+
+      <section>
+        <h2><code>vn-tag</code> 标签 · <code>vn-progress</code> 进度 · <code>vn-breadcrumb</code> 面包屑</h2>
+        <vn-stack gap="5">
+          <vn-breadcrumb>
+            <vn-breadcrumb-item href="./">示例</vn-breadcrumb-item>
+            <vn-breadcrumb-item href="./components.html">器物</vn-breadcrumb-item>
+            <vn-breadcrumb-item>第二批</vn-breadcrumb-item>
+          </vn-breadcrumb>
+          <vn-stack direction="row" gap="2" wrap align="center">
+            <vn-tag>五言</vn-tag>
+            <vn-tag type="accent">名篇</vn-tag>
+            <vn-tag type="success">已读</vn-tag>
+            <vn-tag type="warning">待考</vn-tag>
+            <vn-tag type="danger">残缺</vn-tag>
+            <vn-tag type="info">注释</vn-tag>
+            <vn-tag closable>李白</vn-tag>
+          </vn-stack>
+          <vn-stack direction="row" gap="6" wrap>
+            <vn-progress value="0.35" label="研墨" style="flex: 1 1 200px"></vn-progress>
+            <vn-progress label="装裱中" style="flex: 1 1 200px"></vn-progress>
+          </vn-stack>
+        </vn-stack>
+      </section>
+
+      <section>
+        <h2><code>vn-timeline</code> 时间线</h2>
+        <vn-timeline>
+          <vn-timeline-item time="开元十三年" seal="出">仗剑去国，辞亲远游</vn-timeline-item>
+          <vn-timeline-item time="开元十八年">初入长安，未得任用</vn-timeline-item>
+          <vn-timeline-item time="天宝元年" seal="仕" type="accent">奉诏入京，供奉翰林</vn-timeline-item>
+        </vn-timeline>
       </section>
 
       <section>

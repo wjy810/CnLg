@@ -1,5 +1,70 @@
 // 由 scripts/build-docs.js 根据组件源码的 JSDoc 生成，请勿手改。
 export const api = {
+  "vn-breadcrumb": {
+    "file": "src/components/breadcrumb.js",
+    "tag": "vn-breadcrumb",
+    "summary": "面包屑：当前页在网站中的位置。最后一项是当前页。",
+    "attrs": [
+      {
+        "name": "label",
+        "type": "string",
+        "description": "读屏名称，默认“面包屑”"
+      },
+      {
+        "name": "separator",
+        "type": "string",
+        "description": "分隔符，默认 /"
+      }
+    ],
+    "slots": [
+      {
+        "name": "",
+        "description": "<vn-breadcrumb-item>"
+      }
+    ],
+    "events": [],
+    "parts": [
+      {
+        "name": "list",
+        "description": "列表"
+      }
+    ],
+    "cssprops": []
+  },
+  "vn-breadcrumb-item": {
+    "file": "src/components/breadcrumb.js",
+    "tag": "vn-breadcrumb-item",
+    "summary": "面包屑中的一项。",
+    "attrs": [
+      {
+        "name": "href",
+        "type": "string",
+        "description": "链接地址；当前页（最后一项）不显示为链接"
+      }
+    ],
+    "slots": [
+      {
+        "name": "",
+        "description": "文字"
+      }
+    ],
+    "events": [],
+    "parts": [
+      {
+        "name": "link",
+        "description": "链接"
+      },
+      {
+        "name": "current",
+        "description": "当前页的文字"
+      },
+      {
+        "name": "separator",
+        "description": "分隔符"
+      }
+    ],
+    "cssprops": []
+  },
   "vn-button": {
     "file": "src/components/button.js",
     "tag": "vn-button",
@@ -469,6 +534,46 @@ export const api = {
     ],
     "cssprops": []
   },
+  "vn-progress": {
+    "file": "src/components/progress.js",
+    "tag": "vn-progress",
+    "summary": "进度：一道逐渐写满的线。没有 value 时是不确定进度，一小段来回游走。线的形状来自主题（--vn-mask-stroke）：古风是笔触，赛博是分段的灯条。",
+    "attrs": [
+      {
+        "name": "value",
+        "type": "number",
+        "description": "当前值；不写为不确定进度"
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "description": "最大值，默认 1"
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "description": "读屏名称（也显示在上方），默认“进度”"
+      },
+      {
+        "name": "quiet",
+        "type": "boolean",
+        "description": "不显示文字（读屏仍会读）"
+      }
+    ],
+    "slots": [],
+    "events": [],
+    "parts": [
+      {
+        "name": "track",
+        "description": "轨道"
+      },
+      {
+        "name": "fill",
+        "description": "已完成的部分"
+      }
+    ],
+    "cssprops": []
+  },
   "vn-select": {
     "file": "src/components/select.js",
     "tag": "vn-select",
@@ -697,6 +802,110 @@ export const api = {
       {
         "name": "thumb",
         "description": "滑块"
+      }
+    ],
+    "cssprops": []
+  },
+  "vn-tag": {
+    "file": "src/components/tag.js",
+    "tag": "vn-tag",
+    "summary": "标签：一小块带边框的文字，用来标注类别、状态、关键词。",
+    "attrs": [
+      {
+        "name": "type",
+        "type": "'default'|'accent'|'success'|'warning'|'danger'|'info'",
+        "description": "颜色，默认 default"
+      },
+      {
+        "name": "size",
+        "type": "'sm'|'md'",
+        "description": "尺寸，默认 md"
+      },
+      {
+        "name": "closable",
+        "type": "boolean",
+        "description": "末尾显示关闭按钮"
+      }
+    ],
+    "slots": [
+      {
+        "name": "",
+        "description": "文字"
+      }
+    ],
+    "events": [
+      {
+        "name": "vn-close",
+        "description": "点关闭按钮时（可取消；没被取消就移除自己）"
+      }
+    ],
+    "parts": [
+      {
+        "name": "tag",
+        "description": "标签本体"
+      },
+      {
+        "name": "close",
+        "description": "关闭按钮"
+      }
+    ],
+    "cssprops": []
+  },
+  "vn-timeline": {
+    "file": "src/components/timeline.js",
+    "tag": "vn-timeline",
+    "summary": "时间线：按时间排列的事件。",
+    "attrs": [],
+    "slots": [
+      {
+        "name": "",
+        "description": "<vn-timeline-item>"
+      }
+    ],
+    "events": [],
+    "parts": [],
+    "cssprops": []
+  },
+  "vn-timeline-item": {
+    "file": "src/components/timeline.js",
+    "tag": "vn-timeline-item",
+    "summary": "时间线上的一件事：左侧一个圆点或一方小印，右侧是时间和内容。",
+    "attrs": [
+      {
+        "name": "time",
+        "type": "string",
+        "description": "时间"
+      },
+      {
+        "name": "seal",
+        "type": "string",
+        "description": "小印上的字（一到两个字）；不写时是圆点"
+      },
+      {
+        "name": "type",
+        "type": "'default'|'accent'|'success'|'warning'|'danger'|'info'",
+        "description": "颜色，默认 default"
+      }
+    ],
+    "slots": [
+      {
+        "name": "",
+        "description": "内容"
+      }
+    ],
+    "events": [],
+    "parts": [
+      {
+        "name": "marker",
+        "description": "圆点或小印"
+      },
+      {
+        "name": "time",
+        "description": "时间"
+      },
+      {
+        "name": "content",
+        "description": "内容"
       }
     ],
     "cssprops": []
